@@ -43,6 +43,8 @@ ATGCOCharacter::ATGCOCharacter(const FObjectInitializer& ObjectInitializer)
 	// Default offset from the character location for projectiles to spawn
 	GunOffset = FVector(0.f, 0.f, 0.f);
 
+	bShootMode = false;
+
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
 }
@@ -136,42 +138,46 @@ void ATGCOCharacter::MoveRight(float Value)
 
 void ATGCOCharacter::OnFire()
 {
-	// try and fire a projectile
-	if (ProjectileClass != NULL)
+	// if player is in FireMode
+	if (bShootMode == true)
 	{
-		if (GEngine)
+		// try and fire a projectile
+		if (ProjectileClass != NULL)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, .5f, FColor::Red, TEXT("Shoot"));
+			if (GEngine)
+			{
+				GEngine->AddOnScreenDebugMessage(-1, .5f, FColor::Red, TEXT("Shoot"));
+			}
+
+			const FRotator SpawnRotation = GetControlRotation();
+			// MuzzleOffset is in camera space, so transform it to world space before offsetting from the character location to find the final muzzle position
+			const FVector SpawnLocation = GetActorLocation() + SpawnRotation.RotateVector(GunOffset);
+
+			UWorld* const World = GetWorld();
+			if (World != NULL)
+			{
+				// spawn the projectile at the muzzle
+				World->SpawnActor<AProjectile>(ProjectileClass, SpawnLocation, SpawnRotation);
+			}
 		}
 
-		const FRotator SpawnRotation = GetControlRotation();
-		// MuzzleOffset is in camera space, so transform it to world space before offsetting from the character location to find the final muzzle position
-		const FVector SpawnLocation = GetActorLocation() + SpawnRotation.RotateVector(GunOffset);
-
-		UWorld* const World = GetWorld();
-		if (World != NULL)
+		// try and play the sound if specified
+		if (FireSound != NULL)
 		{
-			// spawn the projectile at the muzzle
-			World->SpawnActor<AProjectile>(ProjectileClass, SpawnLocation, SpawnRotation);
+			UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
 		}
-	}
 
-	// try and play the sound if specified
-	if (FireSound != NULL)
-	{
-		UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
-	}
-
-	// try and play a firing animation if specified
-	if (FireAnimation != NULL)
-	{
-		/*
-		// Get the animation object for the arms mesh
-		UAnimInstance* AnimInstance = Mesh1P->GetAnimInstance();
-		if (AnimInstance != NULL)
+		// try and play a firing animation if specified
+		if (FireAnimation != NULL)
 		{
+			/*
+			// Get the animation object for the arms mesh
+			UAnimInstance* AnimInstance = Mesh1P->GetAnimInstance();
+			if (AnimInstance != NULL)
+			{
 			AnimInstance->Montage_Play(FireAnimation, 1.f);
+			}
+			*/
 		}
-		*/
 	}
 }

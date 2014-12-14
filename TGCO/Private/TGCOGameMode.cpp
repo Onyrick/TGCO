@@ -3,6 +3,7 @@
 #include "TGCO.h"
 #include "TGCOGameMode.h"
 #include "TGCOCharacter.h"
+#include "TGCOHUD.h"
 #include "Engine.h"
 
 ATGCOGameMode::ATGCOGameMode(const FObjectInitializer& ObjectInitializer)
@@ -14,6 +15,8 @@ ATGCOGameMode::ATGCOGameMode(const FObjectInitializer& ObjectInitializer)
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
+
+	HUDClass = ATGCOHUD::StaticClass();
 }
 
 void ATGCOGameMode::StartPlay()
