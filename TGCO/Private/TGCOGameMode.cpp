@@ -3,6 +3,7 @@
 #include "TGCO.h"
 #include "TGCOGameMode.h"
 #include "TGCOCharacter.h"
+#include "Engine.h"
 
 ATGCOGameMode::ATGCOGameMode(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -14,3 +15,14 @@ ATGCOGameMode::ATGCOGameMode(const FObjectInitializer& ObjectInitializer)
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
 }
+
+void ATGCOGameMode::StartPlay()
+{
+	Super::StartPlay();
+
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, .5f, FColor::Red, TEXT("Begin Play"));
+	}
+}
+

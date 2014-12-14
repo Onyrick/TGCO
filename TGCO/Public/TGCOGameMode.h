@@ -10,6 +10,8 @@ class ATGCOGameMode : public AGameMode
 
 public:
 	ATGCOGameMode(const FObjectInitializer& ObjectInitializer);
+
+	virtual void StartPlay() override;
 };
 
 
