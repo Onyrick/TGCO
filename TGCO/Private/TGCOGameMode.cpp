@@ -2,6 +2,7 @@
 
 #include "TGCO.h"
 #include "TGCOGameMode.h"
+#include "TGCOGameState.h"
 #include "TGCOCharacter.h"
 #include "TGCOHUD.h"
 #include "Engine.h"
@@ -17,6 +18,7 @@ ATGCOGameMode::ATGCOGameMode(const FObjectInitializer& ObjectInitializer)
 	}
 
 	HUDClass = ATGCOHUD::StaticClass();
+	GameStateClass = ATGCOGameState::StaticClass();
 }
 
 void ATGCOGameMode::StartPlay()
