@@ -36,6 +36,7 @@ public:
 	class ATGCOGameSession* GetGameSession() const;
 
 	virtual void Init() override;
+	virtual void Shutdown() override;
 	virtual void StartGameInstance() override;
 
 	/** Sends the game to the specified state. */

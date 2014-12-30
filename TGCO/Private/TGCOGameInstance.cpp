@@ -29,8 +29,19 @@ void UTGCOGameInstance::Init()
 	FTicker::GetCoreTicker().AddTicker(TickDelegate);
 }
 
+void UTGCOGameInstance::Shutdown()
+{
+	Super::Shutdown();
+
+	// Unregister ticker delegate
+	FTicker::GetCoreTicker().RemoveTicker(TickDelegate);
+}
+
+
 void UTGCOGameInstance::StartGameInstance()
 {
+	Super::StartGameInstance();
+
 	GotoInitialState();
 }
 
@@ -117,15 +128,7 @@ void UTGCOGameInstance::BeginNewState(FName NewState, FName PrevState)
 
 void UTGCOGameInstance::BeginMainMenuState()
 {
-	UGameViewportClient* ViewPort = GetGameViewportClient();
-
-	if (ViewPort != NULL)
-	{
-
-	}
-
-	ViewPort->SetDisableSplitscreenOverride(true);
-
+	GetWorld()->ServerTravel(FString("/Game/Maps/MainMenuMap"));
 }
 
 class ATGCOGameSession* UTGCOGameInstance::GetGameSession() const
