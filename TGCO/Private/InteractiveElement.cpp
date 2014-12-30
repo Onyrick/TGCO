@@ -6,12 +6,38 @@ UInteractiveElement::UInteractiveElement(const class FPostConstructInitializePro
 
 }
 
-void IInteractiveElement::SetInteractive(bool _interactive)
+void IInteractiveElement::OnInteract_Implementation()
 {
-	bIsInteractive = _interactive;
+	unimplemented();
 }
 
-bool IInteractiveElement::IsInteractive()
+void IInteractiveElement::Highlight_Implementation(bool highlight)
 {
-	return bIsInteractive;
+	unimplemented();
+}
+
+bool IInteractiveElement::IsInteractive_Implementation()
+{
+	unimplemented();
+	return false;
+}
+
+void IInteractiveElement::OnLookAt_Implementation()
+{
+	unimplemented();
+}
+
+void IInteractiveElement::SetInteractive_Implementation(bool interactive)
+{
+	unimplemented();
+}
+
+void IInteractiveElement::OnComponentBeginOverlap_Implementation()
+{
+	unimplemented();
+}
+
+void IInteractiveElement::OnComponentEndOverlap_Implementation()
+{
+	unimplemented();
 }
