@@ -1,7 +1,7 @@
 #include "TGCO.h"
 #include "InteractiveElement.h"
 
-UInteractiveElement::UInteractiveElement(const class FPostConstructInitializeProperties& PCIP) : Super(PCIP)
+UInteractiveElement::UInteractiveElement(const class FObjectInitializer& PCIP) : Super(PCIP)
 {
 
 }

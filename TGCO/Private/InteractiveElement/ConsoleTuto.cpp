@@ -3,7 +3,7 @@
 #include "TGCO.h"
 #include "ConsoleTuto.h"
 
-AConsoleTuto::AConsoleTuto(const class FPostConstructInitializeProperties& PCIP) : Super(PCIP)
+AConsoleTuto::AConsoleTuto(const class FObjectInitializer& PCIP) : Super(PCIP)
 {
 
 }
