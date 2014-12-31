@@ -1,65 +1,64 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
 #pragma once
 
-#include "InteractiveElement.generated.h"
+#include "GameFramework/Actor.h"
+#include "InteractiveElement.h"
+#include "ConsoleTuto.generated.h"
 
-UINTERFACE(MinimalAPI)
-class UInteractiveElement :
-	public UInterface
+/**
+ * 
+ */
+UCLASS()
+class TGCO_API AConsoleTuto : public AActor, public IInteractiveElement
 {
-	GENERATED_UINTERFACE_BODY()
-};
+	GENERATED_UCLASS_BODY()
 
-class IInteractiveElement{
-	GENERATED_IINTERFACE_BODY()
 public:
-
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	//Method called when the player wants to use the object which is currently hightlighted.
 	//This method will be overriden by each of the class' children
 	//////////////////////////////////////////////////////////////////////////////////////////////
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "InteractiveElement", meta = (FriendlyName = "On Interact"))
-		void OnInteract();
-	
+		virtual void OnInteract_Implementation();
+
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	//Method used to highlight the interactive element that the player is currently looking at.
 	//////////////////////////////////////////////////////////////////////////////////////////////
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "InteractiveElement", meta = (FriendlyName = "Highlight"))
-		void Highlight(bool _highlight);
-	
+		virtual void Highlight_Implementation(bool _highlight);
+
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	//Check whether or not the targeted element is currently active(eg the flower pot in the past 
 	//	is not interactive until the player grabs the seed)
 	//////////////////////////////////////////////////////////////////////////////////////////////
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "InteractiveElement", meta = (FriendlyName = "IsInteractive"))
-		bool IsInteractive();
+		virtual bool IsInteractive_Implementation();
 
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	//for an element to be hightlighted it needs the player to look at it and that the player is close
 	//	enough to use it.To know if the player is looking at the element it listens to the evenement OnLookAt
 	//////////////////////////////////////////////////////////////////////////////////////////////
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "InteractiveElement", meta = (FriendlyName = "OnLookAt"))
-		void OnLookAt();
+		virtual void OnLookAt_Implementation();
 
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	//Set the element as being interactible
 	//////////////////////////////////////////////////////////////////////////////////////////////
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "InteractiveElement", meta = (FriendlyName = "SetInteractive"))
-		void SetInteractive(bool _interactive);
+		virtual void SetInteractive_Implementation(bool _interactive);
 
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	//for an element to be hightlighted it needs the player to look at it and that the player is close enough
 	// to use it.To know if the player is close enough it listens to the evenement OnComponentBeginOverlap
 	//////////////////////////////////////////////////////////////////////////////////////////////
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "InteractiveElement", meta = (FriendlyName = "OnComponentBeginOverlap"))
-		void OnComponentBeginOverlap();
-	
+		virtual void OnComponentBeginOverlap_Implementation();
+
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	//When the player leaves the area where he can use an object, this interactive element receives
 	//	OnComponentEndOverlap so that it can stop the highlighting
 	//////////////////////////////////////////////////////////////////////////////////////////////
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "InteractiveElement", meta = (FriendlyName = "OnComponentEndOverlap"))
-		void OnComponentEndOverlap();
+		virtual void OnComponentEndOverlap_Implementation();
+	
+	//Getter / Setter / Is
+		bool IsUnlocked();
+		void SetUnlocked(bool _unlock);
 
 protected:
-	bool bIsInteractive; //whether the element can be interacted with
+	bool bIsUnlocked; //whether the console is unlocked
 };
