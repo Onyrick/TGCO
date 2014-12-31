@@ -24,6 +24,12 @@ public class TGCO : ModuleRules
             }
         );
 
+        PrivateDependencyModuleNames.AddRange(
+            new string[] {
+                "OnlineSubsystem",
+            }
+        );
+
         if ((Target.Platform == UnrealTargetPlatform.Win32) || (Target.Platform == UnrealTargetPlatform.Win64))
         {
             if (UEBuildConfiguration.bCompileSteamOSS == true)

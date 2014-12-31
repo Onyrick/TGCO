@@ -12,6 +12,10 @@ public:
 	ATGCOGameMode(const FObjectInitializer& ObjectInitializer);
 
 	virtual void StartPlay() override;
+
+protected:
+	/** Return game session class to use */
+	virtual TSubclassOf<AGameSession> GetGameSessionClass() const override;
 };
 
 
