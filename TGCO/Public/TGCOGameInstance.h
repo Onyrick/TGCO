@@ -22,22 +22,18 @@ class TGCO_API UTGCOGameInstance : public UGameInstance
 {
 	GENERATED_UCLASS_BODY()
 
-private: 
-	FName CurrentState;
-	FName PendingState;
-
-	/** Delegate for callbacks to Tick */
-	FTickerDelegate TickDelegate;
-
 public:
 	bool Tick(float DeltaSeconds);
 
 	UFUNCTION(BlueprintCallable, Category = "Online")
 	class ATGCOGameSession* GetGameSession() const;
-
+	
 	virtual void Init() override;
 	virtual void Shutdown() override;
 	virtual void StartGameInstance() override;
+
+	UFUNCTION(BlueprintCallable, Category = "Online")
+	bool HostGame(ULocalPlayer* LocalPlayer, const FString& MapName);
 
 	/** Sends the game to the specified state. */
 	UFUNCTION(BlueprintCallable, Category = "GameState")
@@ -63,5 +59,12 @@ private:
 	void EndWelcomeScreenState();
 	void EndMainMenuState();
 	void EndPlayingState();
+
+private:
+	FName CurrentState;
+	FName PendingState;
+
+	/** Delegate for callbacks to Tick */
+	FTickerDelegate TickDelegate;
 	
 };

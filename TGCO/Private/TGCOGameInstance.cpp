@@ -45,6 +45,35 @@ void UTGCOGameInstance::StartGameInstance()
 	GotoInitialState();
 }
 
+// starts a host session
+bool UTGCOGameInstance::HostGame(ULocalPlayer* LocalPlayer, const FString& MapName)
+{
+	ATGCOGameSession* const GameSession = GetGameSession();
+	if (GameSession)
+	{
+		// add callback delegate for completion
+	//	GameSession->OnCreatePresenceSessionComplete().AddUObject(this, &UTGCOGameInstance::OnCreatePresenceSessionComplete);
+
+		bool const bIsLanMatch = true;
+
+		if (GameSession->HostSession(LocalPlayer->GetPreferredUniqueNetId(), "TGCOSession", MapName, bIsLanMatch, true, ATGCOGameSession::DEFAULT_NUM_PLAYERS))
+		{
+			// If any error occured in the above, pending state would be set
+			if ((PendingState == CurrentState) || (PendingState == TGCOGameInstanceState::None))
+			{
+				// Go ahead and go into loading state now
+				// If we fail, the delegate will handle showing the proper messaging and move to the correct state
+				
+				// ShowLoadingScreen();
+				// GotoState(TGCOGameInstanceState::Playing);
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
 bool UTGCOGameInstance::Tick(float DeltaSeconds)
 {
 	MaybeChangeState();
@@ -96,7 +125,7 @@ void UTGCOGameInstance::EndCurrentState(FName NextState)
 	}
 	else if (CurrentState == TGCOGameInstanceState::MainMenu)
 	{
-		//EndMainMenuState();
+		EndMainMenuState();
 	}
 	else if (CurrentState == TGCOGameInstanceState::Playing)
 	{
@@ -120,7 +149,7 @@ void UTGCOGameInstance::BeginNewState(FName NewState, FName PrevState)
 	}
 	else if (NewState == TGCOGameInstanceState::Playing)
 	{
-		//BeginPlayingState();
+		BeginPlayingState();
 	}
 
 	CurrentState = NewState;
@@ -129,6 +158,16 @@ void UTGCOGameInstance::BeginNewState(FName NewState, FName PrevState)
 void UTGCOGameInstance::BeginMainMenuState()
 {
 	GetWorld()->ServerTravel(FString("/Game/Maps/MainMenuMap"));
+}
+
+void UTGCOGameInstance::EndMainMenuState()
+{
+
+}
+
+void UTGCOGameInstance::BeginPlayingState()
+{
+	GetWorld()->ServerTravel(FString("/Game/Maps/Room1"));
 }
 
 class ATGCOGameSession* UTGCOGameInstance::GetGameSession() const
