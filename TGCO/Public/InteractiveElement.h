@@ -24,7 +24,7 @@ public:
 	//Method used to highlight the interactive element that the player is currently looking at.
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "InteractiveElement", meta = (FriendlyName = "Highlight"))
-		void Highlight(bool highlight);
+		void Highlight(bool _highlight);
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	//Check whether or not the targeted element is currently active(eg the flower pot in the past 
@@ -44,7 +44,7 @@ public:
 	//Set the element as being interactible
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "InteractiveElement", meta = (FriendlyName = "SetInteractive"))
-		void SetInteractive(bool interactive);
+		void SetInteractive(bool _interactive);
 
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	//for an element to be hightlighted it needs the player to look at it and that the player is close enough
