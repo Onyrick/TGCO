@@ -30,14 +30,6 @@ public class TGCO : ModuleRules
             }
         );
 
-        if ((Target.Platform == UnrealTargetPlatform.Win32) || (Target.Platform == UnrealTargetPlatform.Win64))
-        {
-            if (UEBuildConfiguration.bCompileSteamOSS == true)
-            {
-                DynamicallyLoadedModuleNames.Add("OnlineSubsystemSteam");
-            }
-
-            DynamicallyLoadedModuleNames.Add("OnlineSubsystemNull");
-        }
+        DynamicallyLoadedModuleNames.Add("OnlineSubsystemSteam");
 	}
 }
