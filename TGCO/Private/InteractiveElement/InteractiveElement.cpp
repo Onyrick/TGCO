@@ -6,39 +6,39 @@ UInteractiveElement::UInteractiveElement(const class FObjectInitializer& PCIP) :
 
 }
 
-void IInteractiveElement::OnInteract_Implementation()
+void IInteractiveElement::OnInteract()
 {
 	unimplemented();
 }
 
-void IInteractiveElement::Highlight_Implementation(bool highlight)
+void IInteractiveElement::Highlight(bool highlight)
 {
 	unimplemented();
 }
 
-bool IInteractiveElement::IsInteractive_Implementation()
+bool IInteractiveElement::IsInteractive()
 {
 	//unimplemented();
 	return bIsInteractive;
 }
 
-void IInteractiveElement::OnLookAt_Implementation()
+void IInteractiveElement::OnLookAt()
 {
 	unimplemented();
 }
 
-void IInteractiveElement::SetInteractive_Implementation(bool interactive)
+void IInteractiveElement::SetInteractive(bool interactive)
 {
 	//unimplemented();
 	bIsInteractive = interactive;
 }
 
-void IInteractiveElement::OnComponentBeginOverlap_Implementation()
+void IInteractiveElement::OnComponentBeginOverlap()
 {
 	unimplemented();
 }
 
-void IInteractiveElement::OnComponentEndOverlap_Implementation()
+void IInteractiveElement::OnComponentEndOverlap()
 {
 	unimplemented();
 }
