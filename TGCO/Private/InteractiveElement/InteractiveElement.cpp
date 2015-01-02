@@ -1,7 +1,7 @@
 #include "TGCO.h"
 #include "InteractiveElement.h"
 
-UInteractiveElement::UInteractiveElement(const class FPostConstructInitializeProperties& PCIP) : Super(PCIP)
+UInteractiveElement::UInteractiveElement(const class FObjectInitializer& PCIP) : Super(PCIP)
 {
 
 }
@@ -18,8 +18,8 @@ void IInteractiveElement::Highlight_Implementation(bool highlight)
 
 bool IInteractiveElement::IsInteractive_Implementation()
 {
-	unimplemented();
-	return false;
+	//unimplemented();
+	return bIsInteractive;
 }
 
 void IInteractiveElement::OnLookAt_Implementation()
@@ -29,7 +29,8 @@ void IInteractiveElement::OnLookAt_Implementation()
 
 void IInteractiveElement::SetInteractive_Implementation(bool interactive)
 {
-	unimplemented();
+	//unimplemented();
+	bIsInteractive = interactive;
 }
 
 void IInteractiveElement::OnComponentBeginOverlap_Implementation()
