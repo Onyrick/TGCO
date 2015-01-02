@@ -18,3 +18,15 @@ FTGCOOnlineSessionSettings::FTGCOOnlineSessionSettings(bool bIsLAN, bool bIsPres
 	bAllowJoinViaPresence = true;
 	bAllowJoinViaPresenceFriendsOnly = false;
 }
+
+FTGCOOnlineSearchSettings::FTGCOOnlineSearchSettings(bool bSearchingLAN, bool bSearchingPresence)
+{
+	bIsLanQuery = bSearchingLAN;
+	MaxSearchResults = 10;
+	PingBucketSize = 50;
+
+	if (bSearchingPresence)
+	{
+		QuerySettings.Set(SEARCH_PRESENCE, true, EOnlineComparisonOp::Equals);
+	}
+}

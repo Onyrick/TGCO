@@ -14,3 +14,13 @@ public:
 	virtual ~FTGCOOnlineSessionSettings() {};
 };
 
+/**
+* General search setting for TGCO
+*/
+class FTGCOOnlineSearchSettings : public FOnlineSessionSearch
+{
+public:
+	FTGCOOnlineSearchSettings(bool bSearchingLAN = false, bool bSearchingPresence = false);
+
+	virtual ~FTGCOOnlineSearchSettings() {}
+};

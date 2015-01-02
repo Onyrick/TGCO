@@ -20,7 +20,7 @@ public class TGCO : ModuleRules
                 "InputCore",
                 "OnlineSubsystem",
 				"OnlineSubsystemUtils",
-                "AIModule",
+                "AIModule", 
             }
         );
 
