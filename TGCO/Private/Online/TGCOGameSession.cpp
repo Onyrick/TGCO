@@ -4,6 +4,7 @@
 #include "TGCOGameSession.h"
 #include "TGCOOnlineSessionSettings.h"
 
+
 ATGCOGameSession::ATGCOGameSession(const FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer)
 {
@@ -39,6 +40,33 @@ bool ATGCOGameSession::HostSession(TSharedPtr<FUniqueNetId> UserId, FName Sessio
 FString ATGCOGameSession::GetPlayerUniqueId()
 {
 	return CurrentSessionParams.UserId->ToString();
+}
+
+FString ATGCOGameSession::TrimPlayerUniqueId()
+{
+	FString TrimedPlayerId = GetPlayerUniqueId();
+	int index;
+
+	/** Delete all values after - */
+	TCHAR search = *TEXT("-");
+	if (TrimedPlayerId.FindChar(search, index))
+	{
+		TrimedPlayerId.RemoveAt(index, TrimedPlayerId.Len() - index, true);
+
+	}
+
+	/** Delete all values after _ */
+	search = *TEXT("_");
+	if (TrimedPlayerId.FindChar(search, index))
+	{
+		TrimedPlayerId.RemoveAt(index, TrimedPlayerId.Len() - index, true);
+
+	}
+
+	/** Delete Blank space if needed */
+	TrimedPlayerId.Shrink();
+
+	return TrimedPlayerId;
 }
 
 FName ATGCOGameSession::GetSessionName()
