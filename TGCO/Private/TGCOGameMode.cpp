@@ -4,6 +4,7 @@
 #include "TGCOGameMode.h"
 #include "TGCOGameState.h"
 #include "TGCOCharacter.h"
+#include "TGCOGameSession.h"
 #include "TGCOHUD.h"
 #include "Engine.h"
 
@@ -31,3 +32,7 @@ void ATGCOGameMode::StartPlay()
 	}
 }
 
+TSubclassOf<AGameSession> ATGCOGameMode::GetGameSessionClass() const
+{
+	return ATGCOGameSession::StaticClass();
+}

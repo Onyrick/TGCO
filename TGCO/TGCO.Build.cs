@@ -6,6 +6,30 @@ public class TGCO : ModuleRules
 {
 	public TGCO(TargetInfo Target)
 	{
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" });
+        PrivateIncludePaths.AddRange(
+            new string[] { 
+				"TGCO/Private", 
+            }
+        );
+
+        PublicDependencyModuleNames.AddRange(
+            new string[] { 
+                "Core", 
+                "CoreUObject", 
+                "Engine", 
+                "InputCore",
+                "OnlineSubsystem",
+				"OnlineSubsystemUtils",
+                "AIModule", 
+            }
+        );
+
+        PrivateDependencyModuleNames.AddRange(
+            new string[] {
+                "OnlineSubsystem",
+            }
+        );
+
+        DynamicallyLoadedModuleNames.Add("OnlineSubsystemSteam");
 	}
 }
