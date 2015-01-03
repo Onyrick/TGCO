@@ -35,7 +35,7 @@ public:
 
 	/** Host a game session */
 	UFUNCTION(BlueprintCallable, Category = "Online")
-	bool HostGame(ULocalPlayer* LocalPlayer, const FString& MapName);
+	bool HostGame(ULocalPlayer* LocalPlayer, const FString& InMapName);
 
 	/** Join a game session */
 	bool JoinSession(ULocalPlayer* LocalPlayer, int32 SessionIndexInSearchResults);
@@ -105,10 +105,12 @@ private:
 	void BeginWelcomeScreenState();
 	void BeginMainMenuState();
 	void BeginPlayingState();
+	void BeginHostingState();
 
 	void EndWelcomeScreenState();
 	void EndMainMenuState();
 	void EndPlayingState();
+	void EndHostingState();
 
 	void AddNetworkFailureHandlers();
 	void RemoveNetworkFailureHandlers();
@@ -137,6 +139,8 @@ private:
 private:
 	FName CurrentState;
 	FName PendingState;
+
+	FString TravelURL;
 
 	/** Delegate for callbacks to Tick */
 	FTickerDelegate TickDelegate;

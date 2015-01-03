@@ -35,9 +35,6 @@ bool ATGCOGameSession::HostSession(TSharedPtr<FUniqueNetId> UserId, FName Sessio
 		if (Sessions.IsValid() && CurrentSessionParams.UserId.IsValid())
 		{
 			HostSettings = MakeShareable(new FTGCOOnlineSessionSettings(bIsLAN, bIsPresence, MaxPlayers));
-			HostSettings->Set(SETTING_MAPNAME, MapName, EOnlineDataAdvertisementType::ViaOnlineService);
-			HostSettings->Set(SETTING_SESSION_TEMPLATE_NAME, FString("GameSession"), EOnlineDataAdvertisementType::DontAdvertise);
-			HostSettings->Set(SEARCH_KEYWORDS, FString("Custom"), EOnlineDataAdvertisementType::ViaOnlineService);
 
 			Sessions->AddOnCreateSessionCompleteDelegate(OnCreateSessionCompleteDelegate);
 			bool bIsCreate = Sessions->CreateSession(*CurrentSessionParams.UserId, CurrentSessionParams.SessionName, *HostSettings);
@@ -63,7 +60,6 @@ void ATGCOGameSession::FindSessions(TSharedPtr<FUniqueNetId> UserId, FName Sessi
 		if (Sessions.IsValid() && CurrentSessionParams.UserId.IsValid())
 		{
 			SearchSettings = MakeShareable(new FTGCOOnlineSearchSettings(bIsLAN, bIsPresence));
-			SearchSettings->QuerySettings.Set(SEARCH_KEYWORDS, FString("Custom"), EOnlineComparisonOp::Equals);
 
 			TSharedRef<FOnlineSessionSearch> SearchSettingsRef = SearchSettings.ToSharedRef();
 
@@ -227,7 +223,11 @@ void ATGCOGameSession::OnJoinSessionComplete(FName SessionName, EOnJoinSessionCo
 
 FString ATGCOGameSession::GetPlayerUniqueId()
 {
-	return CurrentSessionParams.UserId->ToString();
+	if (CurrentSessionParams.SessionName != NAME_None)
+	{
+		return CurrentSessionParams.UserId->ToString();
+	}
+	return FString();
 }
 
 FString ATGCOGameSession::TrimPlayerUniqueId()

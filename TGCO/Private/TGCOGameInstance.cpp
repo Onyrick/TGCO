@@ -11,6 +11,7 @@ namespace TGCOGameInstanceState
 	const FName None = FName(TEXT("None"));
 	const FName WelcomeScreen = FName(TEXT("WelcomeScreen"));
 	const FName MainMenu = FName(TEXT("MainMenu"));
+	const FName Hosting = FName(TEXT("Hosting"));
 	const FName Playing = FName(TEXT("Playing"));
 }
 
@@ -68,26 +69,27 @@ void UTGCOGameInstance::ShowMessageThenGotoState(const FString& Message, const F
 	GotoState(NewState);
 }
 
-bool UTGCOGameInstance::HostGame(ULocalPlayer* LocalPlayer, const FString& MapName)
+bool UTGCOGameInstance::HostGame(ULocalPlayer* LocalPlayer, const FString& InMapName)
 {
 	ATGCOGameSession* const GameSession = GetGameSession();
 	if (GameSession)
 	{
 		// add callback delegate for completion
 		GameSession->OnCreatePresenceSessionComplete().AddUObject(this, &UTGCOGameInstance::OnCreatePresenceSessionComplete);
-
+	
 		bool const bIsLanMatch = true;
 
-		if (GameSession->HostSession(LocalPlayer->GetPreferredUniqueNetId(), GameSessionName, MapName, bIsLanMatch, true, ATGCOGameSession::DEFAULT_NUM_PLAYERS))
+		// Create the TraverURL from the MapName
+		TravelURL = "/Game/Maps/" + InMapName + "?listen";
+
+		UE_LOG(LogOnline, Log, TEXT("MapName : %s"), *InMapName);
+		UE_LOG(LogOnline, Log, TEXT("TravelURL : %s"), *TravelURL);
+
+		if (GameSession->HostSession(LocalPlayer->GetPreferredUniqueNetId(), GameSessionName, InMapName, bIsLanMatch, true, ATGCOGameSession::DEFAULT_NUM_PLAYERS))
 		{
 			// If any error occured in the above, pending state would be set
 			if ((PendingState == CurrentState) || (PendingState == TGCOGameInstanceState::None))
-			{
-				// Go ahead and go into loading state now
-				// If we fail, the delegate will handle showing the proper messaging and move to the correct state
-
-				// ShowLoadingScreen();
-				// GotoState(TGCOGameInstanceState::Playing);
+			{	
 				return true;
 			}
 		}
@@ -111,8 +113,7 @@ void UTGCOGameInstance::FinishSessionCreation(EOnJoinSessionCompleteResult::Type
 {
 	if (Result == EOnJoinSessionCompleteResult::Success)
 	{
-		// Travel to the specified match URL
-		// GetWorld()->ServerTravel(TravelURL);
+		GotoState(TGCOGameInstanceState::Hosting);
 	}
 	else
 	{
@@ -144,6 +145,7 @@ bool UTGCOGameInstance::FindSessions(ULocalPlayer* PlayerOwner, bool bFindLAN)
 			GameSession->OnFindSessionsComplete().RemoveAll(this);
 			GameSession->OnFindSessionsComplete().AddUObject(this, &UTGCOGameInstance::OnSearchSessionsComplete);
 
+			UE_LOG(LogOnline, Log, TEXT("GameSessionName : %s"), *GameSessionName.ToString());
 			GameSession->FindSessions(PlayerOwner->GetPreferredUniqueNetId(), GameSessionName, bFindLAN, true);
 
 			bResult = true;
@@ -377,6 +379,10 @@ void UTGCOGameInstance::EndCurrentState(FName NextState)
 	{
 		//EndPlayingState();
 	}
+	else if (CurrentState == TGCOGameInstanceState::Hosting)
+	{
+		EndHostingState();
+	}
 
 	CurrentState = TGCOGameInstanceState::None;
 }
@@ -396,6 +402,10 @@ void UTGCOGameInstance::BeginNewState(FName NewState, FName PrevState)
 	else if (NewState == TGCOGameInstanceState::Playing)
 	{
 		BeginPlayingState();
+	}
+	else if (NewState == TGCOGameInstanceState::Hosting)
+	{
+		BeginHostingState();
 	}
 
 	CurrentState = NewState;
@@ -417,6 +427,16 @@ void UTGCOGameInstance::EndMainMenuState()
 void UTGCOGameInstance::BeginPlayingState()
 {
 	GetWorld()->ServerTravel(FString("/Game/Maps/Room1"));
+}
+
+void UTGCOGameInstance::BeginHostingState()
+{
+	GetWorld()->ServerTravel(TravelURL);
+}
+
+void UTGCOGameInstance::EndHostingState()
+{
+	CleanupSessionOnReturnToMenu();
 }
 
 void UTGCOGameInstance::OnEndSessionComplete(FName SessionName, bool bWasSuccessful)
