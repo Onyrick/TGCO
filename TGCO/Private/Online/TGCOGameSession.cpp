@@ -132,6 +132,8 @@ const TArray<FOnlineSessionSearchResult> & ATGCOGameSession::GetSearchResults() 
 
 void ATGCOGameSession::OnCreateSessionComplete(FName SessionName, bool bWasSuccessful)
 {
+	UE_LOG(LogOnlineGame, Verbose, TEXT("OnCreateSessionComplete %s bSuccess: %d"), *SessionName.ToString(), bWasSuccessful);
+
 	IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get();
 	if (OnlineSub)
 	{
@@ -171,6 +173,8 @@ void ATGCOGameSession::OnStartOnlineGameComplete(FName SessionName, bool bWasSuc
 
 void ATGCOGameSession::OnDestroySessionComplete(FName SessionName, bool bWasSuccessful)
 {
+	UE_LOG(LogOnlineGame, Verbose, TEXT("OnDestroySessionComplete %s bSuccess: %d"), *SessionName.ToString(), bWasSuccessful);
+
 	IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get();
 	if (OnlineSub)
 	{
@@ -182,6 +186,8 @@ void ATGCOGameSession::OnDestroySessionComplete(FName SessionName, bool bWasSucc
 
 void ATGCOGameSession::OnFindSessionsComplete(bool bWasSuccessful)
 {
+	UE_LOG(LogOnlineGame, Verbose, TEXT("OnFindSessionsComplete bSuccess: %d"), bWasSuccessful);
+
 	IOnlineSubsystem* const OnlineSub = IOnlineSubsystem::Get();
 	if (OnlineSub)
 	{
@@ -190,6 +196,7 @@ void ATGCOGameSession::OnFindSessionsComplete(bool bWasSuccessful)
 		{
 			Sessions->ClearOnFindSessionsCompleteDelegate(OnFindSessionsCompleteDelegate);
 
+			UE_LOG(LogOnlineGame, Verbose, TEXT("Num Search Results: %d"), SearchSettings->SearchResults.Num());
 			for (int32 SearchIdx = 0; SearchIdx < SearchSettings->SearchResults.Num(); SearchIdx++)
 			{
 				const FOnlineSessionSearchResult& SearchResult = SearchSettings->SearchResults[SearchIdx];
@@ -204,6 +211,8 @@ void ATGCOGameSession::OnFindSessionsComplete(bool bWasSuccessful)
 void ATGCOGameSession::OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result)
 {
 	bool bWillTravel = false;
+
+	UE_LOG(LogOnlineGame, Verbose, TEXT("OnJoinSessionComplete %s bSuccess: %d"), *SessionName.ToString(), static_cast<int32>(Result));
 
 	IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get();
 	IOnlineSessionPtr Sessions = NULL;
