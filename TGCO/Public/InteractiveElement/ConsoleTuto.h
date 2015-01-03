@@ -19,44 +19,54 @@ public:
 	//Method called when the player wants to use the object which is currently hightlighted.
 	//This method will be overriden by each of the class' children
 	//////////////////////////////////////////////////////////////////////////////////////////////
-		virtual void OnInteract_Implementation();
+	UFUNCTION(BlueprintCallable, Category = "Console Tuto", meta = (FriendlyName = "On Interact"))
+		virtual void OnInteract();
 
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	//Method used to highlight the interactive element that the player is currently looking at.
 	//////////////////////////////////////////////////////////////////////////////////////////////
-		virtual void Highlight_Implementation(bool _highlight);
+	UFUNCTION(BlueprintCallable, Category = "Console Tuto", meta = (FriendlyName = "Highlight"))
+		virtual void Highlight(bool _highlight);
 
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	//Check whether or not the targeted element is currently active(eg the flower pot in the past 
 	//	is not interactive until the player grabs the seed)
 	//////////////////////////////////////////////////////////////////////////////////////////////
-		virtual bool IsInteractive_Implementation();
+	UFUNCTION(BlueprintCallable, Category = "Console Tuto", meta = (FriendlyName = "IsInteractive"))
+		virtual bool IsInteractive();
 
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	//for an element to be hightlighted it needs the player to look at it and that the player is close
 	//	enough to use it.To know if the player is looking at the element it listens to the evenement OnLookAt
 	//////////////////////////////////////////////////////////////////////////////////////////////
-		virtual void OnLookAt_Implementation();
+	UFUNCTION(BlueprintCallable, Category = "Console Tuto", meta = (FriendlyName = "OnLookAt"))
+		virtual void OnLookAt();
 
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	//Set the element as being interactible
 	//////////////////////////////////////////////////////////////////////////////////////////////
-		virtual void SetInteractive_Implementation(bool _interactive);
+	UFUNCTION(BlueprintCallable, Category = "Console Tuto", meta = (FriendlyName = "SetInteractive"))
+		virtual void SetInteractive(bool _interactive);
 
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	//for an element to be hightlighted it needs the player to look at it and that the player is close enough
 	// to use it.To know if the player is close enough it listens to the evenement OnComponentBeginOverlap
 	//////////////////////////////////////////////////////////////////////////////////////////////
-		virtual void OnComponentBeginOverlap_Implementation();
+	UFUNCTION(BlueprintCallable, Category = "Console Tuto", meta = (FriendlyName = "OnComponentBeginOverlap"))
+		virtual void OnComponentBeginOverlap();
 
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	//When the player leaves the area where he can use an object, this interactive element receives
 	//	OnComponentEndOverlap so that it can stop the highlighting
 	//////////////////////////////////////////////////////////////////////////////////////////////
-		virtual void OnComponentEndOverlap_Implementation();
+	UFUNCTION(BlueprintCallable, Category = "Console Tuto", meta = (FriendlyName = "OnComponentEndOverlap"))
+		virtual void OnComponentEndOverlap();
 	
 	//Getter / Setter / Is
+	UFUNCTION(BlueprintCallable, Category = "Console Tuto", meta = (FriendlyName = "IsUnlocked"))
 		bool IsUnlocked();
+
+	UFUNCTION(BlueprintCallable, Category = "Console Tuto", meta = (FriendlyName = "SetUnlocked"))
 		void SetUnlocked(bool _unlock);
 
 protected:
