@@ -58,6 +58,16 @@ void UTGCOGameInstance::StartGameInstance()
 	GotoInitialState();
 }
 
+
+void UTGCOGameInstance::ShowMessageThenGotoState(const FString& Message, const FName& NewState)
+{
+	UE_LOG(LogOnline, Log, TEXT("ShowMessageThenGotoState: Message: %s, NewState: %s"), *Message, *NewState.ToString());
+
+	const bool bAtWelcomeScreen = PendingState == TGCOGameInstanceState::WelcomeScreen || CurrentState == TGCOGameInstanceState::WelcomeScreen;
+
+	GotoState(NewState);
+}
+
 bool UTGCOGameInstance::HostGame(ULocalPlayer* LocalPlayer, const FString& MapName)
 {
 	ATGCOGameSession* const GameSession = GetGameSession();
@@ -106,11 +116,7 @@ void UTGCOGameInstance::FinishSessionCreation(EOnJoinSessionCompleteResult::Type
 	}
 	else
 	{
-		/*
-		FString ReturnReason = NSLOCTEXT("NetworkErrors", "CreateSessionFailed", "Failed to create session.").ToString();
-		FString OKButton = NSLOCTEXT("DialogButtons", "OKAY", "OK").ToString();
-		ShowMessageThenGoMain(ReturnReason, OKButton, FString());
-		*/
+		ShowMessageThenGotoState(FString("CreateSessionFailed"), TGCOGameInstanceState::MainMenu);
 	}
 }
 
@@ -215,23 +221,22 @@ void UTGCOGameInstance::FinishJoinSession(EOnJoinSessionCompleteResult::Type Res
 {
 	if (Result != EOnJoinSessionCompleteResult::Success)
 	{
-		//FString ReturnReason;
+		FString ReturnReason;
 		switch (Result)
 		{
 		case EOnJoinSessionCompleteResult::RoomIsFull:
-			//ReturnReason = NSLOCTEXT("NetworkErrors", "JoinSessionFailed", "Game is full.").ToString();
+			ReturnReason = NSLOCTEXT("NetworkErrors", "JoinSessionFailed", "Game is full.").ToString();
 			break;
 		case EOnJoinSessionCompleteResult::RoomDoesNotExist:
-			//ReturnReason = NSLOCTEXT("NetworkErrors", "JoinSessionFailed", "Game no longer exists.").ToString();
+			ReturnReason = NSLOCTEXT("NetworkErrors", "JoinSessionFailed", "Game no longer exists.").ToString();
 			break;
 		default:
-			//ReturnReason = NSLOCTEXT("NetworkErrors", "JoinSessionFailed", "Join failed.").ToString();
+			ReturnReason = NSLOCTEXT("NetworkErrors", "JoinSessionFailed", "Join failed.").ToString();
 			break;
 		}
 
-		//FString OKButton = NSLOCTEXT("DialogButtons", "OKAY", "OK").ToString();
 		RemoveNetworkFailureHandlers();
-		//ShowMessageThenGoMain(ReturnReason, OKButton, FString());
+		ShowMessageThenGotoState(ReturnReason, TGCOGameInstanceState::MainMenu);
 		return;
 	}
 
@@ -244,10 +249,9 @@ void UTGCOGameInstance::InternalTravelToSession(const FName& SessionName)
 
 	if (PlayerController == nullptr)
 	{
-		//FString ReturnReason = NSLOCTEXT("NetworkErrors", "InvalidPlayerController", "Invalid Player Controller").ToString();
-		//FString OKButton = NSLOCTEXT("DialogButtons", "OKAY", "OK").ToString();
+		FString ReturnReason = NSLOCTEXT("NetworkErrors", "InvalidPlayerController", "Invalid Player Controller").ToString();
 		RemoveNetworkFailureHandlers();
-		//ShowMessageThenGoMain(ReturnReason, OKButton, FString());
+		ShowMessageThenGotoState(ReturnReason, TGCOGameInstanceState::MainMenu);
 		return;
 	}
 
@@ -256,10 +260,9 @@ void UTGCOGameInstance::InternalTravelToSession(const FName& SessionName)
 
 	if (OnlineSub == nullptr)
 	{
-		//FString ReturnReason = NSLOCTEXT("NetworkErrors", "OSSMissing", "OSS missing").ToString();
-		//FString OKButton = NSLOCTEXT("DialogButtons", "OKAY", "OK").ToString();
+		FString ReturnReason = NSLOCTEXT("NetworkErrors", "OSSMissing", "OSS missing").ToString();
 		RemoveNetworkFailureHandlers();
-		//ShowMessageThenGoMain(ReturnReason, OKButton, FString());
+		ShowMessageThenGotoState(ReturnReason, TGCOGameInstanceState::MainMenu);
 		return;
 	}
 
@@ -268,10 +271,9 @@ void UTGCOGameInstance::InternalTravelToSession(const FName& SessionName)
 
 	if (!Sessions.IsValid() || !Sessions->GetResolvedConnectString(SessionName, URL))
 	{
-		//FString FailReason = NSLOCTEXT("NetworkErrors", "TravelSessionFailed", "Travel to Session failed.").ToString();
-		//FString OKButton = NSLOCTEXT("DialogButtons", "OKAY", "OK").ToString();
-		//ShowMessageThenGoMain(FailReason, OKButton, FString());
-		//UE_LOG(LogOnlineGame, Warning, TEXT("Failed to travel to session upon joining it"));
+		FString FailReason = NSLOCTEXT("NetworkErrors", "TravelSessionFailed", "Travel to Session failed.").ToString();
+		ShowMessageThenGotoState(FailReason, TGCOGameInstanceState::MainMenu);
+		UE_LOG(LogOnlineGame, Warning, TEXT("Failed to travel to session upon joining it"));
 		return;
 	}
 
@@ -308,9 +310,7 @@ void UTGCOGameInstance::TravelLocalSessionFailure(UWorld *World, ETravelFailure:
 			ReturnReason += " ";
 			ReturnReason += ReasonString;
 		}
-
-		FString OKButton = NSLOCTEXT("DialogButtons", "OKAY", "OK").ToString();
-		ShowMessageThenGoMain(ReturnReason, OKButton, FString());
+		ShowMessageThenGotoState(ReturnReason, TGCOGameInstanceState::MainMenu);
 	}
 	*/
 }
@@ -340,6 +340,8 @@ void UTGCOGameInstance::GotoInitialState()
 
 void UTGCOGameInstance::GotoState(FName NewState)
 {
+	UE_LOG(LogOnline, Log, TEXT("GotoState: NewState: %s"), *NewState.ToString());
+
 	PendingState = NewState;
 }
 
@@ -419,6 +421,8 @@ void UTGCOGameInstance::BeginPlayingState()
 
 void UTGCOGameInstance::OnEndSessionComplete(FName SessionName, bool bWasSuccessful)
 {
+	UE_LOG(LogOnline, Log, TEXT("UShooterGameInstance::OnEndSessionComplete: Session=%s bWasSuccessful=%s"), *SessionName.ToString(), bWasSuccessful ? TEXT("true") : TEXT("false"));
+
 	IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get();
 	if (OnlineSub)
 	{
@@ -446,26 +450,31 @@ void UTGCOGameInstance::CleanupSessionOnReturnToMenu()
 	if (Sessions.IsValid())
 	{
 		EOnlineSessionState::Type SessionState = Sessions->GetSessionState(GameSessionName);
+		UE_LOG(LogOnline, Log, TEXT("Session %s is '%s'"), *GameSessionName.ToString(), EOnlineSessionState::ToString(SessionState));
 
 		if (EOnlineSessionState::InProgress == SessionState)
 		{
+			UE_LOG(LogOnline, Log, TEXT("Ending session %s on return to main menu"), *GameSessionName.ToString());
 			Sessions->AddOnEndSessionCompleteDelegate(OnEndSessionCompleteDelegate);
 			Sessions->EndSession(GameSessionName);
 			bPendingOnlineOp = true;
 		}
 		else if (EOnlineSessionState::Ending == SessionState)
 		{
+			UE_LOG(LogOnline, Log, TEXT("Waiting for session %s to end on return to main menu"), *GameSessionName.ToString());
 			Sessions->AddOnEndSessionCompleteDelegate(OnEndSessionCompleteDelegate);
 			bPendingOnlineOp = true;
 		}
 		else if (EOnlineSessionState::Ended == SessionState || EOnlineSessionState::Pending == SessionState)
 		{
+			UE_LOG(LogOnline, Log, TEXT("Destroying session %s on return to main menu"), *GameSessionName.ToString());
 			Sessions->AddOnDestroySessionCompleteDelegate(OnEndSessionCompleteDelegate);
 			Sessions->DestroySession(GameSessionName);
 			bPendingOnlineOp = true;
 		}
 		else if (EOnlineSessionState::Starting == SessionState)
 		{
+			UE_LOG(LogOnline, Log, TEXT("Waiting for session %s to start, and then we will end it to return to main menu"), *GameSessionName.ToString());
 			Sessions->AddOnStartSessionCompleteDelegate(OnEndSessionCompleteDelegate);
 			bPendingOnlineOp = true;
 		}

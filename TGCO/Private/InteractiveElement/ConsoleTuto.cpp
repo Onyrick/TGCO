@@ -18,37 +18,39 @@ void AConsoleTuto::SetUnlocked(bool _unlock)
 	bIsUnlocked = _unlock;
 }
 
-void AConsoleTuto::OnInteract_Implementation()
+void AConsoleTuto::OnInteract()
 {
 		//TODO
 }
 
-void AConsoleTuto::Highlight_Implementation(bool highlight)
+void AConsoleTuto::Highlight(bool highlight)
 {
 	//TODO
+
 }
 
-bool AConsoleTuto::IsInteractive_Implementation()
+bool AConsoleTuto::IsInteractive()
 {
 	return bIsInteractive;
 }
 
-void AConsoleTuto::OnLookAt_Implementation()
+void AConsoleTuto::OnLookAt()
 {
 	//TODO
+	AddActorLocalOffset(FVector(0.f, 0.f, 1.f));
 }
 
-void AConsoleTuto::SetInteractive_Implementation(bool _interactive)
+void AConsoleTuto::SetInteractive(bool _interactive)
 {
 	bIsInteractive = _interactive;
 }
 
-void AConsoleTuto::OnComponentBeginOverlap_Implementation()
+void AConsoleTuto::OnComponentBeginOverlap()
 {
-	Highlight_Implementation(true);
+	Highlight(true);
 }
 
-void AConsoleTuto::OnComponentEndOverlap_Implementation()
+void AConsoleTuto::OnComponentEndOverlap()
 {
-	Highlight_Implementation(false);
+	Highlight(false);
 }
