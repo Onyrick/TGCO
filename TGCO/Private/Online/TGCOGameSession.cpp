@@ -40,7 +40,9 @@ bool ATGCOGameSession::HostSession(TSharedPtr<FUniqueNetId> UserId, FName Sessio
 			HostSettings->Set(SEARCH_KEYWORDS, FString("Custom"), EOnlineDataAdvertisementType::ViaOnlineService);
 
 			Sessions->AddOnCreateSessionCompleteDelegate(OnCreateSessionCompleteDelegate);
-			return Sessions->CreateSession(*CurrentSessionParams.UserId, CurrentSessionParams.SessionName, *HostSettings);
+			bool bIsCreate = Sessions->CreateSession(*CurrentSessionParams.UserId, CurrentSessionParams.SessionName, *HostSettings);
+			Sessions->StartSession(CurrentSessionParams.SessionName);
+			return bIsCreate;
 		}
 	}
 

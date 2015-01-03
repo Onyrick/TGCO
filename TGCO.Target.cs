@@ -8,6 +8,7 @@ public class TGCOTarget : TargetRules
 	public TGCOTarget(TargetInfo Target)
 	{
 		Type = TargetType.Game;
+        bUsesSteam = true;
 	}
 
 	//
