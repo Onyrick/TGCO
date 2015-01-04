@@ -9,7 +9,6 @@ class TGCO_API AMonster : public ACharacter, public ICharacterAI
 {
 	GENERATED_UCLASS_BODY()
 public:
-
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	//Method called when the player wants to use the object which is currently hightlighted.
 	//This method will be overriden by each of the class' children
