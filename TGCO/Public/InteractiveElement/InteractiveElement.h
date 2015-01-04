@@ -70,7 +70,7 @@ public:
 		UBoxComponent* TriggerBox;
 
 	UPROPERTY(EditAnywhere, Category = "Static Meshes")
-		UStaticMesh* StaticMesh;
+		UStaticMeshComponent* StaticMesh;
 
 protected:
 	bool bIsInteractive; //whether the element can be interacted with

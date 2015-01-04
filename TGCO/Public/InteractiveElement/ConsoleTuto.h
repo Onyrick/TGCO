@@ -19,7 +19,7 @@ public:
 	//Method called when the player wants to use the object which is currently hightlighted.
 	//This method will be overriden by each of the class' children
 	//////////////////////////////////////////////////////////////////////////////////////////////
-		virtual void OnInteract();
+		virtual void OnInteract() override;
 	
 	//Getter / Setter / Is
 	UFUNCTION(BlueprintCallable, Category = "InteractiveElement")

@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include "GameFramework/Actor.h"
 #include "Trigerrable.h"
 #include "EnergyCell.generated.h"
 
@@ -10,7 +9,7 @@
  * 
  */
 UCLASS()
-class TGCO_API AEnergyCell : public AActor, public ITrigerrable
+class TGCO_API AEnergyCell : public ATrigerrable
 {
 	GENERATED_UCLASS_BODY()
 
@@ -18,14 +17,12 @@ public:
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	//Event launch when Player trigger the component.
 	//////////////////////////////////////////////////////////////////////////////////////////////
-	UFUNCTION(BlueprintCallable, Category = "EnergyCell")
-		virtual void OnComponentBeginOverlap();
+		virtual void OnOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult) override;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	//Event launch when Player trigger the component.
 	//////////////////////////////////////////////////////////////////////////////////////////////
-	UFUNCTION(BlueprintCallable, Category = "EnergyCell")
-		virtual void OnComponentEndOverlap();
+		virtual void OnOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex) override;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	//Set the AEnergyCell as consumed when the Player hit the OnComponentBeginOverlap. 

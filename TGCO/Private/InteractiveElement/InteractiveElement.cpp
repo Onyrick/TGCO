@@ -7,10 +7,12 @@ AInteractiveElement::AInteractiveElement(const class FObjectInitializer& PCIP)
 	TriggerBox = PCIP.CreateDefaultSubobject<UBoxComponent>(this, TEXT("BoxTrigger_InteractiveElement"));
 	TriggerBox->OnComponentBeginOverlap.AddDynamic(this, &AInteractiveElement::OnOverlapBegin);
 	TriggerBox->OnComponentEndOverlap.AddDynamic(this, &AInteractiveElement::OnOverlapEnd);
-	
-	StaticMesh = PCIP.CreateDefaultSubobject<UStaticMesh>(this, TEXT("StaticMesh_InteractiveElement"));
 
-	RootComponent = TriggerBox;
+	StaticMesh = PCIP.CreateDefaultSubobject < UStaticMeshComponent >(this, TEXT("StaticMesh_InteractiveElement"));
+
+	TriggerBox->AttachParent = StaticMesh;
+
+	RootComponent = StaticMesh;
 }
 
 void AInteractiveElement::OnInteract()
