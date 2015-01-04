@@ -1,43 +1,64 @@
 #include "TGCO.h"
 #include "InteractiveElement.h"
 
-UInteractiveElement::UInteractiveElement(const class FObjectInitializer& PCIP) : Super(PCIP)
+AInteractiveElement::AInteractiveElement(const class FObjectInitializer& PCIP)
+	: Super(PCIP), bIsInteractive(false), bCloseEnough(false)
 {
+	TriggerBox = PCIP.CreateDefaultSubobject<UBoxComponent>(this, TEXT("BoxTrigger_InteractiveElement"));
+	TriggerBox->OnComponentBeginOverlap.AddDynamic(this, &AInteractiveElement::OnOverlapBegin);
+	TriggerBox->OnComponentEndOverlap.AddDynamic(this, &AInteractiveElement::OnOverlapEnd);
+	
+	StaticMesh = PCIP.CreateDefaultSubobject<UStaticMesh>(this, TEXT("StaticMesh_InteractiveElement"));
 
+	RootComponent = TriggerBox;
 }
 
-void IInteractiveElement::OnInteract()
+void AInteractiveElement::OnInteract()
 {
 	unimplemented();
 }
 
-void IInteractiveElement::Highlight(bool highlight)
+void AInteractiveElement::Highlight(bool highlight)
 {
 	//TODO
 }
 
-bool IInteractiveElement::IsInteractive()
+bool AInteractiveElement::IsInteractive()
 {
-	
 	return bIsInteractive;
 }
 
-void IInteractiveElement::OnLookAt()
+void AInteractiveElement::OnLookAt()
 {
-	//TODO	
+	SetInteractive(bCloseEnough);
+	Highlight(bCloseEnough);
 }
 
-void IInteractiveElement::SetInteractive(bool interactive)
+void AInteractiveElement::OnLookAway()
+{	
+	SetInteractive(false);
+	Highlight(false);
+}
+
+void AInteractiveElement::SetInteractive(bool interactive)
 {
 	bIsInteractive = interactive;
 }
 
-void IInteractiveElement::OnComponentBeginOverlap()
+void AInteractiveElement::OnOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	//TODO
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(0, 10.0f, FColor::White, TEXT("Begin Overlap"));
+	}
+	bCloseEnough = true;
 }
 
-void IInteractiveElement::OnComponentEndOverlap()
+void AInteractiveElement::OnOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	//TODO
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(0, 10.0f, FColor::White, TEXT("End Overlap"));
+	}
+	bCloseEnough = false;
 }
