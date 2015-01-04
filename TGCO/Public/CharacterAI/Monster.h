@@ -5,63 +5,46 @@
 #include "Monster.generated.h"
 
 UCLASS()
-class TGCO_API AMonster : public AActor, public ICharacterAI
+class TGCO_API AMonster : public ACharacter, public ICharacterAI
 {
 	GENERATED_UCLASS_BODY()
 public:
-	//////////////////////////////////////////////////////////////////////////////////////////////
-	// Function to get the AIController
-	//////////////////////////////////////////////////////////////////////////////////////////////
-	UFUNCTION(BlueprintCallable, Category = "Monster", meta = (FriendlyName = "GetAIController"))
-		virtual AAIController* GetAIController();
-	
-	//////////////////////////////////////////////////////////////////////////////////////////////
-	//Event launch when the Character has to be destroyed
-	//////////////////////////////////////////////////////////////////////////////////////////////
-	UFUNCTION(BlueprintCallable, Category = "Monster", meta = (FriendlyName = "Destroy"))
-		virtual void Destroy();
 
 	//////////////////////////////////////////////////////////////////////////////////////////////
-	//Event launch when the Character take damage
+	//Method called when the player wants to use the object which is currently hightlighted.
+	//This method will be overriden by each of the class' children
 	//////////////////////////////////////////////////////////////////////////////////////////////
-	UFUNCTION(BlueprintCallable, Category = "Monster", meta = (FriendlyName = "TakeDamage"))
+	UFUNCTION(BlueprintCallable, Category = "Monster")
 		virtual float TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser);
-	
-	//////////////////////////////////////////////////////////////////////////////////////////////
-	//Event launch when the Character is hit by another actor
-	//////////////////////////////////////////////////////////////////////////////////////////////
-	UFUNCTION(BlueprintCallable, Category = "Monster", meta = (FriendlyName = "ReceiveActorBeginOverlap"))
-		virtual void ReceiveActorBeginOverlapAI(AActor* OtherActor) override;
-	
 
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	//Return wether the AI is stunned
 	//////////////////////////////////////////////////////////////////////////////////////////////
-	UFUNCTION(BlueprintCallable, Category = "Monster", meta = (FriendlyName = "IsStun"))
+	UFUNCTION(BlueprintCallable, Category = "Monster")
 		virtual bool IsStun();
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	//Stun the AI during a laps of time
 	//////////////////////////////////////////////////////////////////////////////////////////////
-	UFUNCTION(BlueprintCallable, Category = "Monster", meta = (FriendlyName = "Stun"))
+	UFUNCTION(BlueprintCallable, Category = "Monster")
 		virtual void Stun(bool _stun);
 
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	//Move the actor to a location
 	//////////////////////////////////////////////////////////////////////////////////////////////
-	UFUNCTION(BlueprintCallable, Category = "Monster", meta = (FriendlyName = "MoveToLocation"))
+	UFUNCTION(BlueprintCallable, Category = "Monster")
 		virtual EPathFollowingRequestResult::Type MoveToLocation(const FVector & Dest, float AcceptanceRadius, bool bStopOnOverlap, bool bUsePathfinding, bool bProjectDestinationToNavigation, bool bCanStrafe, TSubclassOf< class UNavigationQueryFilter > FilterClass);
 
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	//Play a move sound when the Monster move
 	//////////////////////////////////////////////////////////////////////////////////////////////
-	UFUNCTION(BlueprintCallable, Category = "Monster", meta = (FriendlyName = "PlayMoveSound"))
+	UFUNCTION(BlueprintCallable, Category = "Monster")
 		virtual void PlayMoveSound();
 
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	//Play a move animation when the Monster move
 	//////////////////////////////////////////////////////////////////////////////////////////////
-	UFUNCTION(BlueprintCallable, Category = "Monster", meta = (FriendlyName = "PlayMoveAnimation"))
+	UFUNCTION(BlueprintCallable, Category = "Monster")
 		virtual void PlayMoveAnimation();
 	
 

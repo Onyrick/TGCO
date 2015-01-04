@@ -16,25 +16,25 @@ public:
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	// Function to get the AIController
 	//////////////////////////////////////////////////////////////////////////////////////////////
-	UFUNCTION(BlueprintCallable, Category = "CharacterAI", meta = (FriendlyName = "GetAIController"))
+	UFUNCTION(BlueprintCallable, Category = "CharacterAI")
 		virtual AAIController* GetAIController();
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	//Event launch when the Character has to be destroyed
 	//////////////////////////////////////////////////////////////////////////////////////////////
-	UFUNCTION(BlueprintCallable, Category = "CharacterAI", meta = (FriendlyName = "Destroy"))
+	UFUNCTION(BlueprintCallable, Category = "CharacterAI")
 		virtual void Destroy();
 
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	//Event launch when the Character take damage
 	//////////////////////////////////////////////////////////////////////////////////////////////
-	UFUNCTION(BlueprintCallable, Category = "CharacterAI", meta = (FriendlyName = "TakeDamage"))
+	UFUNCTION(BlueprintCallable, Category = "CharacterAI")
 		virtual float TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser) = 0;
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	//Event launch when the Character is hit by another actor
 	//////////////////////////////////////////////////////////////////////////////////////////////
-	UFUNCTION(BlueprintCallable, Category = "CharacterAI", meta = (FriendlyName = "ReceiveActorBeginOverlap"))
+	UFUNCTION(BlueprintCallable, Category = "CharacterAI")
 		virtual void ReceiveActorBeginOverlapAI(AActor* OtherActor);
 	
 };

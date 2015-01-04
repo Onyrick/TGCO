@@ -8,13 +8,13 @@ UCharacterAI::UCharacterAI(const class FObjectInitializer& PCIP) : Super(PCIP)
 
 AAIController* ICharacterAI::GetAIController()
 {
-	unimplemented();
+	//TODO
 	return NULL;
 }
 
 void ICharacterAI::Destroy()
 {
-	unimplemented();
+	//TODO
 }
 
 float ICharacterAI::TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser)
@@ -25,5 +25,5 @@ float ICharacterAI::TakeDamage(float DamageAmount, struct FDamageEvent const & D
 
 void ICharacterAI::ReceiveActorBeginOverlapAI(AActor* OtherActor)
 {
-	unimplemented();
+	//TODO
 }

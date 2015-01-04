@@ -8,27 +8,10 @@ AMonster::AMonster(const class FObjectInitializer& PCIP) : Super(PCIP)
 
 }
 
-AAIController* AMonster::GetAIController()
-{
-	//TODO
-	return NULL;
-}
-
-void AMonster::Destroy()
-{
-	//TODO
-}
-
 float AMonster::TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser)
 {
 	//TODO
 	return -1.f;
-}
-
-void AMonster::ReceiveActorBeginOverlapAI(AActor* OtherActor)
-{
-	//TODO
-	//Super::ReceiveActorBeginOverlap(OtherActor);
 }
 
 bool AMonster::IsStun()
