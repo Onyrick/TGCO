@@ -137,7 +137,7 @@ public:
 	FString GetPlayerUniqueId();
 
 	UFUNCTION(BlueprintCallable, Category = "Test")
-	FString TrimPlayerUniqueId();
+	FString TrimId(FString Id);
 
 	UFUNCTION(BlueprintCallable, Category = "Test")
 	FName GetSessionName();

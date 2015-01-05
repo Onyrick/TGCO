@@ -42,11 +42,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Online")
 	bool HostGame(ULocalPlayer* LocalPlayer, const FString& InMapName);
 
-	/** Join a game create previously */
-	UFUNCTION(BlueprintCallable, Category = "Online")
-	void JoinGame();
-
 	/** Join a game session */
+	UFUNCTION(BlueprintCallable, Category = "Online")
 	bool JoinSession(ULocalPlayer* LocalPlayer, int32 SessionIndexInSearchResults);
 
 //	bool JoinSession(ULocalPlayer* LocalPlayer, const FOnlineSessionSearchResult& SearchResult);
