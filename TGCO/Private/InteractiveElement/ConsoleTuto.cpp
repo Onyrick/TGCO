@@ -22,35 +22,3 @@ void AConsoleTuto::OnInteract()
 {
 		//TODO
 }
-
-void AConsoleTuto::Highlight(bool highlight)
-{
-	//TODO
-
-}
-
-bool AConsoleTuto::IsInteractive()
-{
-	return bIsInteractive;
-}
-
-void AConsoleTuto::OnLookAt()
-{
-	//TODO
-	AddActorLocalOffset(FVector(0.f, 0.f, 1.f));
-}
-
-void AConsoleTuto::SetInteractive(bool _interactive)
-{
-	bIsInteractive = _interactive;
-}
-
-void AConsoleTuto::OnComponentBeginOverlap()
-{
-	Highlight(true);
-}
-
-void AConsoleTuto::OnComponentEndOverlap()
-{
-	Highlight(false);
-}

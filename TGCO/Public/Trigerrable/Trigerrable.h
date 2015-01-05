@@ -15,13 +15,13 @@ public:
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	//Event launch when Player trigger the component.
 	//////////////////////////////////////////////////////////////////////////////////////////////
-	UFUNCTION(BlueprintCallable, Category = "Trigerrable", meta = (FriendlyName = "OnComponentBeginOverlap Trigger"))
+	UFUNCTION(BlueprintCallable, Category = "Trigerrable")
 		virtual void OnComponentBeginOverlap();
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	//Event launch when Player trigger the component.
 	//////////////////////////////////////////////////////////////////////////////////////////////
-	UFUNCTION(BlueprintCallable, Category = "Trigerrable", meta = (FriendlyName = "OnComponentEndOverlap Trigger"))
+	UFUNCTION(BlueprintCallable, Category = "Trigerrable")
 		virtual void OnComponentEndOverlap();
 	
 };

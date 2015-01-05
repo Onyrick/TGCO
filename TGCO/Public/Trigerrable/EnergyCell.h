@@ -18,27 +18,27 @@ public:
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	//Event launch when Player trigger the component.
 	//////////////////////////////////////////////////////////////////////////////////////////////
-	UFUNCTION(BlueprintCallable, Category = "EnergyCell", meta = (FriendlyName = "OnComponentBeginOverlap"))
+	UFUNCTION(BlueprintCallable, Category = "EnergyCell")
 		virtual void OnComponentBeginOverlap();
 
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	//Event launch when Player trigger the component.
 	//////////////////////////////////////////////////////////////////////////////////////////////
-	UFUNCTION(BlueprintCallable, Category = "EnergyCell", meta = (FriendlyName = "OnComponentEndOverlap"))
+	UFUNCTION(BlueprintCallable, Category = "EnergyCell")
 		virtual void OnComponentEndOverlap();
 
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	//Set the AEnergyCell as consumed when the Player hit the OnComponentBeginOverlap. 
 	//Hide the AEnergyCell in the Level. Increase Player's energy
 	//////////////////////////////////////////////////////////////////////////////////////////////
-	UFUNCTION(BlueprintCallable, Category = "EnergyCell", meta = (FriendlyName = "Consumed"))
+	UFUNCTION(BlueprintCallable, Category = "EnergyCell")
 		void Consumed();
 
 	//Getter / Setter / Is
-	UFUNCTION(BlueprintCallable, Category = "EnergyCell", meta = (FriendlyName = "GetAmountOfEnergy"))
+	UFUNCTION(BlueprintCallable, Category = "EnergyCell")
 	int32 GetAmountOfEnergy();
 
-	UFUNCTION(BlueprintCallable, Category = "EnergyCell", meta = (FriendlyName = "SetAmountOfEnergy"))
+	UFUNCTION(BlueprintCallable, Category = "EnergyCell")
 	void SetAmountOfEnergy(int32 _unlock);
 
 protected:

@@ -6,10 +6,16 @@
 #include "TGCOGameSession.h"
 #include "TGCOServerList.generated.h"
 
+USTRUCT(BlueprintType)
 struct FServerEntry
 {
+	GENERATED_USTRUCT_BODY();
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Server")
 	FString ServerName;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Server")
 	FString CurrentPlayers;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Server")
 	FString MaxPlayers;
 	FString Ping;
 	int32 SearchResultsIndex;
@@ -60,9 +66,11 @@ public:
 	void UpdateServerList();
 
 	/** connect to chosen server */
-	void ConnectToServer();
+	UFUNCTION(BlueprintCallable, Category = "Server")
+	void ConnectToServer(int32 ServerToJoin);
 
-	TArray< TSharedPtr<FServerEntry> > GetServerList();
+	UFUNCTION(BlueprintCallable, Category = "Server")
+	TArray<FServerEntry> GetServerList();
 
 protected:
 	/** Whether last searched for LAN */
@@ -72,7 +80,7 @@ protected:
 	bool bSearchingForServers;
 
 	/** action bindings array */
-	TArray< TSharedPtr<FServerEntry> > ServerList;
+	TArray<FServerEntry> ServerList;
 
 	/** current status text */
 	FString StatusText;
