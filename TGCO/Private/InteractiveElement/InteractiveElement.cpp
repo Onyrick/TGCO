@@ -13,32 +13,31 @@ void IInteractiveElement::OnInteract()
 
 void IInteractiveElement::Highlight(bool highlight)
 {
-	unimplemented();
+	//TODO
 }
 
 bool IInteractiveElement::IsInteractive()
 {
-	//unimplemented();
+	
 	return bIsInteractive;
 }
 
 void IInteractiveElement::OnLookAt()
 {
-	unimplemented();
+	//TODO	
 }
 
 void IInteractiveElement::SetInteractive(bool interactive)
 {
-	//unimplemented();
 	bIsInteractive = interactive;
 }
 
 void IInteractiveElement::OnComponentBeginOverlap()
 {
-	unimplemented();
+	//TODO
 }
 
 void IInteractiveElement::OnComponentEndOverlap()
 {
-	unimplemented();
+	//TODO
 }
