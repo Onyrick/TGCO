@@ -155,12 +155,6 @@ void UTGCOGameInstance::FinishSessionCreation(EOnJoinSessionCompleteResult::Type
 	}
 }
 
-void UTGCOGameInstance::JoinGame()
-{
-	SetIsOnline(true);
-	GotoState(TGCOGameInstanceState::Joining);
-}
-
 void UTGCOGameInstance::BeginServerSearch(ULocalPlayer* PlayerOwner)
 {
 	if (ServerListObject == nullptr)
@@ -240,6 +234,7 @@ bool UTGCOGameInstance::JoinSession(ULocalPlayer* LocalPlayer, int32 SessionInde
 			// If any error occured in the above, pending state would be set
 			if ((PendingState == CurrentState) || (PendingState == TGCOGameInstanceState::None))
 			{
+				UE_LOG(LogOnlineGame, Verbose, TEXT("Return true on join session"));
 				// Go ahead and go into loading state now
 				// If we fail, the delegate will handle showing the proper messaging and move to the correct state
 				// ShowLoadingScreen();
@@ -286,7 +281,6 @@ void UTGCOGameInstance::FinishJoinSession(EOnJoinSessionCompleteResult::Type Res
 		ShowMessageThenGotoState(ReturnReason, TGCOGameInstanceState::MainMenu);
 		return;
 	}
-
 	InternalTravelToSession(GameSessionName);
 }
 
@@ -323,6 +317,10 @@ void UTGCOGameInstance::InternalTravelToSession(const FName& SessionName)
 		UE_LOG(LogOnlineGame, Warning, TEXT("Failed to travel to session upon joining it"));
 		return;
 	}
+
+	UE_LOG(LogOnlineGame, Verbose, TEXT("I'm here and URL is : %s"), *URL);
+	
+	ServerListObject = nullptr;
 
 	PlayerController->ClientTravel(URL, TRAVEL_Absolute);
 }
@@ -466,7 +464,8 @@ void UTGCOGameInstance::BeginNewState(FName NewState, FName PrevState)
 
 void UTGCOGameInstance::BeginMainMenuState()
 {
-	UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("/Game/Maps/MainMenuMap")), true, FString(TEXT("listen")));
+	//UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("/Game/Maps/MainMenuMap")), true, FString(TEXT("listen")));
+	UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("/Game/Maps/MainMenuMap")), true, FString());
 
 	// player 0 gets to own the UI
 	ULocalPlayer* const Player = GetFirstGamePlayer();
@@ -490,7 +489,7 @@ void UTGCOGameInstance::EndPlayingState()
 void UTGCOGameInstance::BeginHostingState()
 {
 	//GetWorld()->ServerTravel(FString("/Game/Maps/HostMap?listen"));
-	UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("/Game/Maps/HostMap")), true, FString(TEXT("listen")));
+	UGameplayStatics::OpenLevel(GetWorld(), FName(*TravelURL), true, FString(TEXT("listen")));
 	//UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("/Game/Maps/HostMap")), true);
 }
 

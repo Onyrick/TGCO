@@ -35,6 +35,7 @@ bool ATGCOGameSession::HostSession(TSharedPtr<FUniqueNetId> UserId, FName Sessio
 		if (Sessions.IsValid() && CurrentSessionParams.UserId.IsValid())
 		{
 			HostSettings = MakeShareable(new FTGCOOnlineSessionSettings(MaxPlayers));
+			HostSettings->Set(SETTING_MAPNAME, MapName, EOnlineDataAdvertisementType::ViaOnlineService);
 
 			Sessions->AddOnCreateSessionCompleteDelegate(OnCreateSessionCompleteDelegate);
 			bool bIsCreate = Sessions->CreateSession(*CurrentSessionParams.UserId, CurrentSessionParams.SessionName, *HostSettings);
@@ -230,31 +231,30 @@ FString ATGCOGameSession::GetPlayerUniqueId()
 	return FString();
 }
 
-FString ATGCOGameSession::TrimPlayerUniqueId()
+FString ATGCOGameSession::TrimId(FString Id)
 {
-	FString TrimedPlayerId = GetPlayerUniqueId();
 	int index;
 
 	/** Delete all values after - */
 	TCHAR search = *TEXT("-");
-	if (TrimedPlayerId.FindChar(search, index))
+	if (Id.FindChar(search, index))
 	{
-		TrimedPlayerId.RemoveAt(index, TrimedPlayerId.Len() - index, true);
+		Id.RemoveAt(index, Id.Len() - index, true);
 
 	}
 
 	/** Delete all values after _ */
 	search = *TEXT("_");
-	if (TrimedPlayerId.FindChar(search, index))
+	if (Id.FindChar(search, index))
 	{
-		TrimedPlayerId.RemoveAt(index, TrimedPlayerId.Len() - index, true);
+		Id.RemoveAt(index, Id.Len() - index, true);
 
 	}
 
 	/** Delete Blank space if needed */
-	TrimedPlayerId.Shrink();
+	Id.Shrink();
 
-	return TrimedPlayerId;
+	return Id;
 }
 
 FName ATGCOGameSession::GetSessionName()
