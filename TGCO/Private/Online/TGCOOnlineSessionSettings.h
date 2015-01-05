@@ -10,7 +10,7 @@ class FTGCOOnlineSessionSettings : public FOnlineSessionSettings
 {
 public:
 
-	FTGCOOnlineSessionSettings(bool bIsLAN = false, bool bIsPresence = false, int32 MaxNumPlayers = 2);
+	FTGCOOnlineSessionSettings(int32 MaxNumPlayers = 2);
 	virtual ~FTGCOOnlineSessionSettings() {};
 };
 
@@ -20,7 +20,7 @@ public:
 class FTGCOOnlineSearchSettings : public FOnlineSessionSearch
 {
 public:
-	FTGCOOnlineSearchSettings(bool bSearchingLAN = false, bool bSearchingPresence = false);
+	FTGCOOnlineSearchSettings();
 
 	virtual ~FTGCOOnlineSearchSettings() {}
 };

@@ -34,7 +34,7 @@ bool ATGCOGameSession::HostSession(TSharedPtr<FUniqueNetId> UserId, FName Sessio
 		IOnlineSessionPtr Sessions = OnlineSub->GetSessionInterface();
 		if (Sessions.IsValid() && CurrentSessionParams.UserId.IsValid())
 		{
-			HostSettings = MakeShareable(new FTGCOOnlineSessionSettings(bIsLAN, bIsPresence, MaxPlayers));
+			HostSettings = MakeShareable(new FTGCOOnlineSessionSettings(MaxPlayers));
 
 			Sessions->AddOnCreateSessionCompleteDelegate(OnCreateSessionCompleteDelegate);
 			bool bIsCreate = Sessions->CreateSession(*CurrentSessionParams.UserId, CurrentSessionParams.SessionName, *HostSettings);
@@ -57,14 +57,14 @@ void ATGCOGameSession::FindSessions(TSharedPtr<FUniqueNetId> UserId, FName Sessi
 		CurrentSessionParams.UserId = UserId;
 
 		IOnlineSessionPtr Sessions = OnlineSub->GetSessionInterface();
-		if (Sessions.IsValid() && CurrentSessionParams.UserId.IsValid())
+		if (Sessions.IsValid() && UserId.IsValid())
 		{
-			SearchSettings = MakeShareable(new FTGCOOnlineSearchSettings(bIsLAN, bIsPresence));
+			SearchSettings = MakeShareable(new FTGCOOnlineSearchSettings());
 
 			TSharedRef<FOnlineSessionSearch> SearchSettingsRef = SearchSettings.ToSharedRef();
 
 			Sessions->AddOnFindSessionsCompleteDelegate(OnFindSessionsCompleteDelegate);
-			Sessions->FindSessions(*CurrentSessionParams.UserId, SearchSettingsRef);
+			Sessions->FindSessions(*UserId, SearchSettingsRef);
 		}
 	}
 	else

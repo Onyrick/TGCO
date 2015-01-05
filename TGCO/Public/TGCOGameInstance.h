@@ -12,6 +12,8 @@ namespace TGCOGameInstanceState
 	extern const FName None;
 	extern const FName WelcomeScreen;
 	extern const FName MainMenu;
+	extern const FName Hosting;
+	extern const FName Joining;
 	extern const FName Playing;
 }
 
@@ -28,7 +30,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Online")
 	class ATGCOGameSession* GetGameSession() const;
-	
+
+	UFUNCTION(BlueprintCallable, Category = "Server")
+	class UTGCOServerList* GetServerList() const;
+
 	virtual void Init() override;
 	virtual void Shutdown() override;
 	virtual void StartGameInstance() override;
@@ -36,6 +41,10 @@ public:
 	/** Host a game session */
 	UFUNCTION(BlueprintCallable, Category = "Online")
 	bool HostGame(ULocalPlayer* LocalPlayer, const FString& InMapName);
+
+	/** Join a game create previously */
+	UFUNCTION(BlueprintCallable, Category = "Online")
+	void JoinGame();
 
 	/** Join a game session */
 	bool JoinSession(ULocalPlayer* LocalPlayer, int32 SessionIndexInSearchResults);
@@ -54,6 +63,7 @@ public:
 	void OnServerSearchFinished();
 
 	/** Initiates the session searching */
+	UFUNCTION(BlueprintCallable, Category = "Online")
 	bool FindSessions(ULocalPlayer* PlayerOwner, bool bLANMatch);
 
 	/** Sends the game to the specified state. */
@@ -76,6 +86,11 @@ public:
 	*/
 	void ShowMessageThenGotoState(const FString& Message, const FName& NewState);
 
+	/** Returns true if the game is in online mode */
+	bool GetIsOnline() const;
+
+	/** Sets the online mode of the game */
+	void SetIsOnline(bool bInIsOnline);
 
 	/** Shuts down the session, and frees any net driver */
 	UFUNCTION(BlueprintCallable, Category = "Online")
@@ -84,8 +99,8 @@ public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
 		FBindableEvent_ServerSearchFinished,
 			
-		FString,
-		ServerName
+		int32,
+		NumberServerFound
 	);
 
 	/** Called when Server Search is finished */
@@ -96,6 +111,11 @@ private:
 	/** Delegate for ending a session */
 	FOnEndSessionCompleteDelegate OnEndSessionCompleteDelegate;
 
+	/** Last connection status that was passed into the HandleNetworkConnectionStatusChanged hander */
+	EOnlineServerConnectionStatus::Type	CurrentConnectionStatus;
+
+	void HandleNetworkConnectionStatusChanged(EOnlineServerConnectionStatus::Type ConnectionStatus);
+
 	void OnEndSessionComplete(FName SessionName, bool bWasSuccessful);
 
 	void MaybeChangeState();
@@ -105,11 +125,13 @@ private:
 	void BeginWelcomeScreenState();
 	void BeginMainMenuState();
 	void BeginPlayingState();
+	void BeginJoiningState();
 	void BeginHostingState();
 
 	void EndWelcomeScreenState();
 	void EndMainMenuState();
 	void EndPlayingState();
+	void EndJoiningState();
 	void EndHostingState();
 
 	void AddNetworkFailureHandlers();
@@ -141,6 +163,9 @@ private:
 	FName PendingState;
 
 	FString TravelURL;
+
+	/** Whether the party is online or not */
+	bool bIsOnline;
 
 	/** Delegate for callbacks to Tick */
 	FTickerDelegate TickDelegate;
