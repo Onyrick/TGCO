@@ -59,19 +59,19 @@ void UTGCOServerList::UpdateSearchStatus()
 
 					for (int32 IdxResult = 0; IdxResult < NumSearchResults; ++IdxResult)
 					{
-						TSharedPtr<FServerEntry> NewServerEntry = MakeShareable(new FServerEntry());
+						FServerEntry NewServerEntry;
 
 						const FOnlineSessionSearchResult& Result = SearchResults[IdxResult];
 
-						NewServerEntry->ServerName = Result.Session.OwningUserName;
-						NewServerEntry->Ping = FString::FromInt(Result.PingInMs);
-						NewServerEntry->CurrentPlayers = FString::FromInt(Result.Session.SessionSettings.NumPublicConnections
+						NewServerEntry.ServerName = Result.Session.OwningUserName;
+						NewServerEntry.Ping = FString::FromInt(Result.PingInMs);
+						NewServerEntry.CurrentPlayers = FString::FromInt(Result.Session.SessionSettings.NumPublicConnections
 							+ Result.Session.SessionSettings.NumPrivateConnections
 							- Result.Session.NumOpenPublicConnections
 							- Result.Session.NumOpenPrivateConnections);
-						NewServerEntry->MaxPlayers = FString::FromInt(Result.Session.SessionSettings.NumPublicConnections
+						NewServerEntry.MaxPlayers = FString::FromInt(Result.Session.SessionSettings.NumPublicConnections
 							+ Result.Session.SessionSettings.NumPrivateConnections);
-						NewServerEntry->SearchResultsIndex = IdxResult;
+						NewServerEntry.SearchResultsIndex = IdxResult;
 						
 						ServerList.Add(NewServerEntry);
 					}
@@ -96,6 +96,7 @@ void UTGCOServerList::Tick(float DeltaSeconds)
 {
 	if (bSearchingForServers)
 	{
+		UE_LOG(LogOnline, Log, TEXT("UpdateSearchStatus"));
 		UpdateSearchStatus();
 	}
 }
@@ -115,6 +116,8 @@ void UTGCOServerList::BeginServerSearch(bool bLANMatch)
 
 void UTGCOServerList::OnServerSearchFinished()
 {
+
+	UE_LOG(LogOnline, Log, TEXT("Set SearchingServer to false"));
 	bSearchingForServers = false;
 	
 	UTGCOGameInstance* const GI = Cast<UTGCOGameInstance>(PlayerOwner->GetGameInstance());
@@ -131,33 +134,21 @@ void UTGCOServerList::UpdateServerList()
 	// To do
 }
 
-void UTGCOServerList::ConnectToServer()
+void UTGCOServerList::ConnectToServer(int32 SessionIndex)
 {
 	if (bSearchingForServers)
 	{
 		return;
 	}
-	/* TO DO When server is selected 
 
-	if (SelectedItem.IsValid())
+	UTGCOGameInstance* const GI = Cast<UTGCOGameInstance>(PlayerOwner->GetGameInstance());
+	if (GI)
 	{
-		int ServerToJoin = SelectedItem->SearchResultsIndex;
-
-		if (GEngine && GEngine->GameViewport)
-		{
-			//GEngine->GameViewport->RemoveAllViewportWidgets();
-		}
-
-		UTGCOGameInstance* const GI = Cast<UTGCOGameInstance>(PlayerOwner->GetGameInstance());
-		if (GI)
-		{
-			//GI->JoinSession(PlayerOwner.Get(), ServerToJoin);
-		}
+		GI->JoinSession(PlayerOwner.Get(), SessionIndex);
 	}
-	*/
 }
 
-TArray<TSharedPtr<FServerEntry>> UTGCOServerList::GetServerList()
+TArray<FServerEntry> UTGCOServerList::GetServerList()
 {
 	return ServerList;
 }

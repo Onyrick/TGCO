@@ -34,7 +34,8 @@ bool ATGCOGameSession::HostSession(TSharedPtr<FUniqueNetId> UserId, FName Sessio
 		IOnlineSessionPtr Sessions = OnlineSub->GetSessionInterface();
 		if (Sessions.IsValid() && CurrentSessionParams.UserId.IsValid())
 		{
-			HostSettings = MakeShareable(new FTGCOOnlineSessionSettings(bIsLAN, bIsPresence, MaxPlayers));
+			HostSettings = MakeShareable(new FTGCOOnlineSessionSettings(MaxPlayers));
+			HostSettings->Set(SETTING_MAPNAME, MapName, EOnlineDataAdvertisementType::ViaOnlineService);
 
 			Sessions->AddOnCreateSessionCompleteDelegate(OnCreateSessionCompleteDelegate);
 			bool bIsCreate = Sessions->CreateSession(*CurrentSessionParams.UserId, CurrentSessionParams.SessionName, *HostSettings);
@@ -57,14 +58,14 @@ void ATGCOGameSession::FindSessions(TSharedPtr<FUniqueNetId> UserId, FName Sessi
 		CurrentSessionParams.UserId = UserId;
 
 		IOnlineSessionPtr Sessions = OnlineSub->GetSessionInterface();
-		if (Sessions.IsValid() && CurrentSessionParams.UserId.IsValid())
+		if (Sessions.IsValid() && UserId.IsValid())
 		{
-			SearchSettings = MakeShareable(new FTGCOOnlineSearchSettings(bIsLAN, bIsPresence));
+			SearchSettings = MakeShareable(new FTGCOOnlineSearchSettings());
 
 			TSharedRef<FOnlineSessionSearch> SearchSettingsRef = SearchSettings.ToSharedRef();
 
 			Sessions->AddOnFindSessionsCompleteDelegate(OnFindSessionsCompleteDelegate);
-			Sessions->FindSessions(*CurrentSessionParams.UserId, SearchSettingsRef);
+			Sessions->FindSessions(*UserId, SearchSettingsRef);
 		}
 	}
 	else
@@ -151,20 +152,21 @@ void ATGCOGameSession::OnStartOnlineGameComplete(FName SessionName, bool bWasSuc
 			Sessions->ClearOnStartSessionCompleteDelegate(OnStartSessionCompleteDelegate);
 		}
 	}
-	/* TO DO
+
 	if (bWasSuccessful)
 	{
 		// tell non-local players to start online game
 		for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
 		{
-			AShooterPlayerController* PC = Cast<AShooterPlayerController>(*It);
+			APlayerController* PC = *It;
 			if (PC && !PC->IsLocalPlayerController())
 			{
-				PC->ClientStartOnlineGame();
+				UE_LOG(LogOnlineGame, Verbose, TEXT("PC need to start online game"));
+				//PC->ClientStartOnlineGame();
 			}
 		}
 	}
-	*/
+
 }
 
 void ATGCOGameSession::OnDestroySessionComplete(FName SessionName, bool bWasSuccessful)
@@ -221,40 +223,30 @@ void ATGCOGameSession::OnJoinSessionComplete(FName SessionName, EOnJoinSessionCo
 	OnJoinSessionComplete().Broadcast(Result);
 }
 
-FString ATGCOGameSession::GetPlayerUniqueId()
+FString ATGCOGameSession::TrimId(FString Id)
 {
-	if (CurrentSessionParams.SessionName != NAME_None)
-	{
-		return CurrentSessionParams.UserId->ToString();
-	}
-	return FString();
-}
-
-FString ATGCOGameSession::TrimPlayerUniqueId()
-{
-	FString TrimedPlayerId = GetPlayerUniqueId();
 	int index;
 
 	/** Delete all values after - */
 	TCHAR search = *TEXT("-");
-	if (TrimedPlayerId.FindChar(search, index))
+	if (Id.FindChar(search, index))
 	{
-		TrimedPlayerId.RemoveAt(index, TrimedPlayerId.Len() - index, true);
+		Id.RemoveAt(index, Id.Len() - index, true);
 
 	}
 
 	/** Delete all values after _ */
 	search = *TEXT("_");
-	if (TrimedPlayerId.FindChar(search, index))
+	if (Id.FindChar(search, index))
 	{
-		TrimedPlayerId.RemoveAt(index, TrimedPlayerId.Len() - index, true);
+		Id.RemoveAt(index, Id.Len() - index, true);
 
 	}
 
 	/** Delete Blank space if needed */
-	TrimedPlayerId.Shrink();
+	Id.Shrink();
 
-	return TrimedPlayerId;
+	return Id;
 }
 
 FName ATGCOGameSession::GetSessionName()

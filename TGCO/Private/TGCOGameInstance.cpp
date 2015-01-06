@@ -12,6 +12,7 @@ namespace TGCOGameInstanceState
 	const FName WelcomeScreen = FName(TEXT("WelcomeScreen"));
 	const FName MainMenu = FName(TEXT("MainMenu"));
 	const FName Hosting = FName(TEXT("Hosting"));
+	const FName Joining = FName(TEXT("Joining"));
 	const FName Playing = FName(TEXT("Playing"));
 }
 
@@ -36,8 +37,10 @@ void UTGCOGameInstance::Init()
 	const auto SessionInterface = OnlineSub->GetSessionInterface();
 	check(SessionInterface.IsValid());
 
-	OnEndSessionCompleteDelegate = FOnEndSessionCompleteDelegate::CreateUObject(this, &UTGCOGameInstance::OnEndSessionComplete);
+	OnlineSub->AddOnConnectionStatusChangedDelegate(FOnConnectionStatusChangedDelegate::CreateUObject(this, &UTGCOGameInstance::HandleNetworkConnectionStatusChanged));
 
+	OnEndSessionCompleteDelegate = FOnEndSessionCompleteDelegate::CreateUObject(this, &UTGCOGameInstance::OnEndSessionComplete);
+	
 	// Register delegate for ticker callback
 	TickDelegate = FTickerDelegate::CreateUObject(this, &UTGCOGameInstance::Tick);
 	FTicker::GetCoreTicker().AddTicker(TickDelegate);
@@ -88,7 +91,7 @@ bool UTGCOGameInstance::HostGame(ULocalPlayer* LocalPlayer, const FString& InMap
 		if (GameSession->HostSession(LocalPlayer->GetPreferredUniqueNetId(), GameSessionName, InMapName, bIsLanMatch, true, ATGCOGameSession::DEFAULT_NUM_PLAYERS))
 		{
 			// If any error occured in the above, pending state would be set
-			if ((PendingState == CurrentState) || (PendingState == TGCOGameInstanceState::None))
+			if ((PendingState == TGCOGameInstanceState::Hosting))
 			{	
 				return true;
 			}
@@ -145,7 +148,7 @@ bool UTGCOGameInstance::FindSessions(ULocalPlayer* PlayerOwner, bool bFindLAN)
 			GameSession->OnFindSessionsComplete().RemoveAll(this);
 			GameSession->OnFindSessionsComplete().AddUObject(this, &UTGCOGameInstance::OnSearchSessionsComplete);
 
-			UE_LOG(LogOnline, Log, TEXT("GameSessionName : %s"), *GameSessionName.ToString());
+			UE_LOG(LogOnline, Log, TEXT("Searching for GameSessionName = %s"), *GameSessionName.ToString());
 			GameSession->FindSessions(PlayerOwner->GetPreferredUniqueNetId(), GameSessionName, bFindLAN, true);
 
 			bResult = true;
@@ -169,17 +172,16 @@ void UTGCOGameInstance::OnServerSearchFinished()
 	FString ServerName;
 	if (ServerListObject != nullptr)
 	{
-		TArray< TSharedPtr<FServerEntry> > ServerList = ServerListObject->GetServerList();
+		TArray<FServerEntry> ServerList = ServerListObject->GetServerList();
 		int32 iNbServer = ServerList.Num();
-		if (iNbServer > 0)
-		{
-			ServerName = ServerList[0]->ServerName;
-			//JoinSession(ServerListObject->GetPlayer().Get(), 0);
-		}
 
-		OnSearchCompleted.Broadcast(ServerName);
+		OnSearchCompleted.Broadcast(iNbServer);
 	}
-	ServerListObject = nullptr;
+}
+
+UTGCOServerList* UTGCOGameInstance::GetServerList() const
+{
+	return ServerListObject;
 }
 
 bool UTGCOGameInstance::JoinSession(ULocalPlayer* LocalPlayer, int32 SessionIndexInSearchResults)
@@ -195,10 +197,8 @@ bool UTGCOGameInstance::JoinSession(ULocalPlayer* LocalPlayer, int32 SessionInde
 			// If any error occured in the above, pending state would be set
 			if ((PendingState == CurrentState) || (PendingState == TGCOGameInstanceState::None))
 			{
-				// Go ahead and go into loading state now
-				// If we fail, the delegate will handle showing the proper messaging and move to the correct state
-				// ShowLoadingScreen();
-				// GotoState(TGCOGameInstanceState::Playing);
+				UE_LOG(LogOnlineGame, Verbose, TEXT("Return true on join session"));
+				
 				return true;
 			}
 		}
@@ -241,7 +241,6 @@ void UTGCOGameInstance::FinishJoinSession(EOnJoinSessionCompleteResult::Type Res
 		ShowMessageThenGotoState(ReturnReason, TGCOGameInstanceState::MainMenu);
 		return;
 	}
-
 	InternalTravelToSession(GameSessionName);
 }
 
@@ -278,7 +277,10 @@ void UTGCOGameInstance::InternalTravelToSession(const FName& SessionName)
 		UE_LOG(LogOnlineGame, Warning, TEXT("Failed to travel to session upon joining it"));
 		return;
 	}
+		
+	ServerListObject = nullptr;
 
+	GotoState(TGCOGameInstanceState::Joining);
 	PlayerController->ClientTravel(URL, TRAVEL_Absolute);
 }
 
@@ -302,9 +304,8 @@ void UTGCOGameInstance::AddNetworkFailureHandlers()
 
 void UTGCOGameInstance::TravelLocalSessionFailure(UWorld *World, ETravelFailure::Type FailureType, const FString& ReasonString)
 {
-	/* TO DO
-	AShooterPlayerController_Menu* const FirstPC = Cast<AShooterPlayerController_Menu>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-	if (FirstPC != nullptr)
+	APlayerController* const PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	if (PC != nullptr)
 	{
 		FString ReturnReason = NSLOCTEXT("NetworkErrors", "JoinSessionFailed", "Join Session failed.").ToString();
 		if (ReasonString.IsEmpty() == false)
@@ -314,7 +315,6 @@ void UTGCOGameInstance::TravelLocalSessionFailure(UWorld *World, ETravelFailure:
 		}
 		ShowMessageThenGotoState(ReturnReason, TGCOGameInstanceState::MainMenu);
 	}
-	*/
 }
 
 bool UTGCOGameInstance::Tick(float DeltaSeconds)
@@ -383,6 +383,10 @@ void UTGCOGameInstance::EndCurrentState(FName NextState)
 	{
 		EndHostingState();
 	}
+	else if (CurrentState == TGCOGameInstanceState::Joining)
+	{
+		EndJoiningState();
+	}
 
 	CurrentState = TGCOGameInstanceState::None;
 }
@@ -407,13 +411,18 @@ void UTGCOGameInstance::BeginNewState(FName NewState, FName PrevState)
 	{
 		BeginHostingState();
 	}
+	else if (NewState == TGCOGameInstanceState::Joining)
+	{
+		BeginJoiningState();
+	}
 
 	CurrentState = NewState;
 }
 
 void UTGCOGameInstance::BeginMainMenuState()
 {
-	GetWorld()->ServerTravel(FString("/Game/Maps/MainMenuMap"));
+	//UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("/Game/Maps/MainMenuMap")), true, FString(TEXT("listen")));
+	UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("/Game/Maps/MainMenuMap")), true, FString());
 
 	// player 0 gets to own the UI
 	ULocalPlayer* const Player = GetFirstGamePlayer();
@@ -429,14 +438,31 @@ void UTGCOGameInstance::BeginPlayingState()
 	GetWorld()->ServerTravel(FString("/Game/Maps/Room1"));
 }
 
+void UTGCOGameInstance::EndPlayingState()
+{
+	// To Do Deconnect Player of the server
+}
+
 void UTGCOGameInstance::BeginHostingState()
 {
 	GetWorld()->ServerTravel(TravelURL);
+	//UGameplayStatics::OpenLevel(GetWorld(), FName(*TravelURL), true, FString(TEXT("listen")));
+	//UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("/Game/Maps/HostMap")), true);
 }
 
 void UTGCOGameInstance::EndHostingState()
 {
 	CleanupSessionOnReturnToMenu();
+}
+
+void UTGCOGameInstance::BeginJoiningState()
+{
+
+}
+
+void UTGCOGameInstance::EndJoiningState()
+{
+
 }
 
 void UTGCOGameInstance::OnEndSessionComplete(FName SessionName, bool bWasSuccessful)
@@ -499,11 +525,6 @@ void UTGCOGameInstance::CleanupSessionOnReturnToMenu()
 			bPendingOnlineOp = true;
 		}
 	}
-
-	if (!bPendingOnlineOp)
-	{
-		//GEngine->HandleDisconnect( GetWorld(), GetWorld()->GetNetDriver() );
-	}
 }
 
 class ATGCOGameSession* UTGCOGameInstance::GetGameSession() const
@@ -519,4 +540,9 @@ class ATGCOGameSession* UTGCOGameInstance::GetGameSession() const
 	}
 
 	return nullptr;
+}
+
+void UTGCOGameInstance::HandleNetworkConnectionStatusChanged(EOnlineServerConnectionStatus::Type ConnectionStatus)
+{
+	UE_LOG(LogOnlineGame, Warning, TEXT("UTGCOGameInstance::HandleNetworkConnectionStatusChanged: %s"), EOnlineServerConnectionStatus::ToString(ConnectionStatus));
 }
