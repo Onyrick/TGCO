@@ -94,9 +94,8 @@ void UTGCOServerList::UpdateSearchStatus()
 
 void UTGCOServerList::Tick(float DeltaSeconds)
 {
-	if (bSearchingForServers)
+	if (bSearchingForServers == true)
 	{
-		UE_LOG(LogOnline, Log, TEXT("UpdateSearchStatus"));
 		UpdateSearchStatus();
 	}
 }

@@ -119,9 +119,15 @@ private:
 	void EndJoiningState();
 	void EndHostingState();
 
+	void AddNetworkTravelFailureHandlers();
 	void AddNetworkFailureHandlers();
+	void RemoveNetworkTravelFailureHandlers();
 	void RemoveNetworkFailureHandlers();
 	
+	
+	/** Called when there is a Network error */
+	void HandleNetworkFailure(UWorld *World, UNetDriver *NetDriver, ENetworkFailure::Type FailureType, const FString& ErrorString);
+
 	/** Called when there is an error trying to travel to a local session */
 	void TravelLocalSessionFailure(UWorld *World, ETravelFailure::Type FailureType, const FString& ErrorString);
 
