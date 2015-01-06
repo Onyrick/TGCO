@@ -132,10 +132,6 @@ public:
 	/** @return the delegate fired when search of session completes */
 	FOnFindSessionsComplete& OnFindSessionsComplete() { return FindSessionsCompleteEvent; }
 
-	/** Test functions for BP */
-	UFUNCTION(BlueprintCallable, Category = "Test")
-	FString GetPlayerUniqueId();
-
 	UFUNCTION(BlueprintCallable, Category = "Test")
 	FString TrimId(FString Id);
 

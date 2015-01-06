@@ -67,7 +67,7 @@ public:
 
 	/** connect to chosen server */
 	UFUNCTION(BlueprintCallable, Category = "Server")
-	void ConnectToServer(int32 ServerToJoin);
+	void ConnectToServer(int32 SessionIndex);
 
 	UFUNCTION(BlueprintCallable, Category = "Server")
 	TArray<FServerEntry> GetServerList();
