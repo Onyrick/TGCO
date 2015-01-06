@@ -189,7 +189,7 @@ bool UTGCOGameInstance::JoinSession(ULocalPlayer* LocalPlayer, int32 SessionInde
 	ATGCOGameSession* const GameSession = GetGameSession();
 	if (GameSession)
 	{
-		AddNetworkFailureHandlers();
+		AddNetworkTravelFailureHandlers();
 
 		GameSession->OnJoinSessionComplete().AddUObject(this, &UTGCOGameInstance::OnJoinSessionComplete);
 		if (GameSession->JoinSession(LocalPlayer->GetPreferredUniqueNetId(), GameSessionName, SessionIndexInSearchResults))
@@ -237,7 +237,7 @@ void UTGCOGameInstance::FinishJoinSession(EOnJoinSessionCompleteResult::Type Res
 			break;
 		}
 
-		RemoveNetworkFailureHandlers();
+		RemoveNetworkTravelFailureHandlers();
 		ShowMessageThenGotoState(ReturnReason, TGCOGameInstanceState::MainMenu);
 		return;
 	}
@@ -251,7 +251,7 @@ void UTGCOGameInstance::InternalTravelToSession(const FName& SessionName)
 	if (PlayerController == nullptr)
 	{
 		FString ReturnReason = NSLOCTEXT("NetworkErrors", "InvalidPlayerController", "Invalid Player Controller").ToString();
-		RemoveNetworkFailureHandlers();
+		RemoveNetworkTravelFailureHandlers();
 		ShowMessageThenGotoState(ReturnReason, TGCOGameInstanceState::MainMenu);
 		return;
 	}
@@ -262,7 +262,7 @@ void UTGCOGameInstance::InternalTravelToSession(const FName& SessionName)
 	if (OnlineSub == nullptr)
 	{
 		FString ReturnReason = NSLOCTEXT("NetworkErrors", "OSSMissing", "OSS missing").ToString();
-		RemoveNetworkFailureHandlers();
+		RemoveNetworkTravelFailureHandlers();
 		ShowMessageThenGotoState(ReturnReason, TGCOGameInstanceState::MainMenu);
 		return;
 	}
@@ -281,10 +281,29 @@ void UTGCOGameInstance::InternalTravelToSession(const FName& SessionName)
 	ServerListObject = nullptr;
 
 	GotoState(TGCOGameInstanceState::Joining);
+	AddNetworkFailureHandlers();
 	PlayerController->ClientTravel(URL, TRAVEL_Absolute);
 }
 
 void UTGCOGameInstance::RemoveNetworkFailureHandlers()
+{
+	// Remove the local session/travel failure bindings if they exist
+	if (GEngine->OnNetworkFailure().IsBoundToObject(this) == true)
+	{
+		GEngine->OnNetworkFailure().RemoveUObject(this, &UTGCOGameInstance::HandleNetworkFailure);
+	}
+}
+
+void UTGCOGameInstance::AddNetworkFailureHandlers()
+{
+	// Add network/travel error handlers (if they are not already there)
+	if (GEngine->OnNetworkFailure().IsBoundToObject(this) == false)
+	{
+		GEngine->OnNetworkFailure().AddUObject(this, &UTGCOGameInstance::HandleNetworkFailure);
+	}
+}
+
+void UTGCOGameInstance::RemoveNetworkTravelFailureHandlers()
 {
 	// Remove the local session/travel failure bindings if they exist
 	if (GEngine->OnTravelFailure().IsBoundToObject(this) == true)
@@ -293,12 +312,28 @@ void UTGCOGameInstance::RemoveNetworkFailureHandlers()
 	}
 }
 
-void UTGCOGameInstance::AddNetworkFailureHandlers()
+void UTGCOGameInstance::AddNetworkTravelFailureHandlers()
 {
 	// Add network/travel error handlers (if they are not already there)
 	if (GEngine->OnTravelFailure().IsBoundToObject(this) == false)
 	{
 		GEngine->OnTravelFailure().AddUObject(this, &UTGCOGameInstance::TravelLocalSessionFailure);
+	}
+}
+
+void UTGCOGameInstance::HandleNetworkFailure(UWorld *World, UNetDriver *NetDriver, ENetworkFailure::Type FailureType, const FString& ErrorString)
+{
+	APlayerController* const PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	if (PC != nullptr)
+	{
+		FString ReturnReason = NSLOCTEXT("NetworkErrors", "ConnectionLost", "Connection to server lost.").ToString();
+		if (ErrorString.IsEmpty() == false)
+		{
+			ReturnReason += " ";
+			ReturnReason += ErrorString;
+		}
+		RemoveNetworkTravelFailureHandlers();
+		ShowMessageThenGotoState(ReturnReason, TGCOGameInstanceState::MainMenu);
 	}
 }
 
@@ -321,7 +356,7 @@ bool UTGCOGameInstance::Tick(float DeltaSeconds)
 {
 	MaybeChangeState();
 
-	if (ServerListObject)
+	if (ServerListObject != nullptr)
 	{
 		ServerListObject->Tick(DeltaSeconds);
 	}
@@ -421,6 +456,8 @@ void UTGCOGameInstance::BeginNewState(FName NewState, FName PrevState)
 
 void UTGCOGameInstance::BeginMainMenuState()
 {
+	UGameViewportClient* GVC = GEngine->GameViewport;
+	GVC->RemoveAllViewportWidgets();
 	//UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("/Game/Maps/MainMenuMap")), true, FString(TEXT("listen")));
 	UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("/Game/Maps/MainMenuMap")), true, FString());
 
@@ -435,6 +472,8 @@ void UTGCOGameInstance::EndMainMenuState()
 
 void UTGCOGameInstance::BeginPlayingState()
 {
+	UGameViewportClient* GVC = GEngine->GameViewport;
+	GVC->RemoveAllViewportWidgets();
 	GetWorld()->ServerTravel(FString("/Game/Maps/Room1"));
 }
 
@@ -445,6 +484,8 @@ void UTGCOGameInstance::EndPlayingState()
 
 void UTGCOGameInstance::BeginHostingState()
 {
+	UGameViewportClient* GVC = GEngine->GameViewport;
+	GVC->RemoveAllViewportWidgets();
 	GetWorld()->ServerTravel(TravelURL);
 	//UGameplayStatics::OpenLevel(GetWorld(), FName(*TravelURL), true, FString(TEXT("listen")));
 	//UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("/Game/Maps/HostMap")), true);
@@ -457,12 +498,13 @@ void UTGCOGameInstance::EndHostingState()
 
 void UTGCOGameInstance::BeginJoiningState()
 {
-
+	UGameViewportClient* GVC = GEngine->GameViewport;
+	GVC->RemoveAllViewportWidgets();
 }
 
 void UTGCOGameInstance::EndJoiningState()
 {
-
+	CleanupSessionOnReturnToMenu();
 }
 
 void UTGCOGameInstance::OnEndSessionComplete(FName SessionName, bool bWasSuccessful)
