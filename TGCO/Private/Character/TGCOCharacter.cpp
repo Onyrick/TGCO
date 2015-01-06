@@ -4,6 +4,7 @@
 #include "TGCOCharacter.h"
 #include "Projectile.h"
 #include "Engine.h"
+#include "TGCOGameState.h"
 
 //////////////////////////////////////////////////////////////////////////
 // ATGCOCharacter
@@ -180,4 +181,56 @@ void ATGCOCharacter::OnFire()
 			*/
 		}
 	}
+}
+
+
+float ATGCOCharacter::TakeDamage(float fDamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser)
+{
+	UWorld* const World = GetWorld();
+	if (World != NULL)
+	{
+		ATGCOGameState* GameState = Cast<ATGCOGameState>(World->GetGameState());
+		if (GameState != NULL)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, .5f, FColor::Red, TEXT("Take damage"));
+			// Active shield
+			ActiveShield(true);
+
+			// Decrease energy in the GameState
+			GameState->DecreaseEnergy(fDamageAmount);
+
+			return fDamageAmount;
+		}
+	}
+
+	return 0;
+}
+
+void ATGCOCharacter::ActiveShield(bool bActivate)
+{
+	if (bActivate)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, .5f, FColor::Red, TEXT("Active Shield"));
+		// Activate the shield
+		PlayShieldAnimation();
+		PlayShieldSound();
+	}
+	else
+	{
+		// Deactivate the shield
+		// Need to do something ?
+	}
+}
+
+void ATGCOCharacter::PlayShieldAnimation()
+{
+	// TO DO
+	GEngine->AddOnScreenDebugMessage(-1, .5f, FColor::Red, TEXT("TO DO : play activate shield animation"));
+}
+
+void ATGCOCharacter::PlayShieldSound()
+{
+	// TO DO
+	GEngine->AddOnScreenDebugMessage(-1, .5f, FColor::Red, TEXT("TO DO : play activate shield sound"));
+
 }

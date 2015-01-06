@@ -3,6 +3,7 @@
 #include "TGCO.h"
 #include "Projectile.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "TGCOCharacter.h"
 
 AProjectile::AProjectile(const FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer)
