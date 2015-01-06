@@ -13,7 +13,5 @@ public:
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	//Event launch when the Character take damage
 	//////////////////////////////////////////////////////////////////////////////////////////////
-		virtual float TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser);
-	
-	
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser) override;
 };

@@ -32,13 +32,11 @@ bool AInteractiveElement::IsInteractive()
 
 void AInteractiveElement::OnLookAt()
 {
-	SetInteractive(bCloseEnough);
 	Highlight(bCloseEnough);
 }
 
 void AInteractiveElement::OnLookAway()
 {	
-	SetInteractive(false);
 	Highlight(false);
 }
 

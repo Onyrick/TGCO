@@ -3,14 +3,14 @@
 #include "TGCO.h"
 #include "Monster.h"
 
-AMonster::AMonster(const class FObjectInitializer& PCIP) : Super(PCIP)
+AMonster::AMonster(const class FObjectInitializer& PCIP) : Super(PCIP), fStunTime(1.f)
 {
-
+	AIControllerClass = AAIController::StaticClass();
 }
 
 float AMonster::TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser)
 {
-	//TODO
+	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	return -1.f;
 }
 
@@ -19,16 +19,35 @@ bool AMonster::IsStun()
 	return bIsStun;
 }
 
-void AMonster::Stun(bool _stun)
+void AMonster::Stun()
 {
-	bIsStun = _stun;
-	//TODO
+	bIsStun = true;
+	GetWorldTimerManager().SetTimer(this, &AMonster::UnStun, fStunTime, false);
+
+	// Stop MoveToLocation
+	GetAIController()->PauseMove(GetAIController()->GetCurrentMoveRequestID());
+
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(0, 10.0f, FColor::White, TEXT("Stun : Stop MoveTo"));
+	}
 }
 
-EPathFollowingRequestResult::Type AMonster::MoveToLocation(const FVector & Dest, float AcceptanceRadius, bool bStopOnOverlap, bool bUsePathfinding, bool bProjectDestinationToNavigation, bool bCanStrafe, TSubclassOf< class UNavigationQueryFilter > FilterClass)
+void AMonster::UnStun()
 {
-	//TODO
-	return EPathFollowingRequestResult::Failed;
+	bIsStun = false;
+	// Resume MoveToLocation
+	GetAIController()->ResumeMove(GetAIController()->GetCurrentMoveRequestID());
+
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(0, 10.0f, FColor::White, TEXT("UnStun : Resume MoveTo"));
+	}
+}
+
+EPathFollowingRequestResult::Type AMonster::MoveToLocation(const FVector & Dest)//const FVector & Dest, float AcceptanceRadius, bool bStopOnOverlap, bool bUsePathfinding, bool bProjectDestinationToNavigation, bool bCanStrafe, TSubclassOf< class UNavigationQueryFilter > FilterClass)
+{
+	return GetAIController()->MoveToLocation(Dest);
 }
 
 void AMonster::PlayMoveSound()

@@ -1,11 +1,10 @@
 #pragma once
 
-#include "GameFramework/Actor.h"
 #include "CharacterAI.h"
 #include "Monster.generated.h"
 
 UCLASS()
-class TGCO_API AMonster : public ACharacter, public ICharacterAI
+class TGCO_API AMonster : public ACharacterAI
 {
 	GENERATED_UCLASS_BODY()
 public:
@@ -13,8 +12,7 @@ public:
 	//Method called when the player wants to use the object which is currently hightlighted.
 	//This method will be overriden by each of the class' children
 	//////////////////////////////////////////////////////////////////////////////////////////////
-	UFUNCTION(BlueprintCallable, Category = "Monster")
-		virtual float TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser);
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser) override;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	//Return wether the AI is stunned
@@ -26,13 +24,19 @@ public:
 	//Stun the AI during a laps of time
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	UFUNCTION(BlueprintCallable, Category = "Monster")
-		virtual void Stun(bool _stun);
+		virtual void Stun();
+
+	//////////////////////////////////////////////////////////////////////////////////////////////
+	//Unstun the AI during a laps of time
+	//////////////////////////////////////////////////////////////////////////////////////////////
+	UFUNCTION(BlueprintCallable, Category = "Monster")
+		virtual void UnStun();
 
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	//Move the actor to a location
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	UFUNCTION(BlueprintCallable, Category = "Monster")
-		virtual EPathFollowingRequestResult::Type MoveToLocation(const FVector & Dest, float AcceptanceRadius, bool bStopOnOverlap, bool bUsePathfinding, bool bProjectDestinationToNavigation, bool bCanStrafe, TSubclassOf< class UNavigationQueryFilter > FilterClass);
+		virtual EPathFollowingRequestResult::Type MoveToLocation(const FVector & Dest);// const FVector & Dest, float AcceptanceRadius, bool bStopOnOverlap, bool bUsePathfinding, bool bProjectDestinationToNavigation, bool bCanStrafe, TSubclassOf< class UNavigationQueryFilter > FilterClass);
 
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	//Play a move sound when the Monster move
@@ -49,4 +53,6 @@ public:
 
 protected:
 	bool bIsStun; // whether the monster is stunned or not
+	float fStunTime; // the time the monster stay stunned
+
 };

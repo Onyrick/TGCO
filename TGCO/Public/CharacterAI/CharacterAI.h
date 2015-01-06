@@ -3,16 +3,14 @@
 #include "AIController.h"
 #include "CharacterAI.generated.h"
 
-UINTERFACE(Blueprintable, meta = (CannotImplementInterfaceInBlueprint))
-class UCharacterAI :
-	public UInterface
+UCLASS()
+class TGCO_API ACharacterAI : public ACharacter
 {
-	GENERATED_UINTERFACE_BODY()
-};
-
-class ICharacterAI{
-	GENERATED_IINTERFACE_BODY()
+	GENERATED_BODY()
 public:
+	//Constructors
+	ACharacterAI(const FObjectInitializer& PCIP);
+
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	// Function to get the AIController
 	//////////////////////////////////////////////////////////////////////////////////////////////
@@ -28,13 +26,13 @@ public:
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	//Event launch when the Character take damage
 	//////////////////////////////////////////////////////////////////////////////////////////////
-	UFUNCTION(BlueprintCallable, Category = "CharacterAI")
-		virtual float TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser) = 0;
+		virtual float TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser) override;
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	//Event launch when the Character is hit by another actor
 	//////////////////////////////////////////////////////////////////////////////////////////////
-	UFUNCTION(BlueprintCallable, Category = "CharacterAI")
-		virtual void ReceiveActorBeginOverlapAI(AActor* OtherActor);
+		virtual void ReceiveActorBeginOverlap(AActor* OtherActor) override;
 	
+	UPROPERTY(EditAnywhere, Category = "Static Meshes")
+		UStaticMeshComponent* StaticMesh;
 };
