@@ -87,5 +87,29 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+	/** Function called when the Player receive damage from Elements in the World. Decrease Player's Energy and activate Shield.
+	* @param DamageAmount How much damage to apply
+	* @param DamageEvent Datapackage that fully describes the damage received
+	* @param EventInvestigator The Controller responsible for the damage.
+	* @param DamageCauser The Actor that directly caused the damage
+	*
+	* @return The amount of damage actually applied
+	*/
+	virtual float TakeDamage(float fDamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser) override;
+
+private:
+
+	/** Activates the protection of the Character. When active the Character can't die but loose some energy.
+	* @param bActivate To active or deactivate the shield
+	*/
+	void ActiveShield(bool bActivate);
+
+	/** Play the shield animation when the Player is taking damage */
+	void PlayShieldAnimation();
+
+	/** Play the shield sound when the Player is taking damage */
+	void PlayShieldSound();
+
 };
 
