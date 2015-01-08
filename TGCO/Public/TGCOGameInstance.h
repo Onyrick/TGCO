@@ -42,18 +42,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Online")
 	bool HostGame(ULocalPlayer* LocalPlayer, const FString& InMapName);
 
-	/** Join a game create previously */
-	UFUNCTION(BlueprintCallable, Category = "Online")
-	void JoinGame();
-
 	/** Join a game session */
+	UFUNCTION(BlueprintCallable, Category = "Online")
 	bool JoinSession(ULocalPlayer* LocalPlayer, int32 SessionIndexInSearchResults);
-
-//	bool JoinSession(ULocalPlayer* LocalPlayer, const FOnlineSessionSearchResult& SearchResult);
-
-	/** Travel directly to the named session */
-//	UFUNCTION(BlueprintCallable, Category = "Online")
-//	void TravelToSession(const FName& SessionName);
 
 	/** Begin the server search */
 	UFUNCTION(BlueprintCallable, Category = "Online")
@@ -85,12 +76,6 @@ public:
 	* @param	NewState			Final state to go to when message is discarded
 	*/
 	void ShowMessageThenGotoState(const FString& Message, const FName& NewState);
-
-	/** Returns true if the game is in online mode */
-	bool GetIsOnline() const;
-
-	/** Sets the online mode of the game */
-	void SetIsOnline(bool bInIsOnline);
 
 	/** Shuts down the session, and frees any net driver */
 	UFUNCTION(BlueprintCallable, Category = "Online")
@@ -134,9 +119,15 @@ private:
 	void EndJoiningState();
 	void EndHostingState();
 
+	void AddNetworkTravelFailureHandlers();
 	void AddNetworkFailureHandlers();
+	void RemoveNetworkTravelFailureHandlers();
 	void RemoveNetworkFailureHandlers();
 	
+	
+	/** Called when there is a Network error */
+	void HandleNetworkFailure(UWorld *World, UNetDriver *NetDriver, ENetworkFailure::Type FailureType, const FString& ErrorString);
+
 	/** Called when there is an error trying to travel to a local session */
 	void TravelLocalSessionFailure(UWorld *World, ETravelFailure::Type FailureType, const FString& ErrorString);
 
@@ -163,9 +154,6 @@ private:
 	FName PendingState;
 
 	FString TravelURL;
-
-	/** Whether the party is online or not */
-	bool bIsOnline;
 
 	/** Delegate for callbacks to Tick */
 	FTickerDelegate TickDelegate;

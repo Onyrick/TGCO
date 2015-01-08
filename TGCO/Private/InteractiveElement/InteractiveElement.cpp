@@ -1,43 +1,82 @@
 #include "TGCO.h"
+#include "TGCOCharacter.h"
 #include "InteractiveElement.h"
 
-UInteractiveElement::UInteractiveElement(const class FObjectInitializer& PCIP) : Super(PCIP)
+AInteractiveElement::AInteractiveElement(const class FObjectInitializer& PCIP)
+	: Super(PCIP), bIsInteractive(true), bCloseEnough(false)
 {
+	TriggerBox = PCIP.CreateDefaultSubobject<UBoxComponent>(this, TEXT("BoxTrigger_InteractiveElement"));
+	TriggerBox->OnComponentBeginOverlap.AddDynamic(this, &AInteractiveElement::OnOverlapBegin);
+	TriggerBox->OnComponentEndOverlap.AddDynamic(this, &AInteractiveElement::OnOverlapEnd);
 
+	StaticMesh = PCIP.CreateDefaultSubobject < UStaticMeshComponent >(this, TEXT("StaticMesh_InteractiveElement"));
+
+	TriggerBox->AttachParent = StaticMesh;
+
+	RootComponent = StaticMesh;
 }
 
-void IInteractiveElement::OnInteract()
+void AInteractiveElement::OnInteract()
 {
-	unimplemented();
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(0, 2.f, FColor::Green, TEXT("ACTIVATED"));
+	}
 }
 
-void IInteractiveElement::Highlight(bool highlight)
+void AInteractiveElement::Highlight(bool highlight)
 {
 	//TODO
+	if (highlight)
+	{
+		/*if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(0, 2.f, FColor::White, TEXT("Je m'allume !!!"));
+		}*/
+	}
+	else
+	{
+		/*if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(0, 2.f, FColor::White, TEXT("Je m'eteins !!!"));
+		}*/
+	}
+	
 }
 
-bool IInteractiveElement::IsInteractive()
+bool AInteractiveElement::IsInteractive()
 {
-	
 	return bIsInteractive;
 }
 
-void IInteractiveElement::OnLookAt()
+void AInteractiveElement::OnLookAt()
 {
-	//TODO	
+	Highlight(bCloseEnough);
 }
 
-void IInteractiveElement::SetInteractive(bool interactive)
+void AInteractiveElement::SetInteractive(bool interactive)
 {
 	bIsInteractive = interactive;
 }
 
-void IInteractiveElement::OnComponentBeginOverlap()
+void AInteractiveElement::OnOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	//TODO
+	ATGCOCharacter* PlayerCharacter = Cast<ATGCOCharacter>(OtherActor);
+
+	if (PlayerCharacter != NULL)
+	{
+		PlayerCharacter->IncreaseNumberElement();
+		bCloseEnough = true;
+	}	
 }
 
-void IInteractiveElement::OnComponentEndOverlap()
+void AInteractiveElement::OnOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	//TODO
+	ATGCOCharacter* PlayerCharacter = Cast<ATGCOCharacter>(OtherActor);
+
+	if (PlayerCharacter != NULL)
+	{
+		PlayerCharacter->DecreaseNumberElement();
+		bCloseEnough = false;
+	}
 }

@@ -94,7 +94,7 @@ void UTGCOServerList::UpdateSearchStatus()
 
 void UTGCOServerList::Tick(float DeltaSeconds)
 {
-	if (bSearchingForServers)
+	if (bSearchingForServers == true)
 	{
 		UpdateSearchStatus();
 	}
@@ -115,6 +115,8 @@ void UTGCOServerList::BeginServerSearch(bool bLANMatch)
 
 void UTGCOServerList::OnServerSearchFinished()
 {
+
+	UE_LOG(LogOnline, Log, TEXT("Set SearchingServer to false"));
 	bSearchingForServers = false;
 	
 	UTGCOGameInstance* const GI = Cast<UTGCOGameInstance>(PlayerOwner->GetGameInstance());
@@ -131,7 +133,7 @@ void UTGCOServerList::UpdateServerList()
 	// To do
 }
 
-void UTGCOServerList::ConnectToServer(int32 ServerToJoin)
+void UTGCOServerList::ConnectToServer(int32 SessionIndex)
 {
 	if (bSearchingForServers)
 	{
@@ -141,7 +143,7 @@ void UTGCOServerList::ConnectToServer(int32 ServerToJoin)
 	UTGCOGameInstance* const GI = Cast<UTGCOGameInstance>(PlayerOwner->GetGameInstance());
 	if (GI)
 	{
-		GI->JoinSession(PlayerOwner.Get(), ServerToJoin);
+		GI->JoinSession(PlayerOwner.Get(), SessionIndex);
 	}
 }
 

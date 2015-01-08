@@ -17,12 +17,16 @@ void ATGCOGameState::AddEnergy(int32 iEnergyAmount)
 
 void ATGCOGameState::DecreaseEnergy(int32 iEnergyAmount)
 {
+
+	GEngine->AddOnScreenDebugMessage(-1, .5f, FColor::Red, FString::Printf(TEXT("Previous Energy : %f"), iEnergyAmount));
 	if (iEnergyAmount < 0)
 	{
 		iEnergyAmount = -iEnergyAmount;
 	}
 
 	iPlayersEnergy = FMath::Max(0, iPlayersEnergy - iEnergyAmount);
+
+	GEngine->AddOnScreenDebugMessage(-1, .5f, FColor::Red, FString::Printf(TEXT("Next Energy : %f"), iEnergyAmount));
 
 	if (!CheckRemainingEnergy())
 	{

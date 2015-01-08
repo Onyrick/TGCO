@@ -4,6 +4,10 @@
 #include "TGCOCharacter.h"
 #include "Projectile.h"
 #include "Engine.h"
+#include "TGCOGameState.h"
+
+#define COLLISION_HIGHLIGHT_TRACE ECC_GameTraceChannel1
+#define COLLISION_INTERACTIVE_TRACE ECC_GameTraceChannel2
 
 //////////////////////////////////////////////////////////////////////////
 // ATGCOCharacter
@@ -45,6 +49,9 @@ ATGCOCharacter::ATGCOCharacter(const FObjectInitializer& ObjectInitializer)
 
 	bShootMode = false;
 
+	PreviousInteractiveElement = NULL;
+	iNumberOfCloseInteractiveElement = 0;
+
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
 }
@@ -60,6 +67,7 @@ void ATGCOCharacter::SetupPlayerInputComponent(class UInputComponent* InputCompo
 	InputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 
 	InputComponent->BindAction("Fire", IE_Pressed, this, &ATGCOCharacter::OnFire);
+	InputComponent->BindAction("Use", IE_Pressed, this, &ATGCOCharacter::Use);
 
 	InputComponent->BindAxis("MoveForward", this, &ATGCOCharacter::MoveForward);
 	InputComponent->BindAxis("MoveRight", this, &ATGCOCharacter::MoveRight);
@@ -180,4 +188,128 @@ void ATGCOCharacter::OnFire()
 			*/
 		}
 	}
+}
+
+void ATGCOCharacter::Use()
+{
+	FHitResult OutHitResult;
+	FCollisionQueryParams Params(false);
+	
+	bool hasHit = GetWorld()->LineTraceSingle(OutHitResult, GetActorLocation(), 3000.f*GetActorForwardVector(), COLLISION_INTERACTIVE_TRACE, Params);
+
+	if (hasHit)
+	{
+		AInteractiveElement* ElementHit = Cast<AInteractiveElement>(OutHitResult.GetActor());
+		if (ElementHit != NULL)
+		{
+			if (ElementHit->IsInteractive())
+			{
+				ElementHit->OnInteract();
+			}
+		}					
+	}
+	else
+	{
+		//PlaySound "Nothing to Use"
+	}
+}
+
+void ATGCOCharacter::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	if (iNumberOfCloseInteractiveElement <= 0)
+		return;
+
+	FHitResult OutHitResult;
+	FCollisionQueryParams Params(false);
+
+	bool hasHit = GetWorld()->LineTraceSingle(OutHitResult, GetActorLocation(), 3000.f*GetActorForwardVector(), COLLISION_HIGHLIGHT_TRACE, Params);
+
+	if (hasHit)
+	{
+		AInteractiveElement* ElementHit = Cast<AInteractiveElement>(OutHitResult.GetActor());
+		if (PreviousInteractiveElement != NULL && PreviousInteractiveElement != ElementHit)
+		{
+			PreviousInteractiveElement->Highlight(false);
+			PreviousInteractiveElement = NULL;
+		}
+		if (ElementHit != NULL)
+		{
+			if (ElementHit->IsInteractive())
+			{
+				ElementHit->Highlight(true);
+				PreviousInteractiveElement = ElementHit;
+			}
+		}		
+	}
+	else
+	{
+		if (PreviousInteractiveElement != NULL)
+		{
+			PreviousInteractiveElement->Highlight(false);
+			PreviousInteractiveElement = NULL;
+		}		
+	}
+}
+
+void ATGCOCharacter::IncreaseNumberElement()
+{
+	iNumberOfCloseInteractiveElement++;
+}
+
+void ATGCOCharacter::DecreaseNumberElement()
+{
+	iNumberOfCloseInteractiveElement--;
+}
+
+float ATGCOCharacter::TakeDamage(float fDamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser)
+{
+	UWorld* const World = GetWorld();
+	if (World != NULL)
+	{
+		ATGCOGameState* GameState = Cast<ATGCOGameState>(World->GetGameState());
+		if (GameState != NULL)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, .5f, FColor::Red, TEXT("Take damage"));
+			// Active shield
+			ActiveShield(true);
+
+			// Decrease energy in the GameState
+			GameState->DecreaseEnergy(fDamageAmount);
+
+			return fDamageAmount;
+		}
+	}
+
+	return 0;
+}
+
+void ATGCOCharacter::ActiveShield(bool bActivate)
+{
+	if (bActivate)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, .5f, FColor::Red, TEXT("Active Shield"));
+		// Activate the shield
+		PlayShieldAnimation();
+		PlayShieldSound();
+	}
+	else
+	{
+		// Deactivate the shield
+		// Need to do something ?
+	}
+}
+
+void ATGCOCharacter::PlayShieldAnimation()
+{
+	// TO DO
+	GEngine->AddOnScreenDebugMessage(-1, .5f, FColor::Red, TEXT("TO DO : play activate shield animation"));
+}
+
+void ATGCOCharacter::PlayShieldSound()
+{
+	// TO DO
+	GEngine->AddOnScreenDebugMessage(-1, .5f, FColor::Red, TEXT("TO DO : play activate shield sound"));
+
 }

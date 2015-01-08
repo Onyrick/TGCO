@@ -1,17 +1,17 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
 #pragma once
 
+#include "GameFramework/Actor.h"
 #include "InteractiveElement.generated.h"
 
-UINTERFACE(Blueprintable, meta = (CannotImplementInterfaceInBlueprint))
-class UInteractiveElement :
-	public UInterface
+UCLASS()
+class TGCO_API AInteractiveElement : public AActor
 {
-	GENERATED_UINTERFACE_BODY()
-};
-
-class IInteractiveElement{
-	GENERATED_IINTERFACE_BODY()
+	GENERATED_BODY()
 public:
+	//Constructors
+	AInteractiveElement(const FObjectInitializer& PCIP);
 
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	//Method called when the player wants to use the object which is currently hightlighted.
@@ -50,16 +50,23 @@ public:
 	//for an element to be hightlighted it needs the player to look at it and that the player is close enough
 	// to use it.To know if the player is close enough it listens to the evenement OnComponentBeginOverlap
 	//////////////////////////////////////////////////////////////////////////////////////////////
-	UFUNCTION(BlueprintCallable, Category = "InteractiveElement")
-		virtual void OnComponentBeginOverlap();
-	
+	UFUNCTION()
+		virtual void OnOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
+
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	//When the player leaves the area where he can use an object, this interactive element receives
 	//	OnComponentEndOverlap so that it can stop the highlighting
 	//////////////////////////////////////////////////////////////////////////////////////////////
-	UFUNCTION(BlueprintCallable, Category = "InteractiveElement")
-		virtual void OnComponentEndOverlap();
+	UFUNCTION()
+		virtual void OnOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	UPROPERTY(EditAnywhere, Category = "Triggers")
+		UBoxComponent* TriggerBox;
+
+	UPROPERTY(EditAnywhere, Category = "Static Meshes")
+		UStaticMeshComponent* StaticMesh;
 
 protected:
 	bool bIsInteractive; //whether the element can be interacted with
+	bool bCloseEnough; //wether the player is close enough to the element to be able to interact with it
 };

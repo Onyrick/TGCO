@@ -46,31 +46,6 @@ void UTGCOGameInstance::Init()
 	FTicker::GetCoreTicker().AddTicker(TickDelegate);
 }
 
-void UTGCOGameInstance::SetIsOnline(bool bInIsOnline)
-{
-	bIsOnline = bInIsOnline;
-	IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get();
-
-	if (OnlineSub)
-	{
-		for (int32 i = 0; i < LocalPlayers.Num(); ++i)
-		{
-			ULocalPlayer* LocalPlayer = LocalPlayers[i];
-
-			TSharedPtr<FUniqueNetId> PlayerId = LocalPlayer->GetPreferredUniqueNetId();
-			if (PlayerId.IsValid())
-			{
-				OnlineSub->SetUsingMultiplayerFeatures(*PlayerId, bIsOnline);
-			}
-		}
-	}
-}
-
-bool UTGCOGameInstance::GetIsOnline() const
-{
-	return bIsOnline;
-}
-
 void UTGCOGameInstance::Shutdown()
 {
 	Super::Shutdown();
@@ -99,8 +74,6 @@ void UTGCOGameInstance::ShowMessageThenGotoState(const FString& Message, const F
 
 bool UTGCOGameInstance::HostGame(ULocalPlayer* LocalPlayer, const FString& InMapName)
 {
-	SetIsOnline(true);
-
 	ATGCOGameSession* const GameSession = GetGameSession();
 	if (GameSession)
 	{
@@ -110,7 +83,7 @@ bool UTGCOGameInstance::HostGame(ULocalPlayer* LocalPlayer, const FString& InMap
 		bool const bIsLanMatch = true;
 
 		// Create the TraverURL from the MapName
-		TravelURL = "/Game/Maps/" + InMapName;
+		TravelURL = "/Game/Maps/" + InMapName + "?listen";
 
 		UE_LOG(LogOnline, Log, TEXT("MapName : %s"), *InMapName);
 		UE_LOG(LogOnline, Log, TEXT("TravelURL : %s"), *TravelURL);
@@ -126,10 +99,6 @@ bool UTGCOGameInstance::HostGame(ULocalPlayer* LocalPlayer, const FString& InMap
 	}
 
 	return false;
-	/**
-	GotoState(TGCOGameInstanceState::Hosting);
-	return true;
-	*/
 }
 
 void UTGCOGameInstance::OnCreatePresenceSessionComplete(FName SessionName, bool bWasSuccessful)
@@ -155,12 +124,6 @@ void UTGCOGameInstance::FinishSessionCreation(EOnJoinSessionCompleteResult::Type
 	}
 }
 
-void UTGCOGameInstance::JoinGame()
-{
-	SetIsOnline(true);
-	GotoState(TGCOGameInstanceState::Joining);
-}
-
 void UTGCOGameInstance::BeginServerSearch(ULocalPlayer* PlayerOwner)
 {
 	if (ServerListObject == nullptr)
@@ -174,7 +137,6 @@ void UTGCOGameInstance::BeginServerSearch(ULocalPlayer* PlayerOwner)
 
 bool UTGCOGameInstance::FindSessions(ULocalPlayer* PlayerOwner, bool bFindLAN)
 {
-	SetIsOnline(true);
 	bool bResult = false;
 
 	check(PlayerOwner != nullptr);
@@ -212,11 +174,6 @@ void UTGCOGameInstance::OnServerSearchFinished()
 	{
 		TArray<FServerEntry> ServerList = ServerListObject->GetServerList();
 		int32 iNbServer = ServerList.Num();
-		if (iNbServer > 0)
-		{
-			ServerName = ServerList[0].ServerName;
-			//JoinSession(ServerListObject->GetPlayer().Get(), 0);
-		}
 
 		OnSearchCompleted.Broadcast(iNbServer);
 	}
@@ -232,7 +189,7 @@ bool UTGCOGameInstance::JoinSession(ULocalPlayer* LocalPlayer, int32 SessionInde
 	ATGCOGameSession* const GameSession = GetGameSession();
 	if (GameSession)
 	{
-		AddNetworkFailureHandlers();
+		AddNetworkTravelFailureHandlers();
 
 		GameSession->OnJoinSessionComplete().AddUObject(this, &UTGCOGameInstance::OnJoinSessionComplete);
 		if (GameSession->JoinSession(LocalPlayer->GetPreferredUniqueNetId(), GameSessionName, SessionIndexInSearchResults))
@@ -240,10 +197,8 @@ bool UTGCOGameInstance::JoinSession(ULocalPlayer* LocalPlayer, int32 SessionInde
 			// If any error occured in the above, pending state would be set
 			if ((PendingState == CurrentState) || (PendingState == TGCOGameInstanceState::None))
 			{
-				// Go ahead and go into loading state now
-				// If we fail, the delegate will handle showing the proper messaging and move to the correct state
-				// ShowLoadingScreen();
-				// GotoState(TGCOGameInstanceState::Playing);
+				UE_LOG(LogOnlineGame, Verbose, TEXT("Return true on join session"));
+				
 				return true;
 			}
 		}
@@ -282,11 +237,10 @@ void UTGCOGameInstance::FinishJoinSession(EOnJoinSessionCompleteResult::Type Res
 			break;
 		}
 
-		RemoveNetworkFailureHandlers();
+		RemoveNetworkTravelFailureHandlers();
 		ShowMessageThenGotoState(ReturnReason, TGCOGameInstanceState::MainMenu);
 		return;
 	}
-
 	InternalTravelToSession(GameSessionName);
 }
 
@@ -297,7 +251,7 @@ void UTGCOGameInstance::InternalTravelToSession(const FName& SessionName)
 	if (PlayerController == nullptr)
 	{
 		FString ReturnReason = NSLOCTEXT("NetworkErrors", "InvalidPlayerController", "Invalid Player Controller").ToString();
-		RemoveNetworkFailureHandlers();
+		RemoveNetworkTravelFailureHandlers();
 		ShowMessageThenGotoState(ReturnReason, TGCOGameInstanceState::MainMenu);
 		return;
 	}
@@ -308,7 +262,7 @@ void UTGCOGameInstance::InternalTravelToSession(const FName& SessionName)
 	if (OnlineSub == nullptr)
 	{
 		FString ReturnReason = NSLOCTEXT("NetworkErrors", "OSSMissing", "OSS missing").ToString();
-		RemoveNetworkFailureHandlers();
+		RemoveNetworkTravelFailureHandlers();
 		ShowMessageThenGotoState(ReturnReason, TGCOGameInstanceState::MainMenu);
 		return;
 	}
@@ -323,11 +277,33 @@ void UTGCOGameInstance::InternalTravelToSession(const FName& SessionName)
 		UE_LOG(LogOnlineGame, Warning, TEXT("Failed to travel to session upon joining it"));
 		return;
 	}
+		
+	ServerListObject = nullptr;
 
+	GotoState(TGCOGameInstanceState::Joining);
+	AddNetworkFailureHandlers();
 	PlayerController->ClientTravel(URL, TRAVEL_Absolute);
 }
 
 void UTGCOGameInstance::RemoveNetworkFailureHandlers()
+{
+	// Remove the local session/travel failure bindings if they exist
+	if (GEngine->OnNetworkFailure().IsBoundToObject(this) == true)
+	{
+		GEngine->OnNetworkFailure().RemoveUObject(this, &UTGCOGameInstance::HandleNetworkFailure);
+	}
+}
+
+void UTGCOGameInstance::AddNetworkFailureHandlers()
+{
+	// Add network/travel error handlers (if they are not already there)
+	if (GEngine->OnNetworkFailure().IsBoundToObject(this) == false)
+	{
+		GEngine->OnNetworkFailure().AddUObject(this, &UTGCOGameInstance::HandleNetworkFailure);
+	}
+}
+
+void UTGCOGameInstance::RemoveNetworkTravelFailureHandlers()
 {
 	// Remove the local session/travel failure bindings if they exist
 	if (GEngine->OnTravelFailure().IsBoundToObject(this) == true)
@@ -336,7 +312,7 @@ void UTGCOGameInstance::RemoveNetworkFailureHandlers()
 	}
 }
 
-void UTGCOGameInstance::AddNetworkFailureHandlers()
+void UTGCOGameInstance::AddNetworkTravelFailureHandlers()
 {
 	// Add network/travel error handlers (if they are not already there)
 	if (GEngine->OnTravelFailure().IsBoundToObject(this) == false)
@@ -345,11 +321,26 @@ void UTGCOGameInstance::AddNetworkFailureHandlers()
 	}
 }
 
+void UTGCOGameInstance::HandleNetworkFailure(UWorld *World, UNetDriver *NetDriver, ENetworkFailure::Type FailureType, const FString& ErrorString)
+{
+	APlayerController* const PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	if (PC != nullptr)
+	{
+		FString ReturnReason = NSLOCTEXT("NetworkErrors", "ConnectionLost", "Connection to server lost.").ToString();
+		if (ErrorString.IsEmpty() == false)
+		{
+			ReturnReason += " ";
+			ReturnReason += ErrorString;
+		}
+		RemoveNetworkTravelFailureHandlers();
+		ShowMessageThenGotoState(ReturnReason, TGCOGameInstanceState::MainMenu);
+	}
+}
+
 void UTGCOGameInstance::TravelLocalSessionFailure(UWorld *World, ETravelFailure::Type FailureType, const FString& ReasonString)
 {
-	/* TO DO
-	AShooterPlayerController_Menu* const FirstPC = Cast<AShooterPlayerController_Menu>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-	if (FirstPC != nullptr)
+	APlayerController* const PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	if (PC != nullptr)
 	{
 		FString ReturnReason = NSLOCTEXT("NetworkErrors", "JoinSessionFailed", "Join Session failed.").ToString();
 		if (ReasonString.IsEmpty() == false)
@@ -359,14 +350,13 @@ void UTGCOGameInstance::TravelLocalSessionFailure(UWorld *World, ETravelFailure:
 		}
 		ShowMessageThenGotoState(ReturnReason, TGCOGameInstanceState::MainMenu);
 	}
-	*/
 }
 
 bool UTGCOGameInstance::Tick(float DeltaSeconds)
 {
 	MaybeChangeState();
 
-	if (ServerListObject)
+	if (ServerListObject != nullptr)
 	{
 		ServerListObject->Tick(DeltaSeconds);
 	}
@@ -466,7 +456,10 @@ void UTGCOGameInstance::BeginNewState(FName NewState, FName PrevState)
 
 void UTGCOGameInstance::BeginMainMenuState()
 {
-	UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("/Game/Maps/MainMenuMap")), true, FString(TEXT("listen")));
+	UGameViewportClient* GVC = GEngine->GameViewport;
+	GVC->RemoveAllViewportWidgets();
+	//UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("/Game/Maps/MainMenuMap")), true, FString(TEXT("listen")));
+	UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("/Game/Maps/MainMenuMap")), true, FString());
 
 	// player 0 gets to own the UI
 	ULocalPlayer* const Player = GetFirstGamePlayer();
@@ -479,18 +472,22 @@ void UTGCOGameInstance::EndMainMenuState()
 
 void UTGCOGameInstance::BeginPlayingState()
 {
+	UGameViewportClient* GVC = GEngine->GameViewport;
+	GVC->RemoveAllViewportWidgets();
 	GetWorld()->ServerTravel(FString("/Game/Maps/Room1"));
 }
 
 void UTGCOGameInstance::EndPlayingState()
 {
-
+	// To Do Deconnect Player of the server
 }
 
 void UTGCOGameInstance::BeginHostingState()
 {
-	//GetWorld()->ServerTravel(FString("/Game/Maps/HostMap?listen"));
-	UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("/Game/Maps/HostMap")), true, FString(TEXT("listen")));
+	UGameViewportClient* GVC = GEngine->GameViewport;
+	GVC->RemoveAllViewportWidgets();
+	GetWorld()->ServerTravel(TravelURL);
+	//UGameplayStatics::OpenLevel(GetWorld(), FName(*TravelURL), true, FString(TEXT("listen")));
 	//UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("/Game/Maps/HostMap")), true);
 }
 
@@ -501,12 +498,13 @@ void UTGCOGameInstance::EndHostingState()
 
 void UTGCOGameInstance::BeginJoiningState()
 {
-	UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("/Game/Maps/HostMap")), true);
+	UGameViewportClient* GVC = GEngine->GameViewport;
+	GVC->RemoveAllViewportWidgets();
 }
 
 void UTGCOGameInstance::EndJoiningState()
 {
-
+	CleanupSessionOnReturnToMenu();
 }
 
 void UTGCOGameInstance::OnEndSessionComplete(FName SessionName, bool bWasSuccessful)
@@ -568,11 +566,6 @@ void UTGCOGameInstance::CleanupSessionOnReturnToMenu()
 			Sessions->AddOnStartSessionCompleteDelegate(OnEndSessionCompleteDelegate);
 			bPendingOnlineOp = true;
 		}
-	}
-
-	if (!bPendingOnlineOp)
-	{
-		//GEngine->HandleDisconnect( GetWorld(), GetWorld()->GetNetDriver() );
 	}
 }
 
