@@ -1,6 +1,7 @@
 // Copyright 1998-2014 Epic Games, Inc. All Rights Reserved.
 #pragma once
 #include "GameFramework/Character.h"
+#include "InteractiveElement.h"
 #include "TGCOCharacter.generated.h"
 
 UCLASS(config=Game)
@@ -47,6 +48,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	class UAnimMontage* FireAnimation;
 
+
 protected:
 
 	/** Called for forwards/backward input */
@@ -77,10 +79,18 @@ protected:
 	UFUNCTION()
 	void OnFire();
 
+public:
+	/** Handler for using */
+	UFUNCTION(BlueprintCallable, Category = "TGCOCharacter")
+	void Use();
+
 protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 	// End of APawn interface
+
+	//Tick
+	virtual void Tick(float DeltaSeconds) override;
 
 public:
 	/** Returns CameraBoom subobject **/
@@ -98,6 +108,9 @@ public:
 	*/
 	virtual float TakeDamage(float fDamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser) override;
 
+	void IncreaseNumberElement();
+	void DecreaseNumberElement();
+
 private:
 
 	/** Activates the protection of the Character. When active the Character can't die but loose some energy.
@@ -111,5 +124,7 @@ private:
 	/** Play the shield sound when the Player is taking damage */
 	void PlayShieldSound();
 
+	AInteractiveElement* PreviousInteractiveElement; //Previous element which was highlighted
+	int32 iNumberOfCloseInteractiveElement;
 };
 

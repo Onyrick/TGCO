@@ -21,4 +21,8 @@ void AConsoleTuto::SetUnlocked(bool _unlock)
 void AConsoleTuto::OnInteract()
 {
 		//TODO
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(0, 2.f, FColor::Green, TEXT("ACTIVATED CONSOLE"));
+	}
 }
