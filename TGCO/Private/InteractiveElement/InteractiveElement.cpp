@@ -14,38 +14,37 @@ AInteractiveElement::AInteractiveElement(const class FObjectInitializer& PCIP)
 	TriggerBox->AttachParent = StaticMesh;
 
 	RootComponent = StaticMesh;
-}
 
-void AInteractiveElement::OnInteract()
-{
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(0, 2.f, FColor::Green, TEXT("ACTIVATED"));
-	}
+	IsLookedAt = false;
 }
 
 void AInteractiveElement::Highlight(bool highlight)
 {
+	auto name = this->GetClass()->GetName();
+
 	//TODO
 	if (highlight)
 	{
-		/*if (GEngine)
+		if (GEngine)
 		{
-			GEngine->AddOnScreenDebugMessage(0, 2.f, FColor::White, TEXT("Je m'allume !!!"));
-		}*/
+			GEngine->AddOnScreenDebugMessage(0, 2.f, FColor::White, name + TEXT(" : Je m'allume !!!"));
+		}
+		IsLookedAt = true;
 	}
 	else
 	{
-		/*if (GEngine)
+		if (GEngine)
 		{
-			GEngine->AddOnScreenDebugMessage(0, 2.f, FColor::White, TEXT("Je m'eteins !!!"));
-		}*/
+			GEngine->AddOnScreenDebugMessage(0, 2.f, FColor::White, name + TEXT(" : Je m'eteins !!!"));
+		}
+		IsLookedAt = false;
 	}
-	
+
 }
 
 bool AInteractiveElement::IsInteractive()
 {
+	GEngine->AddOnScreenDebugMessage(0, 2.f, FColor::Green, TEXT("check if interactible"));		
 	return bIsInteractive;
 }
 
@@ -67,7 +66,7 @@ void AInteractiveElement::OnOverlapBegin(class AActor* OtherActor, class UPrimit
 	{
 		PlayerCharacter->IncreaseNumberElement();
 		bCloseEnough = true;
-	}	
+	}
 }
 
 void AInteractiveElement::OnOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)

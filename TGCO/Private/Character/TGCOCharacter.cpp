@@ -192,6 +192,7 @@ void ATGCOCharacter::OnFire()
 
 void ATGCOCharacter::Use()
 {
+	
 	FHitResult OutHitResult;
 	FCollisionQueryParams Params(false);
 	
@@ -200,10 +201,12 @@ void ATGCOCharacter::Use()
 	if (hasHit)
 	{
 		AInteractiveElement* ElementHit = Cast<AInteractiveElement>(OutHitResult.GetActor());
+		
 		if (ElementHit != NULL)
 		{
 			if (ElementHit->IsInteractive())
 			{
+				GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Green, ElementHit->GetActorClass()->GetName() + TEXT(" : call the oninteract"));
 				ElementHit->OnInteract();
 			}
 		}					
@@ -240,6 +243,10 @@ void ATGCOCharacter::Tick(float DeltaSeconds)
 			{
 				ElementHit->Highlight(true);
 				PreviousInteractiveElement = ElementHit;
+			}
+			else
+			{
+				GEngine->AddOnScreenDebugMessage(0, 2.f, FColor::Red, TEXT("Element is not yet interactible"));
 			}
 		}		
 	}

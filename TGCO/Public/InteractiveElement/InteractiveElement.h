@@ -17,8 +17,7 @@ public:
 	//Method called when the player wants to use the object which is currently hightlighted.
 	//This method will be overriden by each of the class' children
 	//////////////////////////////////////////////////////////////////////////////////////////////
-	UFUNCTION(BlueprintCallable, Category = "InteractiveElement")
-		virtual void OnInteract();
+	virtual bool OnInteract() PURE_VIRTUAL(AInteractiveElement::OnInteract, return false;);
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	//Method used to highlight the interactive element that the player is currently looking at.
@@ -65,6 +64,9 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Static Meshes")
 		UStaticMeshComponent* StaticMesh;
+	
+	UPROPERTY(EditAnywhere, Category = "bool")
+		bool IsLookedAt;
 
 protected:
 	bool bIsInteractive; //whether the element can be interacted with
