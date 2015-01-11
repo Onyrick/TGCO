@@ -2,34 +2,33 @@
 
 #pragma once
 
-#include "GameFramework/Actor.h"
 #include "Trigerrable.h"
+#include "TGCOCharacter.h"
 #include "Elevator.generated.h"
 
 /**
- * 
- */
+*
+*/
 UCLASS()
-class TGCO_API AElevator : public AActor, public ITrigerrable
+class TGCO_API AElevator : public ATrigerrable
 {
-	GENERATED_BODY()
+	GENERATED_UCLASS_BODY()
+
 public:
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	//Event launch when Player trigger the component.
 	// Set the Player inside the AElevator
 	//////////////////////////////////////////////////////////////////////////////////////////////
-	UFUNCTION(BlueprintCallable, Category = "Elevator")
-		virtual void OnComponentBeginOverlap();
+		virtual void OnOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult) override;
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	//Event launch when Player trigger the component.
 	// Set the Player outside the AElevator
 	//////////////////////////////////////////////////////////////////////////////////////////////
-	UFUNCTION(BlueprintCallable, Category = "Elevator")
-		virtual void OnComponentEndOverlap();
+		virtual void OnOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex) override;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////
-	//Check if both Player are in AElevator to change Level
+	//Get and Set if both Player are in AElevator to change Level
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	bool CheckPlayersPresence();
 
@@ -59,6 +58,6 @@ public:
 	void CloseBackDoors();
 
 protected:
-	bool bIsPlayerInside;
+	//bool bIsPlayerInside; //Whether the Player is in the Elevator
 	
 };

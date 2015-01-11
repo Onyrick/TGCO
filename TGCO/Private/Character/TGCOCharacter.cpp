@@ -313,3 +313,13 @@ void ATGCOCharacter::PlayShieldSound()
 	GEngine->AddOnScreenDebugMessage(-1, .5f, FColor::Red, TEXT("TO DO : play activate shield sound"));
 
 }
+
+bool ATGCOCharacter::IsInsideElevator()
+{
+	return bIsInsideElevator;
+}
+
+void SetInsideElevator()
+{
+	bIsInsideElevator = !bIsInsideElevator;
+}

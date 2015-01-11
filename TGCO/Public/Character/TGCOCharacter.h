@@ -111,6 +111,9 @@ public:
 	void IncreaseNumberElement();
 	void DecreaseNumberElement();
 
+	bool IsInsideElevator();
+	void SetInsideElevator();
+
 private:
 
 	/** Activates the protection of the Character. When active the Character can't die but loose some energy.
@@ -126,5 +129,6 @@ private:
 
 	AInteractiveElement* PreviousInteractiveElement; //Previous element which was highlighted
 	int32 iNumberOfCloseInteractiveElement;
+	bool bIsInsideElevator;
 };
 
