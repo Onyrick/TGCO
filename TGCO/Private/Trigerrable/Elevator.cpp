@@ -3,19 +3,19 @@
 #include "TGCO.h"
 #include "Elevator.h"
 
+
+//AElevator
 AElevator::AElevator(const class FObjectInitializer& PCIP) : Super(PCIP)
 {
-
+	FrontDoors = PCIP.CreateDefaultSubobject < UStaticMeshComponent >(this, TEXT("StaticMesh_FrontDoors"));
+	BackDoors = PCIP.CreateDefaultSubobject < UStaticMeshComponent >(this, TEXT("StaticMesh_BackDoors"));
 }
 
 void AElevator::OnOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
-	//TODO: Check if the second player is near the doors, then open the doors
 	if (GEngine)
 	{
 		//Change the bIsInsideElevator to True for the player which overlap the elevator.
-		GEngine->AddOnScreenDebugMessage(0, 2.f, FColor::White, TEXT("Open the front doors"));
-
 		ATGCOCharacter* Player = Cast<ATGCOCharacter>(OtherActor);
 		if (Player != NULL)
 		{
@@ -23,10 +23,10 @@ void AElevator::OnOverlapBegin(class AActor* OtherActor, class UPrimitiveCompone
 			FString res = Player->IsInsideElevator() ? TEXT("Player is inside: true") : TEXT("Player is inside: false");
 			GEngine->AddOnScreenDebugMessage(0, 2.f, FColor::White, res);
 
-			if (CheckPlayersPresence())
+			/*if (CheckPlayersPresence())
 			{
 				GEngine->AddOnScreenDebugMessage(0, 2.f, FColor::White, TEXT("Cloose the front doors"));
-			}
+			}*/
 		}
 		
 
@@ -39,8 +39,6 @@ void AElevator::OnOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent
 	if (GEngine)
 	{
 		//Change the bIsInsideElevator to False for the player which overlap the elevator.
-		GEngine->AddOnScreenDebugMessage(0, 2.f, FColor::White, TEXT("Cloose the back doors"));
-
 		ATGCOCharacter* Player = Cast<ATGCOCharacter>(OtherActor);
 		if (Player != NULL)
 		{
@@ -51,18 +49,12 @@ void AElevator::OnOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent
 	}
 }
 
-bool AElevator::CheckPlayersPresence()
+UStaticMeshComponent* AElevator::GetFrontDoors()
 {
-	for (TActorIterator<ATGCOCharacter> ActorItr(GetWorld()); ActorItr; ++ActorItr)
-	{
-		ATGCOCharacter* Player = Cast<ATGCOCharacter>(*ActorItr);
-		if (Player->IsInsideElevator() == false)
-		{
-			return false;
-		}
-	}
-	return true;
+	return FrontDoors;
 }
 
-
-
+UStaticMeshComponent* AElevator::GetBackDoors()
+{
+	return BackDoors;
+}
