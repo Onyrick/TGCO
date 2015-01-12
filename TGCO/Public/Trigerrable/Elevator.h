@@ -6,6 +6,8 @@
 #include "TGCOCharacter.h"
 #include "Elevator.generated.h"
 
+
+
 /**
 *
 */
@@ -59,5 +61,6 @@ public:
 
 protected:
 	//bool bIsPlayerInside; //Whether the Player is in the Elevator
+	AElevator* TimeClone; //Clone of the elevator in past or futur
 	
 };

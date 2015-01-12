@@ -319,7 +319,7 @@ bool ATGCOCharacter::IsInsideElevator()
 	return bIsInsideElevator;
 }
 
-void SetInsideElevator()
+void ATGCOCharacter::SetInsideElevator()
 {
 	bIsInsideElevator = !bIsInsideElevator;
 }

@@ -13,14 +13,23 @@ void AElevator::OnOverlapBegin(class AActor* OtherActor, class UPrimitiveCompone
 	//TODO: Check if the second player is near the doors, then open the doors
 	if (GEngine)
 	{
-		GEngine->AddOnScreenDebugMessage(0, 10.0f, FColor::White, TEXT("Begin Overlap Energy"));
 		//Change the bIsInsideElevator to True for the player which overlap the elevator.
-		for (TActorIterator<AActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+		GEngine->AddOnScreenDebugMessage(0, 2.f, FColor::White, TEXT("Open the front doors"));
+
+		ATGCOCharacter* Player = Cast<ATGCOCharacter>(OtherActor);
+		if (Player != NULL)
 		{
-			ATGCOCharacter* Player = Cast<ATGCOCharacter>(*ActorItr);
 			Player->SetInsideElevator();
-			
+			FString res = Player->IsInsideElevator() ? TEXT("Player is inside: true") : TEXT("Player is inside: false");
+			GEngine->AddOnScreenDebugMessage(0, 2.f, FColor::White, res);
+
+			if (CheckPlayersPresence())
+			{
+				GEngine->AddOnScreenDebugMessage(0, 2.f, FColor::White, TEXT("Cloose the front doors"));
+			}
 		}
+		
+
 	}
 }
 
@@ -29,20 +38,22 @@ void AElevator::OnOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent
 	//TODO: Close the back doors
 	if (GEngine)
 	{
-		GEngine->AddOnScreenDebugMessage(0, 10.0f, FColor::White, TEXT("End Overlap Energy"));
 		//Change the bIsInsideElevator to False for the player which overlap the elevator.
-		for (TActorIterator<AActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
-		{
-			ATGCOCharacter* Player = Cast<ATGCOCharacter>(*ActorItr);
-			Player->SetInsideElevator();
+		GEngine->AddOnScreenDebugMessage(0, 2.f, FColor::White, TEXT("Cloose the back doors"));
 
+		ATGCOCharacter* Player = Cast<ATGCOCharacter>(OtherActor);
+		if (Player != NULL)
+		{
+			Player->SetInsideElevator();
+			FString res = Player->IsInsideElevator() ? TEXT("Player is inside: true") : TEXT("Player is inside: false");
+			GEngine->AddOnScreenDebugMessage(0, 2.f, FColor::White, res);
 		}
 	}
 }
 
 bool AElevator::CheckPlayersPresence()
 {
-	for (TActorIterator<AActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+	for (TActorIterator<ATGCOCharacter> ActorItr(GetWorld()); ActorItr; ++ActorItr)
 	{
 		ATGCOCharacter* Player = Cast<ATGCOCharacter>(*ActorItr);
 		if (Player->IsInsideElevator() == false)
