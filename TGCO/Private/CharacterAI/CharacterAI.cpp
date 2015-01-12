@@ -1,4 +1,5 @@
 #include "TGCO.h"
+#include "ControllerAI.h"
 #include "CharacterAI.h"
 
 ACharacterAI::ACharacterAI(const class FObjectInitializer& PCIP) : Super(PCIP)
@@ -7,12 +8,14 @@ ACharacterAI::ACharacterAI(const class FObjectInitializer& PCIP) : Super(PCIP)
 
 	StaticMesh->bGenerateOverlapEvents = true;
 	StaticMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
-	RootComponent = StaticMesh;
+
+	AIControllerClass = AControllerAI::StaticClass();
+
 }
 
-AAIController* ACharacterAI::GetAIController()
+AControllerAI* ACharacterAI::GetAIController()
 {
-	return Cast<AAIController>(GetController());
+	return Cast<AControllerAI>(GetController());
 }
 
 void ACharacterAI::Destroy()
@@ -35,4 +38,11 @@ void ACharacterAI::ReceiveActorBeginOverlap(AActor* OtherActor)
 	{
 		GEngine->AddOnScreenDebugMessage(0, 10.0f, FColor::White, TEXT("Receive Actor Begin Overlap"));
 	}
+}
+
+void ACharacterAI::FaceRotation(FRotator NewRotation, float DeltaTime)
+{
+	FRotator CurrentRotation = FMath::RInterpTo(GetActorRotation(), NewRotation, DeltaTime, 8.0f);
+
+	Super::FaceRotation(CurrentRotation, DeltaTime);
 }

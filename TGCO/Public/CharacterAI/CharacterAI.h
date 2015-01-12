@@ -1,6 +1,6 @@
 #pragma once
 
-#include "AIController.h"
+#include "ControllerAI.h"
 #include "CharacterAI.generated.h"
 
 UCLASS()
@@ -15,7 +15,7 @@ public:
 	// Function to get the AIController
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	UFUNCTION(BlueprintCallable, Category = "CharacterAI")
-		virtual AAIController* GetAIController();
+		virtual AControllerAI* GetAIController();
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	//Event launch when the Character has to be destroyed
@@ -32,7 +32,12 @@ public:
 	//Event launch when the Character is hit by another actor
 	//////////////////////////////////////////////////////////////////////////////////////////////
 		virtual void ReceiveActorBeginOverlap(AActor* OtherActor) override;
-	
+
 	UPROPERTY(EditAnywhere, Category = "Static Meshes")
 		UStaticMeshComponent* StaticMesh;
+
+	UPROPERTY(EditAnywhere, Category = Behavior)
+	class UBehaviorTree* BotBehavior;
+
+	virtual void FaceRotation(FRotator NewRotation, float DeltaTime = 0.f) override;
 };
