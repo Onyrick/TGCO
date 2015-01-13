@@ -3,7 +3,9 @@
 #include "TGCO.h"
 #include "Monster.h"
 
-AMonster::AMonster(const class FObjectInitializer& PCIP) : Super(PCIP), fStunTime(1.f)
+AMonster::AMonster(const class FObjectInitializer& PCIP)
+: Super(PCIP)
+, fStunTime(1.f)
 {
 	AIControllerClass = AAIController::StaticClass();
 }
@@ -26,11 +28,7 @@ void AMonster::Stun()
 
 	// Stop MoveToLocation
 	GetAIController()->PauseMove(GetAIController()->GetCurrentMoveRequestID());
-
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(0, 10.0f, FColor::White, TEXT("Stun : Stop MoveTo"));
-	}
+	UE_LOG(LogDebug, Warning, TEXT("Stun : Stop MoveTo"));
 }
 
 void AMonster::UnStun()
@@ -38,11 +36,7 @@ void AMonster::UnStun()
 	bIsStun = false;
 	// Resume MoveToLocation
 	GetAIController()->ResumeMove(GetAIController()->GetCurrentMoveRequestID());
-
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(0, 10.0f, FColor::White, TEXT("UnStun : Resume MoveTo"));
-	}
+	UE_LOG(LogDebug, Warning, TEXT("Unstun : Resume MoveTo"));
 }
 
 EPathFollowingRequestResult::Type AMonster::MoveToLocation(const FVector & Dest)//const FVector & Dest, float AcceptanceRadius, bool bStopOnOverlap, bool bUsePathfinding, bool bProjectDestinationToNavigation, bool bCanStrafe, TSubclassOf< class UNavigationQueryFilter > FilterClass)

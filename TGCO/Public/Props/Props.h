@@ -1,4 +1,4 @@
-
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -6,7 +6,7 @@
 #include "Props.generated.h"
 
 /**
- * 
+ * TODO
  */
 UCLASS()
 class TGCO_API AProps : public AActor
@@ -14,14 +14,17 @@ class TGCO_API AProps : public AActor
 	GENERATED_BODY()
 	
 public:
-	//Constructors
+	/** Constructors */
 	AProps(const FObjectInitializer& PCIP);
 
 	//UPROPERTY(EditAnywhere, Category = "Triggers")
-	//	UBoxComponent* TriggerBox;
-
-	UPROPERTY(EditAnywhere, Category = "PropsComponents")
-		UStaticMeshComponent* StaticMeshProps;
+	//UBoxComponent* TriggerBox;
 	
+	/** TODO */
 	virtual UStaticMeshComponent* getStaticMesh();
+
+public: 
+	/** TODO */
+	UPROPERTY(EditAnywhere, Category = "PropsComponents")
+	UStaticMeshComponent* StaticMeshProps;
 };

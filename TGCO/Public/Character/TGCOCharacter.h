@@ -4,12 +4,15 @@
 #include "InteractiveElement.h"
 #include "TGCOCharacter.generated.h"
 
+/**
+ *	Represent a Character for Player
+ */
 UCLASS(config=Game)
 class ATGCOCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
-	/** Pawn mesh: 1st person view (arms; seen only by self) */
+	/** Pawn mesh: 1st person view (seen only by self) */
 	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
 	class USkeletalMeshComponent* Mesh1P;
 	
@@ -47,10 +50,8 @@ public:
 	/** AnimMontage to play each time we fire */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	class UAnimMontage* FireAnimation;
-
-
+	
 protected:
-
 	/** Called for forwards/backward input */
 	void MoveForward(float Value);
 
@@ -86,41 +87,41 @@ protected:
 	void OnFire();
 
 public:
-	/** Handler for using */
+	/** Handler for using an InteractiveElement of the World */
 	UFUNCTION(BlueprintCallable, Category = "TGCOCharacter")
 	void Use();
 
 protected:
-	// APawn interface
+	/** APawn interface */
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
-	// End of APawn interface
+	/** End of APawn interface */
 
-	//Tick
+	/** Tick function */
 	virtual void Tick(float DeltaSeconds) override;
 
 public:
-
 	/** Returns FirstPersonCameraComponent subobject **/
 	FORCEINLINE class UCameraComponent* GetFirstPersonCamera() const { return FirstPersonCameraComponent; }
 
 	/** Function called when the Player receive damage from Elements in the World. Decrease Player's Energy and activate Shield.
-	* @param DamageAmount How much damage to apply
-	* @param DamageEvent Datapackage that fully describes the damage received
-	* @param EventInvestigator The Controller responsible for the damage.
-	* @param DamageCauser The Actor that directly caused the damage
-	*
-	* @return The amount of damage actually applied
-	*/
+	 * @param DamageAmount How much damage to apply
+	 * @param DamageEvent Datapackage that fully describes the damage received
+	 * @param EventInvestigator The Controller responsible for the damage.
+	 * @param DamageCauser The Actor that directly caused the damage
+	 *
+	 * @return The amount of damage actually applied
+	 */
 	virtual float TakeDamage(float fDamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser) override;
 
-	void IncreaseNumberElement();
-	void DecreaseNumberElement();
+	/** Increase the iNumberOfCloseInteractiveElement */
+	void IncreaseNumberOfCloseInteractiveElement();
+	/** Decrease the iNumberOfCloseInteractiveElement */
+	void DecreaseNumberOfCloseInteractiveElement();
 
 private:
-
 	/** Activates the protection of the Character. When active the Character can't die but loose some energy.
-	* @param bActivate To active or deactivate the shield
-	*/
+	 * @param bActivate To active or deactivate the shield
+	 */
 	void ActiveShield(bool bActivate);
 
 	/** Play the shield animation when the Player is taking damage */
@@ -129,7 +130,13 @@ private:
 	/** Play the shield sound when the Player is taking damage */
 	void PlayShieldSound();
 
-	AInteractiveElement* PreviousInteractiveElement; //Previous element which was highlighted
+	/** Highlight the InteractiveElement that the Character look */
+	void HightlightCloseInteractiveElement();
+
+private:
+	/** Previous element which was highlighted */
+	AInteractiveElement* PreviousInteractiveElement;
+	/** Number of InteractiveElement that the Player can use in their perimeter */
 	int32 iNumberOfCloseInteractiveElement;
 };
 

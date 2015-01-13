@@ -5,4 +5,9 @@
 
 #include "Engine.h"
 
+//Test Log
+DECLARE_LOG_CATEGORY_EXTERN(LogTest, Log, All);
+//Debug Log
+DECLARE_LOG_CATEGORY_EXTERN(LogDebug, Log, All);
+
 #endif

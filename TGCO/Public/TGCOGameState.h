@@ -6,7 +6,7 @@
 #include "TGCOGameState.generated.h"
 
 /**
- * 
+ * TODO
  */
 UCLASS()
 class TGCO_API ATGCOGameState : public AGameState

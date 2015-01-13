@@ -20,10 +20,7 @@ void AConsoleTuto::SetUnlocked(bool _unlock)
 
 bool AConsoleTuto::OnInteract()
 {
-		//TODO
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(0, 2.f, FColor::Green, TEXT("ACTIVATED CONSOLE"));
-	}
+	//TODO
+	UE_LOG(LogTest, Warning, TEXT("Console activate"));
 	return true;
 }

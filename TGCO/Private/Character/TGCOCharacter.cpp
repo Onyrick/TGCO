@@ -13,7 +13,7 @@
 // ATGCOCharacter
 
 ATGCOCharacter::ATGCOCharacter(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+: Super(ObjectInitializer)
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -128,8 +128,7 @@ void ATGCOCharacter::MoveForward(float Value)
 {
 	if ((Controller != NULL) && (Value != 0.0f))
 	{
-
-		// add movement in that direction
+				// add movement in that direction
 		AddMovementInput(GetActorForwardVector(), Value);
 	}
 }
@@ -151,11 +150,6 @@ void ATGCOCharacter::OnFire()
 		// try and fire a projectile
 		if (ProjectileClass != NULL)
 		{
-			if (GEngine)
-			{
-				GEngine->AddOnScreenDebugMessage(-1, .5f, FColor::Red, TEXT("Shoot"));
-			}
-
 			const FRotator SpawnRotation = GetControlRotation();
 			// MuzzleOffset is in camera space, so transform it to world space before offsetting from the character location to find the final muzzle position
 			const FVector SpawnLocation = GetActorLocation() + SpawnRotation.RotateVector(GunOffset);
@@ -182,7 +176,7 @@ void ATGCOCharacter::OnFire()
 			UAnimInstance* AnimInstance = Mesh1P->GetAnimInstance();
 			if (AnimInstance != NULL)
 			{
-			AnimInstance->Montage_Play(FireAnimation, 1.f);
+				AnimInstance->Montage_Play(FireAnimation, 1.f);
 			}
 			*/
 		}
@@ -191,28 +185,30 @@ void ATGCOCharacter::OnFire()
 
 void ATGCOCharacter::Use()
 {
-	
 	FHitResult OutHitResult;
 	FCollisionQueryParams Params(false);
 	
+	// If raytracer hit an Actor
 	bool hasHit = GetWorld()->LineTraceSingle(OutHitResult, GetActorLocation(), 3000.f*GetActorForwardVector(), COLLISION_INTERACTIVE_TRACE, Params);
 
 	if (hasHit)
 	{
+		// Get the hitting element as an InteractiveElement
 		AInteractiveElement* ElementHit = Cast<AInteractiveElement>(OutHitResult.GetActor());
 		
 		if (ElementHit != NULL)
 		{
+			// If element is active
 			if (ElementHit->IsInteractive())
 			{
-				GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Green, ElementHit->GetActorClass()->GetName() + TEXT(" : call the oninteract"));
+				UE_LOG(LogDebug, Warning, TEXT("%s : call the oninteract"), *ElementHit->GetActorClass()->GetName());
 				ElementHit->OnInteract();
 			}
 		}					
 	}
 	else
 	{
-		//PlaySound "Nothing to Use"
+		//TODO : PlaySound "Nothing to Use"
 	}
 }
 
@@ -221,8 +217,25 @@ void ATGCOCharacter::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 
 	if (iNumberOfCloseInteractiveElement <= 0)
+	{
 		return;
+	}
+	
+	HightlightCloseInteractiveElement();
+}
 
+void ATGCOCharacter::IncreaseNumberOfCloseInteractiveElement()
+{
+	iNumberOfCloseInteractiveElement++;
+}
+
+void ATGCOCharacter::DecreaseNumberOfCloseInteractiveElement()
+{
+	iNumberOfCloseInteractiveElement--;
+}
+
+void ATGCOCharacter::HightlightCloseInteractiveElement()
+{
 	FHitResult OutHitResult;
 	FCollisionQueryParams Params(false);
 
@@ -245,9 +258,9 @@ void ATGCOCharacter::Tick(float DeltaSeconds)
 			}
 			else
 			{
-				GEngine->AddOnScreenDebugMessage(0, 2.f, FColor::Red, TEXT("Element is not yet interactible"));
+				UE_LOG(LogDebug, Warning, TEXT("Element is not yet interactible"));
 			}
-		}		
+		}
 	}
 	else
 	{
@@ -255,18 +268,8 @@ void ATGCOCharacter::Tick(float DeltaSeconds)
 		{
 			PreviousInteractiveElement->Highlight(false);
 			PreviousInteractiveElement = NULL;
-		}		
+		}
 	}
-}
-
-void ATGCOCharacter::IncreaseNumberElement()
-{
-	iNumberOfCloseInteractiveElement++;
-}
-
-void ATGCOCharacter::DecreaseNumberElement()
-{
-	iNumberOfCloseInteractiveElement--;
 }
 
 float ATGCOCharacter::TakeDamage(float fDamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser)
@@ -277,7 +280,7 @@ float ATGCOCharacter::TakeDamage(float fDamageAmount, struct FDamageEvent const 
 		ATGCOGameState* GameState = Cast<ATGCOGameState>(World->GetGameState());
 		if (GameState != NULL)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, .5f, FColor::Red, TEXT("Take damage"));
+			UE_LOG(LogDebug, Warning, TEXT("Player take damage"));
 			// Active shield
 			ActiveShield(true);
 
@@ -295,27 +298,26 @@ void ATGCOCharacter::ActiveShield(bool bActivate)
 {
 	if (bActivate)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, .5f, FColor::Red, TEXT("Active Shield"));
+		UE_LOG(LogDebug, Warning, TEXT("Active Shield"));
 		// Activate the shield
 		PlayShieldAnimation();
 		PlayShieldSound();
 	}
 	else
 	{
-		// Deactivate the shield
+		// TODO : Deactivate the shield
 		// Need to do something ?
 	}
 }
 
 void ATGCOCharacter::PlayShieldAnimation()
 {
-	// TO DO
-	GEngine->AddOnScreenDebugMessage(-1, .5f, FColor::Red, TEXT("TO DO : play activate shield animation"));
+	// TODO
+	UE_LOG(LogDebug, Warning, TEXT("TO DO : play activate shield animation"));
 }
 
 void ATGCOCharacter::PlayShieldSound()
 {
-	// TO DO
-	GEngine->AddOnScreenDebugMessage(-1, .5f, FColor::Red, TEXT("TO DO : play activate shield sound"));
-
+	// TODO
+	UE_LOG(LogDebug, Warning, TEXT("TO DO : play activate shield sound"));
 }
