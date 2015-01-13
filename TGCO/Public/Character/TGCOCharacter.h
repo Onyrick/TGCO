@@ -75,6 +75,12 @@ protected:
 	/** Handler for when a touch input stops. */
 	void TouchStopped(ETouchIndex::Type FingerIndex, FVector Location);
 
+	/** Called to augment max speed and allow player to run */
+	void Run();
+
+	/** Called to decrease max speed and disabled player to run */
+	void StopRunning();
+
 	/** Handler for firing */
 	UFUNCTION()
 	void OnFire();
