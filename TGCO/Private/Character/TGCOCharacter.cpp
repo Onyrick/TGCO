@@ -27,6 +27,7 @@ ATGCOCharacter::ATGCOCharacter(const FObjectInitializer& ObjectInitializer)
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f); // ...at this rotation rate
 	GetCharacterMovement()->JumpZVelocity = 600.f;
 	GetCharacterMovement()->AirControl = 0.2f;
+	GetCharacterMovement()->MaxWalkSpeed = 200;
 
 	// Create a CameraComponent	
 	FirstPersonCameraComponent = ObjectInitializer.CreateDefaultSubobject<UCameraComponent>(this, TEXT("FirstPersonCamera"));
@@ -64,6 +65,9 @@ void ATGCOCharacter::SetupPlayerInputComponent(class UInputComponent* InputCompo
 	InputComponent->BindAction("Fire", IE_Pressed, this, &ATGCOCharacter::OnFire);
 	InputComponent->BindAction("Use", IE_Pressed, this, &ATGCOCharacter::Use);
 
+	InputComponent->BindAction("Run", IE_Pressed, this, &ATGCOCharacter::Run);
+	InputComponent->BindAction("Run", IE_Released, this, &ATGCOCharacter::StopRunning);
+
 	InputComponent->BindAxis("MoveForward", this, &ATGCOCharacter::MoveForward);
 	InputComponent->BindAxis("MoveRight", this, &ATGCOCharacter::MoveRight);
 
@@ -96,6 +100,16 @@ void ATGCOCharacter::TouchStopped(ETouchIndex::Type FingerIndex, FVector Locatio
 	{
 		StopJumping();
 	}
+}
+
+void ATGCOCharacter::Run()
+{
+	GetCharacterMovement()->MaxWalkSpeed = 500;
+}
+
+void ATGCOCharacter::StopRunning()
+{
+	GetCharacterMovement()->MaxWalkSpeed = 200;
 }
 
 void ATGCOCharacter::TurnAtRate(float Rate)
