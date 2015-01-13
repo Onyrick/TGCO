@@ -38,6 +38,16 @@ public:
 	*/
 		UStaticMeshComponent* GetBackDoors();
 
+		/**
+		*Check if both Player are in their own AElevator to change Level
+		*/
+		bool CheckPlayersPresence();
+
+		/**
+		*Close the AElevator's doors when both Players are inside
+		*/
+		void CloseFrontDoors();
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Meshes)
 	UStaticMeshComponent* FrontDoors;
 

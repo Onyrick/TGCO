@@ -23,10 +23,14 @@ void AElevator::OnOverlapBegin(class AActor* OtherActor, class UPrimitiveCompone
 			FString res = Player->IsInsideElevator() ? TEXT("Player is inside: true") : TEXT("Player is inside: false");
 			GEngine->AddOnScreenDebugMessage(0, 2.f, FColor::White, res);
 
-			/*if (CheckPlayersPresence())
+			if (CheckPlayersPresence())
 			{
-				GEngine->AddOnScreenDebugMessage(0, 2.f, FColor::White, TEXT("Cloose the front doors"));
-			}*/
+				CloseFrontDoors();
+			}
+			else
+			{
+				GEngine->AddOnScreenDebugMessage(0, 2.f, FColor::White, TEXT("All players aren't in the elevator"));
+			}
 		}
 		
 
@@ -57,4 +61,26 @@ UStaticMeshComponent* AElevator::GetFrontDoors()
 UStaticMeshComponent* AElevator::GetBackDoors()
 {
 	return BackDoors;
+}
+
+
+bool AElevator::CheckPlayersPresence()
+{
+	for (TActorIterator<ATGCOCharacter> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+	{
+		ATGCOCharacter* Player = Cast<ATGCOCharacter>(*ActorItr);
+		if (Player->IsInsideElevator() == false)
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+void AElevator::CloseFrontDoors()
+{
+	FVector Offset = GetFrontDoors()->GetComponentLocation();
+	Offset.Y -= 200.f;
+	GetFrontDoors()->SetWorldLocation(Offset);
+	GEngine->AddOnScreenDebugMessage(0, 2.f, FColor::White, TEXT("Cloose the front doors"));
 }
