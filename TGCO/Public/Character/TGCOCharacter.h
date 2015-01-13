@@ -9,13 +9,13 @@ class ATGCOCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
-	/** Camera boom positioning the camera behind the character */
+	/** Pawn mesh: 1st person view (arms; seen only by self) */
+	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
+	class USkeletalMeshComponent* Mesh1P;
+	
+	/** First person camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class USpringArmComponent* CameraBoom;
-
-	/** Follow camera */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class UCameraComponent* FollowCamera;
+	class UCameraComponent* FirstPersonCameraComponent;
 
 public:
 	ATGCOCharacter(const FObjectInitializer& ObjectInitializer);
@@ -75,6 +75,12 @@ protected:
 	/** Handler for when a touch input stops. */
 	void TouchStopped(ETouchIndex::Type FingerIndex, FVector Location);
 
+	/** Called to augment max speed and allow player to run */
+	void Run();
+
+	/** Called to decrease max speed and disabled player to run */
+	void StopRunning();
+
 	/** Handler for firing */
 	UFUNCTION()
 	void OnFire();
@@ -93,10 +99,9 @@ protected:
 	virtual void Tick(float DeltaSeconds) override;
 
 public:
-	/** Returns CameraBoom subobject **/
-	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
-	/** Returns FollowCamera subobject **/
-	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+	/** Returns FirstPersonCameraComponent subobject **/
+	FORCEINLINE class UCameraComponent* GetFirstPersonCamera() const { return FirstPersonCameraComponent; }
 
 	/** Function called when the Player receive damage from Elements in the World. Decrease Player's Energy and activate Shield.
 	* @param DamageAmount How much damage to apply

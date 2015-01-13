@@ -5,7 +5,7 @@
 #include "GameFramework/Actor.h"
 #include "InteractiveElement.generated.h"
 
-UCLASS()
+UCLASS(Abstract)
 class TGCO_API AInteractiveElement : public AActor
 {
 	GENERATED_BODY()
@@ -17,8 +17,7 @@ public:
 	//Method called when the player wants to use the object which is currently hightlighted.
 	//This method will be overriden by each of the class' children
 	//////////////////////////////////////////////////////////////////////////////////////////////
-	UFUNCTION(BlueprintCallable, Category = "InteractiveElement")
-		virtual void OnInteract();
+	virtual bool OnInteract() PURE_VIRTUAL(AInteractiveElement::OnInteract, return false;);
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	//Method used to highlight the interactive element that the player is currently looking at.
@@ -65,6 +64,15 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Static Meshes")
 		UStaticMeshComponent* StaticMesh;
+	
+	UPROPERTY(EditAnywhere, Category = "InteractiveElementComponents")
+		bool IsLookedAt;
+
+	UPROPERTY(EditAnywhere, Category = "InteractiveElementComponents")
+		bool bCanExistsPastFuture;
+
+	UPROPERTY(EditAnywhere, Category = "InteractiveElementComponents", meta = (EditCondition = "bCanExistsPastFuture"))
+		AActor* FuturElement;
 
 protected:
 	bool bIsInteractive; //whether the element can be interacted with
