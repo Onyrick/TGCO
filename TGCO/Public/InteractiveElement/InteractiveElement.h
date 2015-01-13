@@ -5,7 +5,7 @@
 #include "GameFramework/Actor.h"
 #include "InteractiveElement.generated.h"
 
-UCLASS()
+UCLASS(Abstract)
 class TGCO_API AInteractiveElement : public AActor
 {
 	GENERATED_BODY()
@@ -65,8 +65,14 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Static Meshes")
 		UStaticMeshComponent* StaticMesh;
 	
-	UPROPERTY(EditAnywhere, Category = "bool")
+	UPROPERTY(EditAnywhere, Category = "InteractiveElementComponents")
 		bool IsLookedAt;
+
+	UPROPERTY(EditAnywhere, Category = "InteractiveElementComponents")
+		bool bCanExistsPastFuture;
+
+	UPROPERTY(EditAnywhere, Category = "InteractiveElementComponents", meta = (EditCondition = "bCanExistsPastFuture"))
+		AActor* FuturElement;
 
 protected:
 	bool bIsInteractive; //whether the element can be interacted with

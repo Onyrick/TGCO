@@ -2,12 +2,17 @@
 
 #pragma once
 
+#include "Props/Props.h"
+#include "SecretDoorRoom.generated.h"
+
 /**
  * 
  */
-class TGCO_API SecretDoorRoom
+UCLASS()
+class TGCO_API ASecretDoorRoom : public AProps
 {
+	GENERATED_BODY()
 public:
-	SecretDoorRoom();
-	~SecretDoorRoom();
+	//Constructors
+	ASecretDoorRoom(const FObjectInitializer& PCIP);
 };

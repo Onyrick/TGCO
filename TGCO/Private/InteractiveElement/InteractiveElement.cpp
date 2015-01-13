@@ -10,12 +10,12 @@ AInteractiveElement::AInteractiveElement(const class FObjectInitializer& PCIP)
 	TriggerBox->OnComponentEndOverlap.AddDynamic(this, &AInteractiveElement::OnOverlapEnd);
 
 	StaticMesh = PCIP.CreateDefaultSubobject < UStaticMeshComponent >(this, TEXT("StaticMesh_InteractiveElement"));
-
-	TriggerBox->AttachParent = StaticMesh;
-
+	
+	TriggerBox->AttachTo(StaticMesh);
 	RootComponent = StaticMesh;
 
 	IsLookedAt = false;
+	bCanExistsPastFuture = 0;
 }
 
 void AInteractiveElement::Highlight(bool highlight)

@@ -3,10 +3,8 @@
 #include "TGCO.h"
 #include "SecretDoorRoom.h"
 
-SecretDoorRoom::SecretDoorRoom()
+ASecretDoorRoom::ASecretDoorRoom(const FObjectInitializer& PCIP)
+	:Super(PCIP)
 {
-}
 
-SecretDoorRoom::~SecretDoorRoom()
-{
 }
