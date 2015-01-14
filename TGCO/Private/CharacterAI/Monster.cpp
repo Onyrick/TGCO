@@ -26,11 +26,6 @@ void AMonster::Stun()
 
 	// Stop MoveToLocation
 	GetAIController()->PauseMove(GetAIController()->GetCurrentMoveRequestID());
-
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(0, 10.0f, FColor::White, TEXT("Stun : Stop MoveTo"));
-	}
 }
 
 void AMonster::UnStun()
@@ -38,14 +33,9 @@ void AMonster::UnStun()
 	bIsStun = false;
 	// Resume MoveToLocation
 	GetAIController()->ResumeMove(GetAIController()->GetCurrentMoveRequestID());
-
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(0, 10.0f, FColor::White, TEXT("UnStun : Resume MoveTo"));
-	}
 }
 
-EPathFollowingRequestResult::Type AMonster::MoveToLocation(const FVector & Dest)//const FVector & Dest, float AcceptanceRadius, bool bStopOnOverlap, bool bUsePathfinding, bool bProjectDestinationToNavigation, bool bCanStrafe, TSubclassOf< class UNavigationQueryFilter > FilterClass)
+EPathFollowingRequestResult::Type AMonster::MoveToLocation(const FVector & Dest)
 {
 	return GetAIController()->MoveToLocation(Dest);
 }

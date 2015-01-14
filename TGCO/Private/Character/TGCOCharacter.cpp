@@ -47,7 +47,7 @@ ATGCOCharacter::ATGCOCharacter(const FObjectInitializer& ObjectInitializer)
 	// Default offset from the character location for projectiles to spawn
 	GunOffset = FVector(0.f, 0.f, 0.f);
 
-	bShootMode = false;
+	bShootMode = true;
 
 	PreviousInteractiveElement = NULL;
 	iNumberOfCloseInteractiveElement = 0;
