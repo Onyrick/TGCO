@@ -5,68 +5,77 @@
 #include "GameFramework/Actor.h"
 #include "InteractiveElement.generated.h"
 
-UCLASS()
+/**
+* TODO
+*/
+UCLASS(Abstract)
 class TGCO_API AInteractiveElement : public AActor
 {
 	GENERATED_BODY()
+
 public:
-	//Constructors
+	/** Constructors */
 	AInteractiveElement(const FObjectInitializer& PCIP);
 
-	//////////////////////////////////////////////////////////////////////////////////////////////
-	//Method called when the player wants to use the object which is currently hightlighted.
-	//This method will be overriden by each of the class' children
-	//////////////////////////////////////////////////////////////////////////////////////////////
-	UFUNCTION(BlueprintCallable, Category = "InteractiveElement")
-		virtual void OnInteract();
+	/**
+	 * Method called when the Player wants to use the object which is currently highlighted.
+	 * This method will be overridden by each children classes.
+	 */
+	virtual bool OnInteract() PURE_VIRTUAL(AInteractiveElement::OnInteract, return false;);
 	
-	//////////////////////////////////////////////////////////////////////////////////////////////
-	//Method used to highlight the interactive element that the player is currently looking at.
-	//////////////////////////////////////////////////////////////////////////////////////////////
+	/** Method used to highlight the interactive element that the player is currently looking at. */
 	UFUNCTION(BlueprintCallable, Category = "InteractiveElement")
-		virtual void Highlight(bool _highlight);
+	virtual void Highlight(bool _highlight);
 	
-	//////////////////////////////////////////////////////////////////////////////////////////////
-	//Check whether or not the targeted element is currently active(eg the flower pot in the past 
-	//	is not interactive until the player grabs the seed)
-	//////////////////////////////////////////////////////////////////////////////////////////////
+	/** 
+	 * Check whether or not the targeted element is currently active as Interactive
+	 */
 	UFUNCTION(BlueprintCallable, Category = "InteractiveElement")
-		virtual bool IsInteractive();
+	virtual bool IsInteractive();
 
-	//////////////////////////////////////////////////////////////////////////////////////////////
-	//for an element to be hightlighted it needs the player to look at it and that the player is close
-	//	enough to use it.To know if the player is looking at the element it listens to the evenement OnLookAt
-	//////////////////////////////////////////////////////////////////////////////////////////////
+	/**
+	 * For an element to be highlighted it needs the Player to look at it and that the Player is close
+	 * enough to use it. To know if the Player is looking at the element it listens to the event OnLookAt
+	 */
 	UFUNCTION(BlueprintCallable, Category = "InteractiveElement")
-		virtual void OnLookAt();
+	virtual void OnLookAt();
 
-	//////////////////////////////////////////////////////////////////////////////////////////////
-	//Set the element as being interactible
-	//////////////////////////////////////////////////////////////////////////////////////////////
+	/** Set the element as being active as Interactive so the Player can interact with */
 	UFUNCTION(BlueprintCallable, Category = "InteractiveElement")
-		virtual void SetInteractive(bool _interactive);
+	virtual void SetInteractive(bool bInteractive);
 
-	//////////////////////////////////////////////////////////////////////////////////////////////
-	//for an element to be hightlighted it needs the player to look at it and that the player is close enough
-	// to use it.To know if the player is close enough it listens to the evenement OnComponentBeginOverlap
-	//////////////////////////////////////////////////////////////////////////////////////////////
+	/** When the Player enters the area where he can use an object, this interactive element receives OnComponentBeginOverlap. */
 	UFUNCTION()
-		virtual void OnOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
+	virtual void OnOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
 
-	//////////////////////////////////////////////////////////////////////////////////////////////
-	//When the player leaves the area where he can use an object, this interactive element receives
-	//	OnComponentEndOverlap so that it can stop the highlighting
-	//////////////////////////////////////////////////////////////////////////////////////////////
+	/** When the Player leaves the area where he can use an object, this interactive element receives OnComponentEndOverlap. */
 	UFUNCTION()
-		virtual void OnOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+	virtual void OnOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
+	/** TODO */
 	UPROPERTY(EditAnywhere, Category = "Triggers")
-		UBoxComponent* TriggerBox;
+	UBoxComponent* TriggerBox;
 
+	/** TODO */
 	UPROPERTY(EditAnywhere, Category = "Static Meshes")
-		UStaticMeshComponent* StaticMesh;
+	UStaticMeshComponent* StaticMesh;
+	
+	/** TODO */
+	UPROPERTY(EditAnywhere, Category = "InteractiveElementComponents")
+	bool IsLookedAt;
+
+	/** TODO */
+	UPROPERTY(EditAnywhere, Category = "InteractiveElementComponents")
+	bool bCanExistsPastFuture;
+
+	/** TODO */
+	UPROPERTY(EditAnywhere, Category = "InteractiveElementComponents", meta = (EditCondition = "bCanExistsPastFuture"))
+	AActor* FuturElement;
 
 protected:
-	bool bIsInteractive; //whether the element can be interacted with
-	bool bCloseEnough; //wether the player is close enough to the element to be able to interact with it
+
+	/** Whether the element can be interacted with */
+	bool bIsInteractive;
+	/** Whether the Player is close enough to the element to be able to interact with it */
+	bool bCloseEnough;
 };

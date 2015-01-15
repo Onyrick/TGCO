@@ -21,10 +21,10 @@ namespace ESolutionType
 }
 
 /**
-* Return the name of the solution type
-*
-* @param SolutionType value of the enum ESolutionType
-*
-* @return FString string of the solution type
-*/
+ * Return the name of the solution type
+ *
+ * @param SolutionType value of the enum ESolutionType
+ *
+ * @return FString string of the solution type
+ */
 FString GetNameOfTheSolution(const ESolutionType::Type SolutionType);

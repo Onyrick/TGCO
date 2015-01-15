@@ -12,13 +12,14 @@ ATGCOGameState::ATGCOGameState(const FObjectInitializer& ObjectInitializer)
 
 void ATGCOGameState::AddEnergy(int32 iEnergyAmount)
 {
+	UE_LOG(LogTest, Warning, TEXT("Previous Energy : %f"), iPlayersEnergy);
 	iPlayersEnergy = FMath::Min(iMaxPlayersEnergy, iPlayersEnergy + iEnergyAmount);
+	UE_LOG(LogTest, Warning, TEXT("Next Energy : %f"), iPlayersEnergy);
 }
 
 void ATGCOGameState::DecreaseEnergy(int32 iEnergyAmount)
 {
-
-	GEngine->AddOnScreenDebugMessage(-1, .5f, FColor::Red, FString::Printf(TEXT("Previous Energy : %f"), iEnergyAmount));
+	UE_LOG(LogTest, Warning, TEXT("Previous Energy : %f"), iPlayersEnergy);
 	if (iEnergyAmount < 0)
 	{
 		iEnergyAmount = -iEnergyAmount;
@@ -26,11 +27,12 @@ void ATGCOGameState::DecreaseEnergy(int32 iEnergyAmount)
 
 	iPlayersEnergy = FMath::Max(0, iPlayersEnergy - iEnergyAmount);
 
-	GEngine->AddOnScreenDebugMessage(-1, .5f, FColor::Red, FString::Printf(TEXT("Next Energy : %f"), iEnergyAmount));
+	UE_LOG(LogTest, Warning, TEXT("Next Energy : %f"), iPlayersEnergy);
 
 	if (!CheckRemainingEnergy())
 	{
 		//Game Over
+		UE_LOG(LogDebug, Warning, TEXT("GameOver"));
 	}
 }
 

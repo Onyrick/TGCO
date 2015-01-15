@@ -18,7 +18,7 @@ namespace TGCOGameInstanceState
 }
 
 /**
- * 
+ * TODO
  */
 UCLASS(config = Game)
 class TGCO_API UTGCOGameInstance : public UGameInstance
@@ -70,11 +70,11 @@ public:
 	void GotoInitialState();
 
 	/**
-	* Creates the message menu, clears other menus and sets the KingState to Message.
-	*
-	* @param	Message				Main message body
-	* @param	NewState			Final state to go to when message is discarded
-	*/
+	 * Creates the message menu, clears other menus and sets the KingState to Message.
+	 *
+	 * @param	Message				Main message body
+	 * @param	NewState			Final state to go to when message is discarded
+	 */
 	void ShowMessageThenGotoState(const FString& Message, const FName& NewState);
 
 	/** Shuts down the session, and frees any net driver */

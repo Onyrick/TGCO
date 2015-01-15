@@ -25,11 +25,6 @@ ATGCOGameMode::ATGCOGameMode(const FObjectInitializer& ObjectInitializer)
 void ATGCOGameMode::StartPlay()
 {
 	Super::StartPlay();
-
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, .5f, FColor::Red, TEXT("Begin Play"));
-	}
 }
 
 TSubclassOf<AGameSession> ATGCOGameMode::GetGameSessionClass() const

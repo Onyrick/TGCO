@@ -13,7 +13,7 @@
 // ATGCOCharacter
 
 ATGCOCharacter::ATGCOCharacter(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+: Super(ObjectInitializer)
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -22,30 +22,26 @@ ATGCOCharacter::ATGCOCharacter(const FObjectInitializer& ObjectInitializer)
 	BaseTurnRate = 45.f;
 	BaseLookUpRate = 45.f;
 
-	// Don't rotate when the controller rotates. Let that just affect the camera.
-	bUseControllerRotationPitch = false;
-	bUseControllerRotationYaw = false;
-	bUseControllerRotationRoll = false;
-
 	// Configure character movement
 	GetCharacterMovement()->bOrientRotationToMovement = true; // Character moves in the direction of input...	
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f); // ...at this rotation rate
 	GetCharacterMovement()->JumpZVelocity = 600.f;
 	GetCharacterMovement()->AirControl = 0.2f;
+	GetCharacterMovement()->MaxWalkSpeed = 200;
 
-	// Create a camera boom (pulls in towards the player if there is a collision)
-	CameraBoom = ObjectInitializer.CreateDefaultSubobject<USpringArmComponent>(this, TEXT("CameraBoom"));
-	CameraBoom->AttachTo(RootComponent);
-	CameraBoom->TargetArmLength = 300.0f; // The camera follows at this distance behind the character	
-	CameraBoom->bUsePawnControlRotation = true; // Rotate the arm based on the controller
-
-	// Create a follow camera
-	FollowCamera = ObjectInitializer.CreateDefaultSubobject<UCameraComponent>(this, TEXT("FollowCamera"));
-	FollowCamera->AttachTo(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
-	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
+	// Create a CameraComponent	
+	FirstPersonCameraComponent = ObjectInitializer.CreateDefaultSubobject<UCameraComponent>(this, TEXT("FirstPersonCamera"));
+	FirstPersonCameraComponent->AttachParent = GetCapsuleComponent();
+	FirstPersonCameraComponent->RelativeLocation = FVector(0, 0, 64.f); // Position the camera
+	FirstPersonCameraComponent->bUsePawnControlRotation = true;
 
 	// Default offset from the character location for projectiles to spawn
-	GunOffset = FVector(0.f, 0.f, 0.f);
+	GunOffset = FVector(100.0f, 30.0f, 10.0f);
+
+	// Create a mesh component that will be used when being viewed from a '1st person' view (when controlling this pawn)
+	Mesh1P = ObjectInitializer.CreateDefaultSubobject<USkeletalMeshComponent>(this, TEXT("CharacterMesh1P"));
+	Mesh1P->AttachParent = FirstPersonCameraComponent;
+	Mesh1P->RelativeLocation = FVector(0.f, 0.f, -150.f);
 
 	bShootMode = true;
 
@@ -68,6 +64,9 @@ void ATGCOCharacter::SetupPlayerInputComponent(class UInputComponent* InputCompo
 
 	InputComponent->BindAction("Fire", IE_Pressed, this, &ATGCOCharacter::OnFire);
 	InputComponent->BindAction("Use", IE_Pressed, this, &ATGCOCharacter::Use);
+
+	InputComponent->BindAction("Run", IE_Pressed, this, &ATGCOCharacter::Run);
+	InputComponent->BindAction("Run", IE_Released, this, &ATGCOCharacter::StopRunning);
 
 	InputComponent->BindAxis("MoveForward", this, &ATGCOCharacter::MoveForward);
 	InputComponent->BindAxis("MoveRight", this, &ATGCOCharacter::MoveRight);
@@ -103,6 +102,16 @@ void ATGCOCharacter::TouchStopped(ETouchIndex::Type FingerIndex, FVector Locatio
 	}
 }
 
+void ATGCOCharacter::Run()
+{
+	GetCharacterMovement()->MaxWalkSpeed = 500;
+}
+
+void ATGCOCharacter::StopRunning()
+{
+	GetCharacterMovement()->MaxWalkSpeed = 200;
+}
+
 void ATGCOCharacter::TurnAtRate(float Rate)
 {
 	// calculate delta for this frame from the rate information
@@ -119,13 +128,8 @@ void ATGCOCharacter::MoveForward(float Value)
 {
 	if ((Controller != NULL) && (Value != 0.0f))
 	{
-		// find out which way is forward
-		const FRotator Rotation = Controller->GetControlRotation();
-		const FRotator YawRotation(0, Rotation.Yaw, 0);
-
-		// get forward vector
-		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-		AddMovementInput(Direction, Value);
+				// add movement in that direction
+		AddMovementInput(GetActorForwardVector(), Value);
 	}
 }
 
@@ -133,14 +137,8 @@ void ATGCOCharacter::MoveRight(float Value)
 {
 	if ( (Controller != NULL) && (Value != 0.0f) )
 	{
-		// find out which way is right
-		const FRotator Rotation = Controller->GetControlRotation();
-		const FRotator YawRotation(0, Rotation.Yaw, 0);
-	
-		// get right vector 
-		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 		// add movement in that direction
-		AddMovementInput(Direction, Value);
+		AddMovementInput(GetActorRightVector(), Value);
 	}
 }
 
@@ -152,11 +150,6 @@ void ATGCOCharacter::OnFire()
 		// try and fire a projectile
 		if (ProjectileClass != NULL)
 		{
-			if (GEngine)
-			{
-				GEngine->AddOnScreenDebugMessage(-1, .5f, FColor::Red, TEXT("Shoot"));
-			}
-
 			const FRotator SpawnRotation = GetControlRotation();
 			// MuzzleOffset is in camera space, so transform it to world space before offsetting from the character location to find the final muzzle position
 			const FVector SpawnLocation = GetActorLocation() + SpawnRotation.RotateVector(GunOffset);
@@ -183,7 +176,7 @@ void ATGCOCharacter::OnFire()
 			UAnimInstance* AnimInstance = Mesh1P->GetAnimInstance();
 			if (AnimInstance != NULL)
 			{
-			AnimInstance->Montage_Play(FireAnimation, 1.f);
+				AnimInstance->Montage_Play(FireAnimation, 1.f);
 			}
 			*/
 		}
@@ -195,22 +188,27 @@ void ATGCOCharacter::Use()
 	FHitResult OutHitResult;
 	FCollisionQueryParams Params(false);
 	
+	// If raytracer hit an Actor
 	bool hasHit = GetWorld()->LineTraceSingle(OutHitResult, GetActorLocation(), 3000.f*GetActorForwardVector(), COLLISION_INTERACTIVE_TRACE, Params);
 
 	if (hasHit)
 	{
+		// Get the hitting element as an InteractiveElement
 		AInteractiveElement* ElementHit = Cast<AInteractiveElement>(OutHitResult.GetActor());
+		
 		if (ElementHit != NULL)
 		{
+			// If element is active
 			if (ElementHit->IsInteractive())
 			{
+				UE_LOG(LogDebug, Warning, TEXT("%s : call the oninteract"), *ElementHit->GetActorClass()->GetName());
 				ElementHit->OnInteract();
 			}
 		}					
 	}
 	else
 	{
-		//PlaySound "Nothing to Use"
+		//TODO : PlaySound "Nothing to Use"
 	}
 }
 
@@ -219,8 +217,25 @@ void ATGCOCharacter::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 
 	if (iNumberOfCloseInteractiveElement <= 0)
+	{
 		return;
+	}
+	
+	HightlightCloseInteractiveElement();
+}
 
+void ATGCOCharacter::IncreaseNumberOfCloseInteractiveElement()
+{
+	iNumberOfCloseInteractiveElement++;
+}
+
+void ATGCOCharacter::DecreaseNumberOfCloseInteractiveElement()
+{
+	iNumberOfCloseInteractiveElement--;
+}
+
+void ATGCOCharacter::HightlightCloseInteractiveElement()
+{
 	FHitResult OutHitResult;
 	FCollisionQueryParams Params(false);
 
@@ -241,7 +256,11 @@ void ATGCOCharacter::Tick(float DeltaSeconds)
 				ElementHit->Highlight(true);
 				PreviousInteractiveElement = ElementHit;
 			}
-		}		
+			else
+			{
+				UE_LOG(LogDebug, Warning, TEXT("Element is not yet interactible"));
+			}
+		}
 	}
 	else
 	{
@@ -249,18 +268,8 @@ void ATGCOCharacter::Tick(float DeltaSeconds)
 		{
 			PreviousInteractiveElement->Highlight(false);
 			PreviousInteractiveElement = NULL;
-		}		
+		}
 	}
-}
-
-void ATGCOCharacter::IncreaseNumberElement()
-{
-	iNumberOfCloseInteractiveElement++;
-}
-
-void ATGCOCharacter::DecreaseNumberElement()
-{
-	iNumberOfCloseInteractiveElement--;
 }
 
 float ATGCOCharacter::TakeDamage(float fDamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser)
@@ -271,7 +280,7 @@ float ATGCOCharacter::TakeDamage(float fDamageAmount, struct FDamageEvent const 
 		ATGCOGameState* GameState = Cast<ATGCOGameState>(World->GetGameState());
 		if (GameState != NULL)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, .5f, FColor::Red, TEXT("Take damage"));
+			UE_LOG(LogDebug, Warning, TEXT("Player take damage"));
 			// Active shield
 			ActiveShield(true);
 
@@ -289,27 +298,26 @@ void ATGCOCharacter::ActiveShield(bool bActivate)
 {
 	if (bActivate)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, .5f, FColor::Red, TEXT("Active Shield"));
+		UE_LOG(LogDebug, Warning, TEXT("Active Shield"));
 		// Activate the shield
 		PlayShieldAnimation();
 		PlayShieldSound();
 	}
 	else
 	{
-		// Deactivate the shield
+		// TODO : Deactivate the shield
 		// Need to do something ?
 	}
 }
 
 void ATGCOCharacter::PlayShieldAnimation()
 {
-	// TO DO
-	GEngine->AddOnScreenDebugMessage(-1, .5f, FColor::Red, TEXT("TO DO : play activate shield animation"));
+	// TODO
+	UE_LOG(LogDebug, Warning, TEXT("TO DO : play activate shield animation"));
 }
 
 void ATGCOCharacter::PlayShieldSound()
 {
-	// TO DO
-	GEngine->AddOnScreenDebugMessage(-1, .5f, FColor::Red, TEXT("TO DO : play activate shield sound"));
-
+	// TODO
+	UE_LOG(LogDebug, Warning, TEXT("TO DO : play activate shield sound"));
 }

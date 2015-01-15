@@ -3,7 +3,9 @@
 #include "TGCO.h"
 #include "Monster.h"
 
-AMonster::AMonster(const class FObjectInitializer& PCIP) : Super(PCIP), fStunTime(1.f)
+AMonster::AMonster(const class FObjectInitializer& PCIP)
+: Super(PCIP)
+, fStunTime(1.f)
 {
 	AIControllerClass = AAIController::StaticClass();
 }

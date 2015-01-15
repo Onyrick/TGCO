@@ -1,3 +1,4 @@
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "TGCO.h"
 #include "SolutionType.h"
@@ -20,5 +21,3 @@ FString GetNameOfTheSolution(const ESolutionType::Type SolutionType)
 	}
 
 }
-
-

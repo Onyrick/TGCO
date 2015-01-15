@@ -6,7 +6,7 @@
 #include "TGCOHUD.generated.h"
 
 /**
- * 
+ * TODO
  */
 UCLASS()
 class TGCO_API ATGCOHUD : public AHUD

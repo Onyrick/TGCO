@@ -156,4 +156,3 @@ TWeakObjectPtr<class ULocalPlayer> UTGCOServerList::GetPlayer() const
 {
 	return PlayerOwner;
 }
-

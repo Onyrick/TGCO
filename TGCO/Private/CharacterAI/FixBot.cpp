@@ -25,10 +25,7 @@ float AFixBot::TakeDamage(float DamageAmount, struct FDamageEvent const & Damage
 	{
 		Stun();
 	}*/
+	UE_LOG(LogDebug, Warning, TEXT("Take Damage FixBot"));
 
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(0, 10.0f, FColor::White, TEXT("Take Damage FixBot"));
-	}
 	return -1.f;
 }

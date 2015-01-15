@@ -2,6 +2,7 @@
 
 #include "TGCO.h"
 #include "TGCOGameState.h"
+#include "Engine.h"
 #include "EnergyCell.h"
 
 AEnergyCell::AEnergyCell(const class FObjectInitializer& PCIP) : Super(PCIP), iAmountOfEnergy(100)
@@ -11,31 +12,23 @@ AEnergyCell::AEnergyCell(const class FObjectInitializer& PCIP) : Super(PCIP), iA
 
 void AEnergyCell::OnOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(0, 10.0f, FColor::White, TEXT("Begin Overlap Energy"));
-	}
+	UE_LOG(LogDebug, Warning, TEXT("Begin Overlap Energy"));
 	Consumed();
-	Destroy();
 }
 
 void AEnergyCell::OnOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(0, 10.0f, FColor::White, TEXT("End Overlap Energy"));
-	}
+	UE_LOG(LogDebug, Warning, TEXT("End Overlap Energy"));
 }
 
 void AEnergyCell::Consumed()
 {
-	AGameState * GameState = GetWorld()->GetGameState();
-	ATGCOGameState* TGCOGameState = Cast<ATGCOGameState>(GameState);
-
-	if (TGCOGameState != NULL)
+	ATGCOGameState* gameState = Cast<ATGCOGameState>(GetWorld()->GetGameState());
+	if (gameState)
 	{
-		TGCOGameState->AddEnergy(iAmountOfEnergy);
+		gameState->AddEnergy(iAmountOfEnergy);
 	}
+	Destroy();
 }
 
 int32 AEnergyCell::GetAmountOfEnergy()
