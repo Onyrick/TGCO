@@ -42,10 +42,10 @@ public:
 	
 	/** Getter / Setter / Is */
 	UFUNCTION(BlueprintCallable, Category = "Monster")
-		float GetWalkSpeed();
+	virtual float GetWalkSpeed();
 
 	UFUNCTION(BlueprintCallable, Category = "Monster")
-		void SetWalkSpeed(float _speed);
+	virtual void SetWalkSpeed(float _speed);
 
 protected:
 	/** Whether the Monster is stunned or not */
