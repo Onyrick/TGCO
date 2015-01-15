@@ -5,7 +5,7 @@
 #include "CharacterAI.h"
 
 ACharacterAI::ACharacterAI(const class FObjectInitializer& PCIP) 
-	: Super(PCIP), iWalkSpeed(100)
+	: Super(PCIP)
 {
 	StaticMesh = PCIP.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("StaticMesh_CharacterAI"));
 	StaticMesh->bGenerateOverlapEvents = true;
@@ -18,7 +18,6 @@ ACharacterAI::ACharacterAI(const class FObjectInitializer& PCIP)
 
 	RootComponent = GetCapsuleComponent();
 
-	CharacterMovement->MaxWalkSpeed = iWalkSpeed;
 }
 
 AControllerAI* ACharacterAI::GetAIController()
@@ -52,12 +51,3 @@ void ACharacterAI::FaceRotation(FRotator NewRotation, float DeltaTime)
 	Super::FaceRotation(CurrentRotation, DeltaTime);
 }
 
-float ACharacterAI::GetWalkSpeed()
-{
-	return iWalkSpeed;
-}
-
-void ACharacterAI::SetWalkSpeed(float _speed)
-{
-	iWalkSpeed = _speed;
-}

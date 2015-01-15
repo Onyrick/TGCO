@@ -7,7 +7,7 @@ AMonster::AMonster(const class FObjectInitializer& PCIP)
 : Super(PCIP)
 , fStunTime(1.f)
 {
-	AIControllerClass = AAIController::StaticClass();
+	GetCharacterMovement()->MaxWalkSpeed = 100.f;
 }
 
 float AMonster::TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser)
@@ -50,4 +50,14 @@ void AMonster::PlayMoveSound()
 void AMonster::PlayMoveAnimation()
 {
 	//TODO
+}
+
+float AMonster::GetWalkSpeed()
+{
+	return GetCharacterMovement()->MaxWalkSpeed;
+}
+
+void AMonster::SetWalkSpeed(float _speed)
+{
+	GetCharacterMovement()->MaxWalkSpeed = _speed;
 }

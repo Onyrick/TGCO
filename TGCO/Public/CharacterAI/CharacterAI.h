@@ -39,15 +39,4 @@ public:
 	/** Function to make the character face a direction */
 	virtual void FaceRotation(FRotator NewRotation, float DeltaTime = 0.f) override;
 
-
-	/** Getter / Setter / Is */
-	UFUNCTION(BlueprintCallable, Category = "CharacterAI")
-	float GetWalkSpeed();
-
-	UFUNCTION(BlueprintCallable, Category = "CharacterAI")
-	void SetWalkSpeed(float _speed);
-
-private :
-	/** The speed walk of the character */
-	float iWalkSpeed;
 };

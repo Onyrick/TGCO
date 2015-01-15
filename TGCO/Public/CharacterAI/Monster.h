@@ -40,6 +40,13 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Monster")
 	virtual void PlayMoveAnimation();
 	
+	/** Getter / Setter / Is */
+	UFUNCTION(BlueprintCallable, Category = "Monster")
+		float GetWalkSpeed();
+
+	UFUNCTION(BlueprintCallable, Category = "Monster")
+		void SetWalkSpeed(float _speed);
+
 protected:
 	/** Whether the Monster is stunned or not */
 	bool bIsStun;
