@@ -223,32 +223,6 @@ void ATGCOGameSession::OnJoinSessionComplete(FName SessionName, EOnJoinSessionCo
 	OnJoinSessionComplete().Broadcast(Result);
 }
 
-FString ATGCOGameSession::TrimId(FString Id)
-{
-	int index;
-
-	/** Delete all values after - */
-	TCHAR search = *TEXT("-");
-	if (Id.FindChar(search, index))
-	{
-		Id.RemoveAt(index, Id.Len() - index, true);
-
-	}
-
-	/** Delete all values after _ */
-	search = *TEXT("_");
-	if (Id.FindChar(search, index))
-	{
-		Id.RemoveAt(index, Id.Len() - index, true);
-
-	}
-
-	/** Delete Blank space if needed */
-	Id.Shrink();
-
-	return Id;
-}
-
 FName ATGCOGameSession::GetSessionName()
 {
 	return CurrentSessionParams.SessionName; 

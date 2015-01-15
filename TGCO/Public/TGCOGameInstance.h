@@ -81,6 +81,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Online")
 	void CleanupSessionOnReturnToMenu();
 
+	UFUNCTION(BlueprintCallable, Category = "Text")
+	FString TrimId(FString Id);
+
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
 		FBindableEvent_ServerSearchFinished,
 			

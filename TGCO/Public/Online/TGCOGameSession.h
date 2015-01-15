@@ -133,9 +133,6 @@ public:
 	FOnFindSessionsComplete& OnFindSessionsComplete() { return FindSessionsCompleteEvent; }
 
 	UFUNCTION(BlueprintCallable, Category = "Test")
-	FString TrimId(FString Id);
-
-	UFUNCTION(BlueprintCallable, Category = "Test")
 	FName GetSessionName();
 
 public:

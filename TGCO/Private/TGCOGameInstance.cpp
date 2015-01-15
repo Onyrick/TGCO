@@ -588,3 +588,29 @@ void UTGCOGameInstance::HandleNetworkConnectionStatusChanged(EOnlineServerConnec
 {
 	UE_LOG(LogOnlineGame, Warning, TEXT("UTGCOGameInstance::HandleNetworkConnectionStatusChanged: %s"), EOnlineServerConnectionStatus::ToString(ConnectionStatus));
 }
+
+FString UTGCOGameInstance::TrimId(FString Id)
+{
+	int index;
+
+	/** Delete all values after - */
+	TCHAR search = *TEXT("-");
+	if (Id.FindChar(search, index))
+	{
+		Id.RemoveAt(index, Id.Len() - index, true);
+
+	}
+
+	/** Delete all values after _ */
+	search = *TEXT("_");
+	if (Id.FindChar(search, index))
+	{
+		Id.RemoveAt(index, Id.Len() - index, true);
+
+	}
+
+	/** Delete Blank space if needed */
+	Id.Shrink();
+
+	return Id;
+}
