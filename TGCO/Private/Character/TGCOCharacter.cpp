@@ -27,7 +27,7 @@ ATGCOCharacter::ATGCOCharacter(const FObjectInitializer& ObjectInitializer)
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f); // ...at this rotation rate
 	GetCharacterMovement()->JumpZVelocity = 600.f;
 	GetCharacterMovement()->AirControl = 0.2f;
-	GetCharacterMovement()->MaxWalkSpeed = 200;
+	GetCharacterMovement()->MaxWalkSpeed = 400;
 
 	// Create a CameraComponent	
 	FirstPersonCameraComponent = ObjectInitializer.CreateDefaultSubobject<UCameraComponent>(this, TEXT("FirstPersonCamera"));
@@ -104,12 +104,12 @@ void ATGCOCharacter::TouchStopped(ETouchIndex::Type FingerIndex, FVector Locatio
 
 void ATGCOCharacter::Run()
 {
-	GetCharacterMovement()->MaxWalkSpeed = 500;
+	GetCharacterMovement()->MaxWalkSpeed = 700;
 }
 
 void ATGCOCharacter::StopRunning()
 {
-	GetCharacterMovement()->MaxWalkSpeed = 200;
+	GetCharacterMovement()->MaxWalkSpeed = 400;
 }
 
 void ATGCOCharacter::TurnAtRate(float Rate)
