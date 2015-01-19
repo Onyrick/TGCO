@@ -29,7 +29,7 @@ public:
 
 	/** Remove an amount of energy to the total Player's energy*/
 	UFUNCTION(BlueprintCallable, Category = "Players")
-	void DecreaseEnergy(int32 iEnergyAmount);
+	bool DecreaseEnergy(int32 iEnergyAmount);
 
 	/** Get the Player's energy*/
 	UFUNCTION(BlueprintCallable, Category = "Players")

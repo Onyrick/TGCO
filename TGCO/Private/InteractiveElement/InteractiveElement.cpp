@@ -4,16 +4,16 @@
 #include "TGCOCharacter.h"
 #include "InteractiveElement.h"
 
-AInteractiveElement::AInteractiveElement(const class FObjectInitializer& PCIP)
-: Super(PCIP)
+AInteractiveElement::AInteractiveElement(const class FObjectInitializer& ObjectInitializer)
+: Super(ObjectInitializer)
 , bIsInteractive(true)
 , bCloseEnough(false)
 {
-	TriggerBox = PCIP.CreateDefaultSubobject<UBoxComponent>(this, TEXT("BoxTrigger_InteractiveElement"));
+	TriggerBox = ObjectInitializer.CreateDefaultSubobject<UBoxComponent>(this, TEXT("BoxTrigger_InteractiveElement"));
 	TriggerBox->OnComponentBeginOverlap.AddDynamic(this, &AInteractiveElement::OnOverlapBegin);
 	TriggerBox->OnComponentEndOverlap.AddDynamic(this, &AInteractiveElement::OnOverlapEnd);
 
-	StaticMesh = PCIP.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("StaticMesh_InteractiveElement"));
+	StaticMesh = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("StaticMesh_InteractiveElement"));
 	
 	TriggerBox->AttachTo(StaticMesh);
 	RootComponent = StaticMesh;

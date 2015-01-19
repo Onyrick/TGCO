@@ -5,8 +5,8 @@
 #include "Engine.h"
 #include "EnergyCell.h"
 
-AEnergyCell::AEnergyCell(const class FObjectInitializer& PCIP) 
-: Super(PCIP)
+AEnergyCell::AEnergyCell(const class FObjectInitializer& ObjectInitializer)
+: Super(ObjectInitializer)
 , iAmountOfEnergy(100)
 {}
 

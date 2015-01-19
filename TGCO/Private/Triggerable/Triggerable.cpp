@@ -3,14 +3,14 @@
 #include "TGCO.h"
 #include "Triggerable.h"
 
-ATriggerable::ATriggerable(const class FObjectInitializer& PCIP) 
-: Super(PCIP)
+ATriggerable::ATriggerable(const class FObjectInitializer& ObjectInitializer)
+: Super(ObjectInitializer)
 {	
-	TriggerBox = PCIP.CreateDefaultSubobject<UBoxComponent>(this, TEXT("BoxTrigger_Trigerrable"));
+	TriggerBox = ObjectInitializer.CreateDefaultSubobject<UBoxComponent>(this, TEXT("BoxTrigger_Trigerrable"));
 	TriggerBox->OnComponentBeginOverlap.AddDynamic(this, &ATriggerable::OnOverlapBegin);
 	TriggerBox->OnComponentEndOverlap.AddDynamic(this, &ATriggerable::OnOverlapEnd);	
 
-	StaticMesh = PCIP.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("StaticMesh_Trigerrable"));
+	StaticMesh = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("StaticMesh_Trigerrable"));
 
 	TriggerBox->AttachParent = StaticMesh;
 

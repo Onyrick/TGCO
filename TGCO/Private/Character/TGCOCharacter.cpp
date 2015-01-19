@@ -45,8 +45,11 @@ ATGCOCharacter::ATGCOCharacter(const FObjectInitializer& ObjectInitializer)
 
 	bShootMode = false;
 
-	PreviousInteractiveElement = NULL;
+	PreviousInteractiveElement = nullptr;
 	iNumberOfCloseInteractiveElement = 0;
+
+	PlayerPawn = nullptr;
+	LastSpawn = nullptr;
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
@@ -212,6 +215,77 @@ void ATGCOCharacter::Use()
 	}
 }
 
+bool ATGCOCharacter::SetCheckpoint()
+{
+	FTransform ActorTransform = GetTransform();
+	LastCheckpoint = ActorTransform;
+
+	FVector vLocation = ActorTransform.GetLocation();
+
+	return !vLocation.IsZero();
+}
+
+FTransform ATGCOCharacter::GetCheckpoint()
+{
+	return LastCheckpoint;
+}
+
+void ATGCOCharacter::SpawnPlayer()
+{
+	UE_LOG(LogDebug, Warning, TEXT("Spawn Player"));
+	FVector vLocation = LastCheckpoint.GetLocation();
+	
+	if (vLocation.IsZero())
+	{
+		UE_LOG(LogDebug, Warning, TEXT("No checkpoint found"));
+		// We should not pass here because player can't die before having a checkpoint
+		// Just in case spawn actor at the right Player Start
+		// Can be simplify later if needed
+		TArray<AActor*> OutPlayerStartActors;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), OutPlayerStartActors);
+		for (auto OutPlayerStartActor : OutPlayerStartActors)
+		{
+			APlayerStart* PlayerStartActor = Cast<APlayerStart>(OutPlayerStartActor);
+			if (PlayerStartActor)
+			{
+				LastSpawn = PlayerStartActor;
+				break;
+			}
+		}
+
+		// Spawn a new character to the location needed
+		FTransform SpawnTransform = LastSpawn->GetTransform();
+		PlayerPawn = GetWorld()->SpawnActor<ATGCOCharacter>(this->GetClass(), SpawnTransform.GetLocation(), SpawnTransform.Rotator());
+	}
+	else
+	{
+		UE_LOG(LogDebug, Warning, TEXT("Checkpoint found"));
+		// Spawn a new character to the location needed
+		PlayerPawn = GetWorld()->SpawnActor<ATGCOCharacter>(this->GetClass(), LastCheckpoint.GetLocation(), LastCheckpoint.Rotator());
+		// Set this Player the current checkpoint 
+		PlayerPawn->LastCheckpoint = this->LastCheckpoint;
+	}
+
+	// Get the player controller
+	APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	if (PC)
+	{
+		// Attach it to the new Character Pawn
+		UE_LOG(LogDebug, Warning, TEXT("PLayerController possess now"));
+		PC->Possess(PlayerPawn);
+		Destroy();
+	}
+}
+
+void ATGCOCharacter::KillPlayerThenRespawn()
+{
+	UE_LOG(LogDebug, Warning, TEXT("Kill Player and respawn"));
+
+	//TODO : kill Player (Play animation etc..)
+	DetachFromControllerPendingDestroy();
+	SpawnPlayer();
+}
+
 void ATGCOCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
@@ -285,7 +359,11 @@ float ATGCOCharacter::TakeDamage(float fDamageAmount, struct FDamageEvent const 
 			ActiveShield(true);
 
 			// Decrease energy in the GameState
-			GameState->DecreaseEnergy(fDamageAmount);
+			if (GameState->DecreaseEnergy(fDamageAmount) == 0)
+			{
+				KillPlayerThenRespawn();
+				return 0;
+			}
 
 			return fDamageAmount;
 		}

@@ -6,19 +6,20 @@
 #include "Props/Lever.h"
 
 
-AFlowerPot::AFlowerPot(const class FObjectInitializer& PCIP) : Super(PCIP)
+AFlowerPot::AFlowerPot(const class FObjectInitializer& ObjectInitializer)
+: Super(ObjectInitializer)
 {
 	bIsInteractive = false;
 	
 	ConstructorHelpers::FObjectFinder<UStaticMesh> PotShape(TEXT("StaticMesh'/Game/StarterContent/Shapes/Shape_Cylinder.Shape_Cylinder'"));
 	StaticMesh->SetStaticMesh(PotShape.Object);
-	TreeTrunc = PCIP.CreateDefaultSubobject<UTree>(this, TEXT("TreeTrunc"));
+	TreeTrunc = ObjectInitializer.CreateDefaultSubobject<UTree>(this, TEXT("TreeTrunc"));
 	ConstructorHelpers::FObjectFinder<UStaticMesh> TreeShape(TEXT("StaticMesh'/Game/StarterContent/Props/SM_PillarFrame300.SM_PillarFrame300'"));
 	TreeTrunc->SetStaticMesh(TreeShape.Object);
 	TreeTrunc->AttachTo(StaticMesh);
 	TreeTrunc->SetVisibility(false, true);
 
-	TreeCapsuleOverlapCheck = PCIP.CreateDefaultSubobject<UCapsuleComponent>(this, TEXT("TreeBoxOverlapCheck"));
+	TreeCapsuleOverlapCheck = ObjectInitializer.CreateDefaultSubobject<UCapsuleComponent>(this, TEXT("TreeBoxOverlapCheck"));
 	TreeCapsuleOverlapCheck->AttachTo(StaticMesh);
 }
 

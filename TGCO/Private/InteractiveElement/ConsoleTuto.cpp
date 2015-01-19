@@ -3,10 +3,9 @@
 #include "TGCO.h"
 #include "ConsoleTuto.h"
 
-AConsoleTuto::AConsoleTuto(const class FObjectInitializer& PCIP) : Super(PCIP)
-{
-
-}
+AConsoleTuto::AConsoleTuto(const class FObjectInitializer& ObjectInitializer)
+: Super(ObjectInitializer)
+{}
 
 bool AConsoleTuto::IsUnlocked()
 {
