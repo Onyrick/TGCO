@@ -12,8 +12,8 @@ AEnergyCell::AEnergyCell(const class FObjectInitializer& ObjectInitializer)
 
 void AEnergyCell::OnOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
-	Consumed();
 	UE_LOG(LogDebug, Warning, TEXT("Begin Overlap Energy"));
+	Consumed();
 }
 
 void AEnergyCell::OnOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)

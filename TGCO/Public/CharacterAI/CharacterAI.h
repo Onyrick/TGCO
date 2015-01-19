@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "AIController.h"
+#include "ControllerAI.h"
 #include "CharacterAI.generated.h"
 
 /**
@@ -18,7 +18,7 @@ public:
 
 	/** Function to get the AIController */
 	UFUNCTION(BlueprintCallable, Category = "CharacterAI")
-	virtual AAIController* GetAIController();
+	virtual AControllerAI* GetAIController();
 	
 	/** Event launch when the CharacterAI has to be destroyed */
 	UFUNCTION(BlueprintCallable, Category = "CharacterAI")
@@ -29,8 +29,14 @@ public:
 	
 	/** Event launch when the CharacterAI is hit by another actor */
 	virtual void ReceiveActorBeginOverlap(AActor* OtherActor) override;
-	
-	/** TODO */
+
 	UPROPERTY(EditAnywhere, Category = "Static Meshes")
 	UStaticMeshComponent* StaticMesh;
+
+	UPROPERTY(EditAnywhere, Category = Behavior)
+	class UBehaviorTree* BotBehavior;
+
+	/** Function to make the character face a direction */
+	virtual void FaceRotation(FRotator NewRotation, float DeltaTime = 0.f) override;
+
 };

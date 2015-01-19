@@ -43,7 +43,7 @@ ATGCOCharacter::ATGCOCharacter(const FObjectInitializer& ObjectInitializer)
 	Mesh1P->AttachParent = FirstPersonCameraComponent;
 	Mesh1P->RelativeLocation = FVector(0.f, 0.f, -150.f);
 
-	bShootMode = false;
+	bShootMode = true;
 
 	PreviousInteractiveElement = nullptr;
 	iNumberOfCloseInteractiveElement = 0;
