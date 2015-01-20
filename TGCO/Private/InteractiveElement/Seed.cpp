@@ -4,7 +4,8 @@
 #include "Seed.h"
 
 
-ASeed::ASeed(const class FObjectInitializer& PCIP) : Super(PCIP)
+ASeed::ASeed(const class FObjectInitializer& ObjectInitializer)
+: Super(ObjectInitializer)
 {
 	ConstructorHelpers::FObjectFinder<UStaticMesh> SeedShape(TEXT("StaticMesh'/Game/StarterContent/Shapes/Shape_NarrowCapsule.Shape_NarrowCapsule'"));
 	StaticMesh->SetStaticMesh(SeedShape.Object);

@@ -91,6 +91,18 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "TGCOCharacter")
 	void Use();
 
+	/** Set a checkpoint for re spawn */
+	bool SetCheckpoint();
+
+	/** Get the checkpoint for re spawn */
+	FTransform GetCheckpoint();
+
+	/** Spawn the Player to the last checkpoint */
+	void SpawnPlayer();
+
+	/** Function called when Player is dead */
+	void KillPlayerThenRespawn();
+
 protected:
 	/** APawn interface */
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
@@ -138,5 +150,11 @@ private:
 	AInteractiveElement* PreviousInteractiveElement;
 	/** Number of InteractiveElement that the Player can use in their perimeter */
 	int32 iNumberOfCloseInteractiveElement;
+	/** Last Character checkpoint */
+	FTransform LastCheckpoint;
+	/** Character PlayerStart */
+	APlayerStart* LastSpawn;
+	/** Character Pawn */
+	ATGCOCharacter* PlayerPawn;
 };
 

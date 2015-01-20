@@ -6,6 +6,7 @@
 AFixBot::AFixBot(const class FObjectInitializer& PCIP) : Super(PCIP)
 {
 	this->fStunTime = 3.f;
+	MaxRoutes = 0;
 }
 
 float AFixBot::TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser)
