@@ -221,6 +221,7 @@ void ATGCOGameSession::OnJoinSessionComplete(FName SessionName, EOnJoinSessionCo
 	}
 
 	OnJoinSessionComplete().Broadcast(Result);
+
 }
 
 FName ATGCOGameSession::GetSessionName()
