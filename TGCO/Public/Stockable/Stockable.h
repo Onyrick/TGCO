@@ -9,7 +9,7 @@
 /**
 * TODO
 */
-UCLASS(Abstract)
+UCLASS()
 class TGCO_API AStockable : public ATriggerable
 {
 	GENERATED_BODY()
@@ -27,7 +27,15 @@ public:
 	/** Getter */
 	UFUNCTION(BlueprintCallable, Category = "Stockable")
 	virtual FString GetDescription();
+
+	UFUNCTION(BlueprintCallable, Category = "Stockable")
+	virtual UTexture2D* GetInventoryImageTexture();
 	
-	UPROPERTY(EditAnywhere, Category = "Description")
+	/** The description wirtten in the inventory when the player click on this item*/
+	UPROPERTY(EditAnywhere, Category = "Stockable")
 	FString sDescription;
+
+	/** The UMG Image shown in the inventory */
+	UPROPERTY(EditAnywhere, Category = "Stockable")
+	UTexture2D* InventoryImageTexture;
 };

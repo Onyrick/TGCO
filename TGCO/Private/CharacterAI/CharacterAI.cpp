@@ -12,9 +12,6 @@ ACharacterAI::ACharacterAI(const class FObjectInitializer& PCIP)
 	StaticMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
 
 	AIControllerClass = AControllerAI::StaticClass();
-	
-	GetMesh()->AttachTo(StaticMesh);
-	StaticMesh->AttachTo(GetCapsuleComponent());
 
 	RootComponent = GetCapsuleComponent();
 

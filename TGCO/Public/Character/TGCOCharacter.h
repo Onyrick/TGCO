@@ -2,6 +2,8 @@
 #pragma once
 #include "GameFramework/Character.h"
 #include "InteractiveElement.h"
+#include "Stockable.h"
+#include "InventoryUMG.h"
 #include "TGCOCharacter.generated.h"
 
 /**
@@ -156,5 +158,23 @@ private:
 	APlayerStart* LastSpawn;
 	/** Character Pawn */
 	ATGCOCharacter* PlayerPawn;
+
+public:
+	/** Function to add a stockable item in the inventory*/
+	void PickStockableItem(AStockable* _item);
+
+	/**Getter / Setter */
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	UInventoryUMG* GetInventoryUMG();
+
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	void SetInventoryUMG(UInventoryUMG* _widget);
+
+	/** Toggle the visibility of the mouse and of the widget */
+	void ToggleInventory();
+
+protected:
+	/** The UMG Inventory */
+	UInventoryUMG* InventoryUMG;
 };
 

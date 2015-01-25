@@ -8,13 +8,19 @@ AStockable::AStockable(const class FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer),
 sDescription("Stockable")
 {
-
 }
 
 void AStockable::OnOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	UE_LOG(LogDebug, Warning, TEXT("Begin Overlap Stockable"));
-	Destroy();
+	//PickStockableItem(this);
+	ATGCOCharacter* PlayerCharacter = Cast<ATGCOCharacter>(OtherActor);
+
+	if (PlayerCharacter != NULL)
+	{
+		PlayerCharacter->PickStockableItem(this);
+		Destroy();
+	}
 }
 
 void AStockable::OnOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
@@ -25,4 +31,9 @@ void AStockable::OnOverlapEnd(class AActor* OtherActor, class UPrimitiveComponen
 FString AStockable::GetDescription()
 {
 	return sDescription;
+}
+
+UTexture2D* AStockable::GetInventoryImageTexture()
+{
+	return InventoryImageTexture;
 }

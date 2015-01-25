@@ -68,6 +68,8 @@ void ATGCOCharacter::SetupPlayerInputComponent(class UInputComponent* InputCompo
 	InputComponent->BindAction("Fire", IE_Pressed, this, &ATGCOCharacter::OnFire);
 	InputComponent->BindAction("Use", IE_Pressed, this, &ATGCOCharacter::Use);
 
+	InputComponent->BindAction("Inventory", IE_Pressed, this, &ATGCOCharacter::ToggleInventory);
+
 	InputComponent->BindAction("Run", IE_Pressed, this, &ATGCOCharacter::Run);
 	InputComponent->BindAction("Run", IE_Released, this, &ATGCOCharacter::StopRunning);
 
@@ -398,4 +400,37 @@ void ATGCOCharacter::PlayShieldSound()
 {
 	// TODO
 	UE_LOG(LogDebug, Warning, TEXT("TO DO : play activate shield sound"));
+}
+
+UInventoryUMG* ATGCOCharacter::GetInventoryUMG()
+{
+	return InventoryUMG;
+}
+
+void ATGCOCharacter::SetInventoryUMG(UInventoryUMG* _widget)
+{
+	InventoryUMG = _widget;
+}
+
+void ATGCOCharacter::PickStockableItem(AStockable* _item)
+{
+	InventoryUMG->AddNewItem(_item);
+	
+}
+
+void ATGCOCharacter::ToggleInventory()
+{
+	APlayerController* MyController = GetWorld()->GetFirstPlayerController();
+
+	if (InventoryUMG->IsVisible())
+	{
+		InventoryUMG->SetVisibility(ESlateVisibility::Hidden);
+		MyController->bShowMouseCursor = false;
+	}
+	else
+	{
+		InventoryUMG->SetVisibility(ESlateVisibility::Visible);
+		MyController->bShowMouseCursor = true;
+	}
+	
 }

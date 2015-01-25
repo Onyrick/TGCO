@@ -3,6 +3,7 @@
 #pragma once
 
 #include "GameFramework/PlayerState.h"
+#include "Stockable.h"
 #include "TGCOPlayerState.generated.h"
 
 /**
@@ -28,9 +29,14 @@ public:
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable, Category = "Online")
 	void ServerSetPlayerNumber(int32 NewPlayerNumber);
 
+	/** Add and Remove Item*/
+	void AddNewInventoryItem(AStockable* _item);
+	void RemoveInventoryItem(AStockable* _item);
+
 protected:
 	/** Player number (0 = Maximilien = futur / 1 = Samantha = past */
 	UPROPERTY(Replicated)
 	int32 PlayerNumber;
 	
+	TArray<AStockable*> InventoryListItems;
 };
