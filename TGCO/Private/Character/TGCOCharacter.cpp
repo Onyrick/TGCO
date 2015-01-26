@@ -4,6 +4,7 @@
 #include "TGCOCharacter.h"
 #include "Projectile.h"
 #include "Engine.h"
+#include "TGCOPlayerState.h"
 #include "TGCOGameState.h"
 
 #define COLLISION_HIGHLIGHT_TRACE ECC_GameTraceChannel1
@@ -414,8 +415,21 @@ void ATGCOCharacter::SetInventoryUMG(UInventoryUMG* _widget)
 
 void ATGCOCharacter::PickStockableItem(AStockable* _item)
 {
-	InventoryUMG->AddNewItem(_item);
 	
+
+	InventoryUMG->AddNewItem(_item);
+	TArray<APlayerState*> MyPlayerArray = GetWorld()->GetGameState()->PlayerArray;
+	for (int i = 0; i < MyPlayerArray.Num(); ++i)
+	{
+		ATGCOPlayerState* PlayerState = Cast<ATGCOPlayerState>(MyPlayerArray[i]);
+
+		//UE_LOG(LogTest, Warning, TEXT("State %d Current %d "), PlayerState->GetUniqueID(), this->GetUniqueID());
+		if (PlayerState->GetUniqueID() == this->GetUniqueID())
+		{
+			PlayerState->AddNewInventoryItem(_item);
+			break;
+		}
+	}
 }
 
 void ATGCOCharacter::ToggleInventory()
