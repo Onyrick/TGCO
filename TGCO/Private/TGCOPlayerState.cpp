@@ -29,13 +29,26 @@ void ATGCOPlayerState::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & 
 	DOREPLIFETIME(ATGCOPlayerState, PlayerNumber);
 }
 
-bool ATGCOPlayerState::ServerSetPlayerNumber_Validate(int32 NewPlayerNumber){
+bool ATGCOPlayerState::ServerSetPlayerNumber_Validate(int32 NewPlayerNumber)
+{
 	UE_LOG(LogTest, Warning, TEXT("Validate server exchange"));
 	return true;
 }
 
-void ATGCOPlayerState::ServerSetPlayerNumber_Implementation(int32 NewPlayerNumber){
+void ATGCOPlayerState::ServerSetPlayerNumber_Implementation(int32 NewPlayerNumber)
+{
 	UE_LOG(LogTest, Warning, TEXT("Update from client (PlayeState is %i) : from %i to %i "), this->GetUniqueID(), PlayerNumber, NewPlayerNumber);
 	PlayerNumber = NewPlayerNumber;
+}
+
+void ATGCOPlayerState::CopyProperties(APlayerState* PlayerState)
+{
+	Super::CopyProperties(PlayerState);
+
+	ATGCOPlayerState* TGCOPlayer = Cast<ATGCOPlayerState>(PlayerState);
+	if (TGCOPlayer)
+	{
+		TGCOPlayer->PlayerNumber = PlayerNumber;
+	}
 }
 

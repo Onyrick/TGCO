@@ -38,6 +38,10 @@ public:
 	virtual void Shutdown() override;
 	virtual void StartGameInstance() override;
 
+	/** Start the game */
+	UFUNCTION(BlueprintCallable, Category = "Online")
+	void StartGame();
+
 	/** Host a game session */
 	UFUNCTION(BlueprintCallable, Category = "Online")
 	bool HostGame(ULocalPlayer* LocalPlayer, const FString& InMapName);
@@ -68,6 +72,10 @@ public:
 	/** Sends the game to the initial startup/frontend state  */
 	UFUNCTION(BlueprintCallable, Category = "GameState")
 	void GotoInitialState();
+
+	/** Get cuurent state */
+	UFUNCTION(BlueprintCallable, Category = "GameState")
+	FName GetState();
 
 	/**
 	 * Creates the message menu, clears other menus and sets the KingState to Message.

@@ -72,6 +72,11 @@ void UTGCOGameInstance::ShowMessageThenGotoState(const FString& Message, const F
 	GotoState(NewState);
 }
 
+void UTGCOGameInstance::StartGame()
+{
+	PendingState = TGCOGameInstanceState::Playing;
+}
+
 bool UTGCOGameInstance::HostGame(ULocalPlayer* LocalPlayer, const FString& InMapName)
 {
 	ATGCOGameSession* const GameSession = GetGameSession();
@@ -79,7 +84,7 @@ bool UTGCOGameInstance::HostGame(ULocalPlayer* LocalPlayer, const FString& InMap
 	{
 		// add callback delegate for completion
 		GameSession->OnCreatePresenceSessionComplete().AddUObject(this, &UTGCOGameInstance::OnCreatePresenceSessionComplete);
-	
+
 		bool const bIsLanMatch = true;
 
 		// Create the TraverURL from the MapName
@@ -92,7 +97,7 @@ bool UTGCOGameInstance::HostGame(ULocalPlayer* LocalPlayer, const FString& InMap
 		{
 			// If any error occured in the above, pending state would be set
 			if ((PendingState == TGCOGameInstanceState::Hosting))
-			{	
+			{
 				return true;
 			}
 		}
@@ -198,7 +203,7 @@ bool UTGCOGameInstance::JoinSession(ULocalPlayer* LocalPlayer, int32 SessionInde
 			if ((PendingState == CurrentState) || (PendingState == TGCOGameInstanceState::None))
 			{
 				UE_LOG(LogOnlineGame, Verbose, TEXT("Return true on join session"));
-				
+
 				return true;
 			}
 		}
@@ -282,6 +287,7 @@ void UTGCOGameInstance::InternalTravelToSession(const FName& SessionName)
 
 	GotoState(TGCOGameInstanceState::Joining);
 	AddNetworkFailureHandlers();
+	UE_LOG(LogOnlineGame, Warning, TEXT("Client go to %s"), *URL);
 	PlayerController->ClientTravel(URL, TRAVEL_Absolute);
 }
 
@@ -412,7 +418,7 @@ void UTGCOGameInstance::EndCurrentState(FName NextState)
 	}
 	else if (CurrentState == TGCOGameInstanceState::Playing)
 	{
-		//EndPlayingState();
+		EndPlayingState();
 	}
 	else if (CurrentState == TGCOGameInstanceState::Hosting)
 	{
@@ -472,14 +478,23 @@ void UTGCOGameInstance::EndMainMenuState()
 
 void UTGCOGameInstance::BeginPlayingState()
 {
+	UWorld* const World = GetWorld();
+	if (World)
+	{
+		AGameMode* const Game = World->GetAuthGameMode();
+		if (Game)
+		{
+			Game->bUseSeamlessTravel = true;
+		}
+	}
 	UGameViewportClient* GVC = GEngine->GameViewport;
 	GVC->RemoveAllViewportWidgets();
-	GetWorld()->ServerTravel(FString("/Game/Maps/Room1"));
+	GetWorld()->ServerTravel(FString("/Game/Maps/TutorialRoom?listen"));
 }
 
 void UTGCOGameInstance::EndPlayingState()
 {
-	// To Do Deconnect Player of the server
+	// To Do Disconnect Player of the server
 }
 
 void UTGCOGameInstance::BeginHostingState()
@@ -613,4 +628,9 @@ FString UTGCOGameInstance::TrimId(FString Id)
 	Id.Shrink();
 
 	return Id;
+}
+
+FName UTGCOGameInstance::GetState()
+{
+	return CurrentState;
 }
