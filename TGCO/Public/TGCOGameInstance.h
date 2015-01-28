@@ -93,15 +93,20 @@ public:
 	FString TrimId(FString Id);
 
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
-		FBindableEvent_ServerSearchFinished,
+	FBindableEvent_ServerSearchFinished,
 			
-		int32,
-		NumberServerFound
+	int32,
+	NumberServerFound
 	);
 
 	/** Called when Server Search is finished */
 	UPROPERTY(BlueprintAssignable, Category = "Online")
 	FBindableEvent_ServerSearchFinished OnSearchCompleted;
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FBindableEvent_GoingToPlay);
+	/** Called when Server Search is finished */
+	UPROPERTY(BlueprintAssignable, Category = "Online")
+	FBindableEvent_GoingToPlay OnGoingToPlay;
 	
 private:
 	/** Delegate for ending a session */

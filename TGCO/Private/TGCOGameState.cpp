@@ -3,6 +3,7 @@
 #include "TGCO.h"
 #include "TGCOGameState.h"
 #include "TGCOPlayerState.h"
+#include "TGCOGameInstance.h"
 
 ATGCOGameState::ATGCOGameState(const FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer)
@@ -84,4 +85,18 @@ void ATGCOGameState::ExchangeCharacter(){
 
 		OnExchangeCharacters.Broadcast();
 	}
+}
+
+void ATGCOGameState::RemoveAllWidgets()
+{
+	if (true)
+	{
+		MulticastRemoveAllWidgets();
+	}
+}
+
+void ATGCOGameState::MulticastRemoveAllWidgets_Implementation()
+{
+	UGameViewportClient* GVC = GEngine->GameViewport;
+	GVC->RemoveAllViewportWidgets();
 }

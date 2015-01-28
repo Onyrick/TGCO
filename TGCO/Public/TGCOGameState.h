@@ -46,6 +46,12 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Players")
 	FBindableEvent_ExchangeCharactersFinished OnExchangeCharacters;
 
+	/** Remove all widgets attached to viewport */
+	UFUNCTION(BlueprintCallable, Category = "Online")
+	void RemoveAllWidgets();
+	UFUNCTION(Netmulticast, reliable)
+	void MulticastRemoveAllWidgets();
+
 private:
 
 	/** Check if Players have remaining energy and can continue the game. If not launch Game Over. */

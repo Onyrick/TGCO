@@ -2,6 +2,7 @@
 
 #include "TGCO.h"
 #include "TGCOGameInstance.h"
+#include "TGCOGameState.h"
 
 #include "Online.h"
 #include "Engine.h"
@@ -486,9 +487,10 @@ void UTGCOGameInstance::BeginPlayingState()
 		{
 			Game->bUseSeamlessTravel = true;
 		}
+		ATGCOGameState* const GameState = Cast<ATGCOGameState>(World->GetGameState());
+		GameState->MulticastRemoveAllWidgets();
 	}
-	UGameViewportClient* GVC = GEngine->GameViewport;
-	GVC->RemoveAllViewportWidgets();
+
 	GetWorld()->ServerTravel(FString("/Game/Maps/TutorialRoom?listen"));
 }
 
