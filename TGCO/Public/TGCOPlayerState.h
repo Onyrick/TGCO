@@ -3,6 +3,7 @@
 #pragma once
 
 #include "GameFramework/PlayerState.h"
+#include "Stockable.h"
 #include "TGCOPlayerState.generated.h"
 
 /**
@@ -32,9 +33,14 @@ public:
 	/** Copy properties which need to be saved in inactive PlayerState */
 	virtual void CopyProperties(APlayerState* PlayerState) override;
 
+	/** Add and Remove Item*/
+	void AddNewInventoryItem(AStockable* _item);
+	void RemoveInventoryItem(AStockable* _item);
+
 protected:
 	/** Player number (0 = Maximilien = futur / 1 = Samantha = past */
 	UPROPERTY(Replicated)
 	int32 PlayerNumber;
 	
+	TArray<AStockable*> InventoryListItems;
 };

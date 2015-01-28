@@ -27,6 +27,9 @@ public class TGCO : ModuleRules
         PrivateDependencyModuleNames.AddRange(
             new string[] {
                 "OnlineSubsystem",
+				"UMG",
+				"Slate",
+				"SlateCore",
             }
         );
 

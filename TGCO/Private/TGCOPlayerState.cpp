@@ -52,3 +52,12 @@ void ATGCOPlayerState::CopyProperties(APlayerState* PlayerState)
 	}
 }
 
+void ATGCOPlayerState::AddNewInventoryItem(AStockable* _item)
+{
+	InventoryListItems.Add(_item);
+}
+
+void ATGCOPlayerState::RemoveInventoryItem(AStockable* _item)
+{
+	InventoryListItems.Remove(_item);
+}
