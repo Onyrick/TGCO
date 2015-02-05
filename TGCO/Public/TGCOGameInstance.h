@@ -73,9 +73,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "GameState")
 	void GotoInitialState();
 
-	/** Get cuurent state */
+	/** Get curent state */
 	UFUNCTION(BlueprintCallable, Category = "GameState")
 	FName GetState();
+	/** Set current stage be carefull */
+	void SetCurrentState(FName NewState);
 
 	/**
 	 * Creates the message menu, clears other menus and sets the KingState to Message.

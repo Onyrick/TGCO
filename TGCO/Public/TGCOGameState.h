@@ -47,10 +47,11 @@ public:
 	FBindableEvent_ExchangeCharactersFinished OnExchangeCharacters;
 
 	/** Remove all widgets attached to viewport */
-	UFUNCTION(BlueprintCallable, Category = "Online")
-	void RemoveAllWidgets();
 	UFUNCTION(Netmulticast, reliable)
 	void MulticastRemoveAllWidgets();
+
+	UFUNCTION(Netmulticast, reliable)
+	void MulticastGoToPlayingState();
 
 private:
 

@@ -489,6 +489,7 @@ void UTGCOGameInstance::BeginPlayingState()
 		}
 		ATGCOGameState* const GameState = Cast<ATGCOGameState>(World->GetGameState());
 		GameState->MulticastRemoveAllWidgets();
+		GameState->MulticastGoToPlayingState();
 	}
 
 	GetWorld()->ServerTravel(FString("/Game/Maps/TutorialRoom?listen"));
@@ -635,4 +636,9 @@ FString UTGCOGameInstance::TrimId(FString Id)
 FName UTGCOGameInstance::GetState()
 {
 	return CurrentState;
+}
+
+void UTGCOGameInstance::SetCurrentState(FName NewState)
+{
+	CurrentState = NewState;
 }

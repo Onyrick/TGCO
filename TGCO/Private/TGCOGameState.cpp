@@ -87,16 +87,21 @@ void ATGCOGameState::ExchangeCharacter(){
 	}
 }
 
-void ATGCOGameState::RemoveAllWidgets()
-{
-	if (true)
-	{
-		MulticastRemoveAllWidgets();
-	}
-}
 
 void ATGCOGameState::MulticastRemoveAllWidgets_Implementation()
 {
 	UGameViewportClient* GVC = GEngine->GameViewport;
 	GVC->RemoveAllViewportWidgets();
+}
+void ATGCOGameState::MulticastGoToPlayingState_Implementation()
+{
+	UWorld* const World = GetWorld();
+	if (World)
+	{
+		UTGCOGameInstance* GameInstance = Cast<UTGCOGameInstance>(World->GetGameInstance());
+		if (GameInstance)
+		{
+			GameInstance->SetCurrentState(FName(TEXT("Playing")));
+		}
+	}
 }
