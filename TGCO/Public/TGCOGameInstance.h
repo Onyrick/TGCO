@@ -38,6 +38,10 @@ public:
 	virtual void Shutdown() override;
 	virtual void StartGameInstance() override;
 
+	/** Start the game */
+	UFUNCTION(BlueprintCallable, Category = "Online")
+	void StartGame();
+
 	/** Host a game session */
 	UFUNCTION(BlueprintCallable, Category = "Online")
 	bool HostGame(ULocalPlayer* LocalPlayer, const FString& InMapName);
@@ -69,6 +73,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "GameState")
 	void GotoInitialState();
 
+	/** Get curent state */
+	UFUNCTION(BlueprintCallable, Category = "GameState")
+	FName GetState();
+	/** Set current stage be carefull */
+	void SetCurrentState(FName NewState);
+
 	/**
 	 * Creates the message menu, clears other menus and sets the KingState to Message.
 	 *
@@ -85,15 +95,20 @@ public:
 	FString TrimId(FString Id);
 
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
-		FBindableEvent_ServerSearchFinished,
+	FBindableEvent_ServerSearchFinished,
 			
-		int32,
-		NumberServerFound
+	int32,
+	NumberServerFound
 	);
 
 	/** Called when Server Search is finished */
 	UPROPERTY(BlueprintAssignable, Category = "Online")
 	FBindableEvent_ServerSearchFinished OnSearchCompleted;
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FBindableEvent_GoingToPlay);
+	/** Called when Server Search is finished */
+	UPROPERTY(BlueprintAssignable, Category = "Online")
+	FBindableEvent_GoingToPlay OnGoingToPlay;
 	
 private:
 	/** Delegate for ending a session */

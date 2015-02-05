@@ -26,8 +26,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Online")
 	void SetPlayerNumber(int32 NewPlayerNumber);
 
+	/** Set PlayerNumber from server */
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable, Category = "Online")
 	void ServerSetPlayerNumber(int32 NewPlayerNumber);
+
+	/** Copy properties which need to be saved in inactive PlayerState */
+	virtual void CopyProperties(APlayerState* PlayerState) override;
 
 	/** Add and Remove Item*/
 	void AddNewInventoryItem(AStockable* _item);

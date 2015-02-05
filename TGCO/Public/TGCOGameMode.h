@@ -18,4 +18,8 @@ public:
 protected:
 	/** Return game session class to use */
 	virtual TSubclassOf<AGameSession> GetGameSessionClass() const override;
+
+private:
+	/** select best spawn point for player */
+	virtual AActor* ChoosePlayerStart(AController* Player) override;
 };
