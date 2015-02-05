@@ -5,18 +5,19 @@
 namespace ESolutionType
 {
 	/** List of solution type */
-	enum Type
+	UENUM(BlueprintType)
+	enum class Type : uint8
 	{
-		ACID,
-		CAUSTIC_SODA,
-		SALTED_WATER,
-		ETHANOL,
-		MERCURY,
-		WEEDKILLING,
-		INFLAMMABLE_PRODUCT,
-		FROZEN_PRODUCT,
-		NITROGLYCERINE,
-		RIGIDIFY
+		ACID UMETA(DisplayName = "Acid"),
+		CAUSTIC_SODA UMETA(DisplayName = "Caustic Soda"),
+		SALTED_WATER UMETA(DisplayName = "Salted Water"),
+		ETHANOL UMETA(DisplayName = "Ethanol"),
+		MERCURY UMETA(DisplayName = "Mercury"),
+		WEEDKILLING UMETA(DisplayName = "Weedkilling"),
+		INFLAMMABLE_PRODUCT UMETA(DisplayName = "Inflammable"),
+		FROZEN_PRODUCT UMETA(DisplayName = "Frozen Product"),
+		NITROGLYCERINE UMETA(DisplayName = "Nitroglycerine"),
+		RIGIDIFY UMETA(DisplayName = "Rigidify")
 	};
 }
 
