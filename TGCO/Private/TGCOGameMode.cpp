@@ -2,9 +2,11 @@
 
 #include "TGCO.h"
 #include "TGCOGameMode.h"
+#include "TGCOPlayerState.h"
 #include "TGCOGameState.h"
 #include "TGCOCharacter.h"
 #include "TGCOGameSession.h"
+#include "TGCOPlayerState.h"
 #include "TGCOHUD.h"
 #include "Engine.h"
 
@@ -20,19 +22,66 @@ ATGCOGameMode::ATGCOGameMode(const FObjectInitializer& ObjectInitializer)
 
 	HUDClass = ATGCOHUD::StaticClass();
 	GameStateClass = ATGCOGameState::StaticClass();
+	PlayerStateClass = ATGCOPlayerState::StaticClass();
+
+	bUseSeamlessTravel = false;
 }
 
 void ATGCOGameMode::StartPlay()
 {
 	Super::StartPlay();
-
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, .5f, FColor::Red, TEXT("Begin Play"));
-	}
 }
 
 TSubclassOf<AGameSession> ATGCOGameMode::GetGameSessionClass() const
 {
 	return ATGCOGameSession::StaticClass();
+}
+
+AActor* ATGCOGameMode::ChoosePlayerStart(AController* Player)
+{
+	APlayerStart* BestStart = NULL;
+	for (int32 i = 0; i < PlayerStarts.Num(); i++)
+	{
+		APlayerStart* TestSpawn = PlayerStarts[i];
+		UE_LOG(LogOnline, Log, TEXT("Player start name : %s"), *TestSpawn->GetName());
+		if (TestSpawn != NULL)
+		{
+			if (TestSpawn->GetName().Equals("PlayerStartPast"))
+			{
+				ATGCOPlayerState* PlayerState = Cast<ATGCOPlayerState>(Player->PlayerState);
+				if (PlayerState)
+				{
+					int32 PlayerNumber = PlayerState->GetPlayerNumber();
+					if (PlayerNumber == 1)
+					{
+						// 1 == Sam == past
+						BestStart = TestSpawn;
+					}
+				}
+			}
+			else
+			{
+				if (TestSpawn->GetName().Equals("PlayerStartFutur"))
+				{
+					ATGCOPlayerState* PlayerState = Cast<ATGCOPlayerState>(Player->PlayerState);
+					if (PlayerState)
+					{
+						int32 PlayerNumber = PlayerState->GetPlayerNumber();
+						if (PlayerNumber == 0)
+						{
+							// 1 == Sam == past
+							BestStart = TestSpawn;
+						}
+					}
+				}
+				else
+				{
+					BestStart = TestSpawn;
+				}
+			}
+			
+		}
+	}
+
+	return BestStart ? BestStart : Super::ChoosePlayerStart(Player);
 }

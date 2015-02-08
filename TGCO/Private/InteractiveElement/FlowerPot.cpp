@@ -1,4 +1,4 @@
-
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "TGCO.h"
 #include "FlowerPot.h"
@@ -6,19 +6,20 @@
 #include "Props/Lever.h"
 
 
-AFlowerPot::AFlowerPot(const class FObjectInitializer& PCIP) : Super(PCIP)
+AFlowerPot::AFlowerPot(const class FObjectInitializer& ObjectInitializer)
+: Super(ObjectInitializer)
 {
 	bIsInteractive = false;
 	
 	ConstructorHelpers::FObjectFinder<UStaticMesh> PotShape(TEXT("StaticMesh'/Game/StarterContent/Shapes/Shape_Cylinder.Shape_Cylinder'"));
 	StaticMesh->SetStaticMesh(PotShape.Object);
-	TreeTrunc = PCIP.CreateDefaultSubobject<UTree>(this, TEXT("TreeTrunc"));
+	TreeTrunc = ObjectInitializer.CreateDefaultSubobject<UTree>(this, TEXT("TreeTrunc"));
 	ConstructorHelpers::FObjectFinder<UStaticMesh> TreeShape(TEXT("StaticMesh'/Game/StarterContent/Props/SM_PillarFrame300.SM_PillarFrame300'"));
 	TreeTrunc->SetStaticMesh(TreeShape.Object);
 	TreeTrunc->AttachTo(StaticMesh);
 	TreeTrunc->SetVisibility(false, true);
 
-	TreeCapsuleOverlapCheck = PCIP.CreateDefaultSubobject<UCapsuleComponent>(this, TEXT("TreeBoxOverlapCheck"));
+	TreeCapsuleOverlapCheck = ObjectInitializer.CreateDefaultSubobject<UCapsuleComponent>(this, TEXT("TreeBoxOverlapCheck"));
 	TreeCapsuleOverlapCheck->AttachTo(StaticMesh);
 }
 
@@ -26,18 +27,18 @@ AFlowerPot::AFlowerPot(const class FObjectInitializer& PCIP) : Super(PCIP)
 bool AFlowerPot::OnInteract()
 {
 	//TODO
-	if (GEngine)
+	UE_LOG(LogDebug, Warning, TEXT("Interactible flower pot"));
+
+	AFlowerPot* FuturSelf = Cast<AFlowerPot>(FuturElement);
+	if (FuturSelf != nullptr)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 2.f,  FColor::Green, TEXT("Interactible flower pot"));
-		AFlowerPot* FuturSelf = Cast<AFlowerPot>(FuturElement);
-		if (FuturSelf != nullptr)
-		{
-			FuturSelf->GrowTree();
-		}
+		FuturSelf->GrowTree();
 	}
+
 	return true;
 }
 
+//TODO Comment
 void AFlowerPot::GrowTree()
 {
 	if (TreeTrunc != nullptr)
@@ -45,19 +46,17 @@ void AFlowerPot::GrowTree()
 		TreeTrunc->SetVisibility(true, true);
 		TreeVisible.Broadcast();
 		TArray<AActor*> OutOverlappingComponents;
-		this->GetOverlappingActors( OutOverlappingComponents);
+		this->GetOverlappingActors(OutOverlappingComponents);
 		for (int i = 0; i < OutOverlappingComponents.Num(); i++)
 		{
-			auto comp = OutOverlappingComponents[i];
-			auto classname = comp->GetClass()->GetName();
+			auto component = OutOverlappingComponents[i];
+			auto classname = component->GetClass()->GetName();
 			if (classname.Contains(TEXT("Lever")))
 			{
-				auto tempLever = Cast<ALever>(comp);
+				auto tempLever = Cast<ALever>(component);
 				tempLever->getStaticMesh()->SetVisibility(false);
-				if (GEngine)
-				{
-					GEngine->AddOnScreenDebugMessage(-1, 4.f, FColor::Green, TEXT("Tree has pushed the lever"));
-				}
+
+				UE_LOG(LogDebug, Warning, TEXT("Tree has pushed the lever"));
 			}			
 		}
 

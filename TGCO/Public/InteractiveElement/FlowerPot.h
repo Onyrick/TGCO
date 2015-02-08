@@ -1,4 +1,4 @@
-
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -8,43 +8,46 @@
 #include "FlowerPot.generated.h"
 
 /**
- * 
+ * TODO
  */
 UCLASS()
 class TGCO_API AFlowerPot : public AInteractiveElement
 {
 	GENERATED_BODY()
-	
-		//Constructors
-		AFlowerPot(const FObjectInitializer& PCIP);
 
 public:
-	//////////////////////////////////////////////////////////////////////////////////////////////
-	//Method called when the player wants to use the object
-	//////////////////////////////////////////////////////////////////////////////////////////////
+	/** Constructors */
+	AFlowerPot(const FObjectInitializer& PCIP);
+
+	/** Called when the Player uses the object */
 	UFUNCTION(BlueprintCallable, Category = "FlowerPot")
 	virtual bool OnInteract() override;
 	
+	/** TODO */
 	UPROPERTY(VisibleAnywhere, Category = "Tree")
-		UCapsuleComponent* TreeCapsuleOverlapCheck;
+	UCapsuleComponent* TreeCapsuleOverlapCheck;
 
+	/** TODO */
 	UPROPERTY(EditAnywhere, Category = "FlowerPot")
-		UTree* TreeTrunc;
+	UTree* TreeTrunc;
 
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE(
-	FBindableEvent_TreeVisible
-		);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FBindableEvent_TreeVisible);
 
-	/** Called when Server Search is finished */
+	/** Called when TODO */
 	UPROPERTY(BlueprintAssignable, Category = "Tree")
-		FBindableEvent_TreeVisible TreeVisible;
+	FBindableEvent_TreeVisible TreeVisible;
 
-protected:	
+protected:
+	/** TODO */
 	void GrowTree();
+	/** TODO */
 	void PlantSeed(ASeed * Seed);
+	/** TODO */
 	ASeed * RemoveSeed();
+	/** TODO */
 	ASeed * SwapSeed(ASeed * Seed);
 
 private:
+	/** TODO */
 	ASeed * PlantedSeed;
 };

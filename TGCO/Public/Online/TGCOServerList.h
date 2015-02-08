@@ -22,7 +22,7 @@ struct FServerEntry
 };
 
 /**
- * 
+ * TODO
  */
 UCLASS()
 class TGCO_API UTGCOServerList : public UObject
@@ -35,22 +35,22 @@ public:
 	void UTGCOServerList::Init(TWeakObjectPtr<class ULocalPlayer> pPlayer);
 
 	/**
-	* Get the current game session
-	*
-	* @return The current game session
-	*/
+	 * Get the current game session
+	 *
+	 * @return The current game session
+	 */
 	ATGCOGameSession* GetGameSession() const;
 
 	/**
-	* Get the current player that own this object
-	*
-	* @return The current player
-	*/
+	 * Get the current player that own this object
+	 *
+	 * @return The current player
+	 */
 	TWeakObjectPtr<class ULocalPlayer> GetPlayer() const;
 
 	/**
-	* Tick called by the GameInstance when needed
-	*/
+	 * Tick called by the GameInstance when needed
+	 */
 	void Tick(float DeltaSeconds);
 
 	/** Updates current search status */

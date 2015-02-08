@@ -7,7 +7,7 @@
 #include "ConsoleTuto.generated.h"
 
 /**
- * 
+ * TODO
  */
 UCLASS()
 class TGCO_API AConsoleTuto : public AInteractiveElement
@@ -15,20 +15,19 @@ class TGCO_API AConsoleTuto : public AInteractiveElement
 	GENERATED_UCLASS_BODY()
 
 public:
-	//////////////////////////////////////////////////////////////////////////////////////////////
-	//Method called when the player wants to use the object which is currently hightlighted.
-	//This method will be overriden by each of the class' children
-	//////////////////////////////////////////////////////////////////////////////////////////////
+	/** Called when the Player uses the object */
 	UFUNCTION(BlueprintCallable, Category = "InteractiveElement")
 	virtual bool OnInteract() override;
 	
-	//Getter / Setter / Is
+	/** Getter for bIsUnlocked */
 	UFUNCTION(BlueprintCallable, Category = "InteractiveElement")
-		bool IsUnlocked();
+	bool IsUnlocked();
 
+	/** Setter for bIsUnlocked */
 	UFUNCTION(BlueprintCallable, Category = "InteractiveElement")
-		void SetUnlocked(bool _unlock);
+	void SetUnlocked(bool _unlock);
 
 protected:
-	bool bIsUnlocked; //whether the console is unlocked
+	/** Whether the console is unlocked */
+	bool bIsUnlocked;
 };

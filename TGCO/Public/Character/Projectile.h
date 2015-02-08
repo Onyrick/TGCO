@@ -6,8 +6,9 @@
 #include "Projectile.generated.h"
 
 #define COLLISION_PROJECTILE    ECC_GameTraceChannel1
+
 /**
- * 
+ * Define the Projectile launch by the Player 
  */
 UCLASS()
 class TGCO_API AProjectile : public AActor

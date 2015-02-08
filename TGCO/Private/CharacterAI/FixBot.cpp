@@ -6,6 +6,7 @@
 AFixBot::AFixBot(const class FObjectInitializer& PCIP) : Super(PCIP)
 {
 	this->fStunTime = 3.f;
+	MaxRoutes = 0;
 }
 
 float AFixBot::TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser)
@@ -24,10 +25,7 @@ float AFixBot::TakeDamage(float DamageAmount, struct FDamageEvent const & Damage
 	{
 		Stun();
 	}*/
+	UE_LOG(LogDebug, Warning, TEXT("Take Damage FixBot"));
 
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(0, 10.0f, FColor::White, TEXT("Take Damage FixBot"));
-	}
 	return -1.f;
 }

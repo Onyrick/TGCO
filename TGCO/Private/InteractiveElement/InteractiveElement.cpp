@@ -1,15 +1,19 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
 #include "TGCO.h"
 #include "TGCOCharacter.h"
 #include "InteractiveElement.h"
 
-AInteractiveElement::AInteractiveElement(const class FObjectInitializer& PCIP)
-	: Super(PCIP), bIsInteractive(true), bCloseEnough(false)
+AInteractiveElement::AInteractiveElement(const class FObjectInitializer& ObjectInitializer)
+: Super(ObjectInitializer)
+, bIsInteractive(true)
+, bCloseEnough(false)
 {
-	TriggerBox = PCIP.CreateDefaultSubobject<UBoxComponent>(this, TEXT("BoxTrigger_InteractiveElement"));
+	TriggerBox = ObjectInitializer.CreateDefaultSubobject<UBoxComponent>(this, TEXT("BoxTrigger_InteractiveElement"));
 	TriggerBox->OnComponentBeginOverlap.AddDynamic(this, &AInteractiveElement::OnOverlapBegin);
 	TriggerBox->OnComponentEndOverlap.AddDynamic(this, &AInteractiveElement::OnOverlapEnd);
 
-	StaticMesh = PCIP.CreateDefaultSubobject < UStaticMeshComponent >(this, TEXT("StaticMesh_InteractiveElement"));
+	StaticMesh = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("StaticMesh_InteractiveElement"));
 	
 	TriggerBox->AttachTo(StaticMesh);
 	RootComponent = StaticMesh;
@@ -25,18 +29,12 @@ void AInteractiveElement::Highlight(bool highlight)
 	//TODO
 	if (highlight)
 	{
-		if (GEngine)
-		{
-			GEngine->AddOnScreenDebugMessage(0, 2.f, FColor::White, name + TEXT(" : Je m'allume !!!"));
-		}
+		//UE_LOG(LogTest, Warning, TEXT("Highlight on"));
 		IsLookedAt = true;
 	}
 	else
 	{
-		if (GEngine)
-		{
-			GEngine->AddOnScreenDebugMessage(0, 2.f, FColor::White, name + TEXT(" : Je m'eteins !!!"));
-		}
+		//UE_LOG(LogTest, Warning, TEXT("Highlight off"));
 		IsLookedAt = false;
 	}
 
@@ -44,7 +42,7 @@ void AInteractiveElement::Highlight(bool highlight)
 
 bool AInteractiveElement::IsInteractive()
 {
-	GEngine->AddOnScreenDebugMessage(0, 2.f, FColor::Green, TEXT("check if interactible"));		
+	//UE_LOG(LogDebug, Warning, TEXT("Check if element is interactible"));
 	return bIsInteractive;
 }
 
@@ -53,9 +51,9 @@ void AInteractiveElement::OnLookAt()
 	Highlight(bCloseEnough);
 }
 
-void AInteractiveElement::SetInteractive(bool interactive)
+void AInteractiveElement::SetInteractive(bool bInteractive)
 {
-	bIsInteractive = interactive;
+	bIsInteractive = bInteractive;
 }
 
 void AInteractiveElement::OnOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -64,7 +62,7 @@ void AInteractiveElement::OnOverlapBegin(class AActor* OtherActor, class UPrimit
 
 	if (PlayerCharacter != NULL)
 	{
-		PlayerCharacter->IncreaseNumberElement();
+		PlayerCharacter->IncreaseNumberOfCloseInteractiveElement();
 		bCloseEnough = true;
 	}
 }
@@ -75,7 +73,7 @@ void AInteractiveElement::OnOverlapEnd(class AActor* OtherActor, class UPrimitiv
 
 	if (PlayerCharacter != NULL)
 	{
-		PlayerCharacter->DecreaseNumberElement();
+		PlayerCharacter->DecreaseNumberOfCloseInteractiveElement();
 		bCloseEnough = false;
 	}
 }

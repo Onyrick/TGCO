@@ -13,7 +13,7 @@
 // ATGCOCharacter
 
 ATGCOCharacter::ATGCOCharacter(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+: Super(ObjectInitializer)
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -27,7 +27,7 @@ ATGCOCharacter::ATGCOCharacter(const FObjectInitializer& ObjectInitializer)
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f); // ...at this rotation rate
 	GetCharacterMovement()->JumpZVelocity = 600.f;
 	GetCharacterMovement()->AirControl = 0.2f;
-	GetCharacterMovement()->MaxWalkSpeed = 200;
+	GetCharacterMovement()->MaxWalkSpeed = 400;
 
 	// Create a CameraComponent	
 	FirstPersonCameraComponent = ObjectInitializer.CreateDefaultSubobject<UCameraComponent>(this, TEXT("FirstPersonCamera"));
@@ -43,10 +43,13 @@ ATGCOCharacter::ATGCOCharacter(const FObjectInitializer& ObjectInitializer)
 	Mesh1P->AttachParent = FirstPersonCameraComponent;
 	Mesh1P->RelativeLocation = FVector(0.f, 0.f, -150.f);
 
-	bShootMode = false;
+	bShootMode = true;
 
-	PreviousInteractiveElement = NULL;
+	PreviousInteractiveElement = nullptr;
 	iNumberOfCloseInteractiveElement = 0;
+
+	PlayerPawn = nullptr;
+	LastSpawn = nullptr;
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
@@ -64,6 +67,8 @@ void ATGCOCharacter::SetupPlayerInputComponent(class UInputComponent* InputCompo
 
 	InputComponent->BindAction("Fire", IE_Pressed, this, &ATGCOCharacter::OnFire);
 	InputComponent->BindAction("Use", IE_Pressed, this, &ATGCOCharacter::Use);
+
+	InputComponent->BindAction("Inventory", IE_Pressed, this, &ATGCOCharacter::ToggleInventory);
 
 	InputComponent->BindAction("Run", IE_Pressed, this, &ATGCOCharacter::Run);
 	InputComponent->BindAction("Run", IE_Released, this, &ATGCOCharacter::StopRunning);
@@ -104,12 +109,12 @@ void ATGCOCharacter::TouchStopped(ETouchIndex::Type FingerIndex, FVector Locatio
 
 void ATGCOCharacter::Run()
 {
-	GetCharacterMovement()->MaxWalkSpeed = 500;
+	GetCharacterMovement()->MaxWalkSpeed = 700;
 }
 
 void ATGCOCharacter::StopRunning()
 {
-	GetCharacterMovement()->MaxWalkSpeed = 200;
+	GetCharacterMovement()->MaxWalkSpeed = 400;
 }
 
 void ATGCOCharacter::TurnAtRate(float Rate)
@@ -128,8 +133,7 @@ void ATGCOCharacter::MoveForward(float Value)
 {
 	if ((Controller != NULL) && (Value != 0.0f))
 	{
-
-		// add movement in that direction
+				// add movement in that direction
 		AddMovementInput(GetActorForwardVector(), Value);
 	}
 }
@@ -151,11 +155,6 @@ void ATGCOCharacter::OnFire()
 		// try and fire a projectile
 		if (ProjectileClass != NULL)
 		{
-			if (GEngine)
-			{
-				GEngine->AddOnScreenDebugMessage(-1, .5f, FColor::Red, TEXT("Shoot"));
-			}
-
 			const FRotator SpawnRotation = GetControlRotation();
 			// MuzzleOffset is in camera space, so transform it to world space before offsetting from the character location to find the final muzzle position
 			const FVector SpawnLocation = GetActorLocation() + SpawnRotation.RotateVector(GunOffset);
@@ -182,7 +181,7 @@ void ATGCOCharacter::OnFire()
 			UAnimInstance* AnimInstance = Mesh1P->GetAnimInstance();
 			if (AnimInstance != NULL)
 			{
-			AnimInstance->Montage_Play(FireAnimation, 1.f);
+				AnimInstance->Montage_Play(FireAnimation, 1.f);
 			}
 			*/
 		}
@@ -191,29 +190,102 @@ void ATGCOCharacter::OnFire()
 
 void ATGCOCharacter::Use()
 {
-	
 	FHitResult OutHitResult;
 	FCollisionQueryParams Params(false);
 	
+	// If raytracer hit an Actor
 	bool hasHit = GetWorld()->LineTraceSingle(OutHitResult, GetActorLocation(), 3000.f*GetActorForwardVector(), COLLISION_INTERACTIVE_TRACE, Params);
 
 	if (hasHit)
 	{
+		// Get the hitting element as an InteractiveElement
 		AInteractiveElement* ElementHit = Cast<AInteractiveElement>(OutHitResult.GetActor());
 		
 		if (ElementHit != NULL)
 		{
+			// If element is active
 			if (ElementHit->IsInteractive())
 			{
-				GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Green, ElementHit->GetActorClass()->GetName() + TEXT(" : call the oninteract"));
+				UE_LOG(LogDebug, Warning, TEXT("%s : call the oninteract"), *ElementHit->GetActorClass()->GetName());
 				ElementHit->OnInteract();
 			}
 		}					
 	}
 	else
 	{
-		//PlaySound "Nothing to Use"
+		//TODO : PlaySound "Nothing to Use"
 	}
+}
+
+bool ATGCOCharacter::SetCheckpoint()
+{
+	FTransform ActorTransform = GetTransform();
+	LastCheckpoint = ActorTransform;
+
+	FVector vLocation = ActorTransform.GetLocation();
+
+	return !vLocation.IsZero();
+}
+
+FTransform ATGCOCharacter::GetCheckpoint()
+{
+	return LastCheckpoint;
+}
+
+void ATGCOCharacter::SpawnPlayer()
+{
+	UE_LOG(LogDebug, Warning, TEXT("Spawn Player"));
+	FVector vLocation = LastCheckpoint.GetLocation();
+	
+	if (vLocation.IsZero())
+	{
+		UE_LOG(LogDebug, Warning, TEXT("No checkpoint found"));
+		// We should not pass here because player can't die before having a checkpoint
+		// Just in case spawn actor at the right Player Start
+		// Can be simplify later if needed
+		TArray<AActor*> OutPlayerStartActors;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), OutPlayerStartActors);
+		for (auto OutPlayerStartActor : OutPlayerStartActors)
+		{
+			APlayerStart* PlayerStartActor = Cast<APlayerStart>(OutPlayerStartActor);
+			if (PlayerStartActor)
+			{
+				LastSpawn = PlayerStartActor;
+				break;
+			}
+		}
+
+		// Spawn a new character to the location needed
+		FTransform SpawnTransform = LastSpawn->GetTransform();
+		PlayerPawn = GetWorld()->SpawnActor<ATGCOCharacter>(this->GetClass(), SpawnTransform.GetLocation(), SpawnTransform.Rotator());
+	}
+	else
+	{
+		UE_LOG(LogDebug, Warning, TEXT("Checkpoint found"));
+		// Spawn a new character to the location needed
+		PlayerPawn = GetWorld()->SpawnActor<ATGCOCharacter>(this->GetClass(), LastCheckpoint.GetLocation(), LastCheckpoint.Rotator());
+		// Set this Player the current checkpoint 
+		PlayerPawn->LastCheckpoint = this->LastCheckpoint;
+	}
+
+	// Get the player controller
+	APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	if (PC)
+	{
+		// Attach it to the new Character Pawn
+		UE_LOG(LogDebug, Warning, TEXT("PLayerController possess now"));
+		PC->Possess(PlayerPawn);
+		Destroy();
+	}
+}
+
+void ATGCOCharacter::KillPlayerThenRespawn()
+{
+	UE_LOG(LogDebug, Warning, TEXT("Kill Player and respawn"));
+
+	//TODO : kill Player (Play animation etc..)
+	DetachFromControllerPendingDestroy();
+	SpawnPlayer();
 }
 
 void ATGCOCharacter::Tick(float DeltaSeconds)
@@ -221,8 +293,25 @@ void ATGCOCharacter::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 
 	if (iNumberOfCloseInteractiveElement <= 0)
+	{
 		return;
+	}
+	
+	HightlightCloseInteractiveElement();
+}
 
+void ATGCOCharacter::IncreaseNumberOfCloseInteractiveElement()
+{
+	iNumberOfCloseInteractiveElement++;
+}
+
+void ATGCOCharacter::DecreaseNumberOfCloseInteractiveElement()
+{
+	iNumberOfCloseInteractiveElement--;
+}
+
+void ATGCOCharacter::HightlightCloseInteractiveElement()
+{
 	FHitResult OutHitResult;
 	FCollisionQueryParams Params(false);
 
@@ -245,9 +334,9 @@ void ATGCOCharacter::Tick(float DeltaSeconds)
 			}
 			else
 			{
-				GEngine->AddOnScreenDebugMessage(0, 2.f, FColor::Red, TEXT("Element is not yet interactible"));
+				UE_LOG(LogDebug, Warning, TEXT("Element is not yet interactible"));
 			}
-		}		
+		}
 	}
 	else
 	{
@@ -255,18 +344,8 @@ void ATGCOCharacter::Tick(float DeltaSeconds)
 		{
 			PreviousInteractiveElement->Highlight(false);
 			PreviousInteractiveElement = NULL;
-		}		
+		}
 	}
-}
-
-void ATGCOCharacter::IncreaseNumberElement()
-{
-	iNumberOfCloseInteractiveElement++;
-}
-
-void ATGCOCharacter::DecreaseNumberElement()
-{
-	iNumberOfCloseInteractiveElement--;
 }
 
 float ATGCOCharacter::TakeDamage(float fDamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser)
@@ -277,12 +356,16 @@ float ATGCOCharacter::TakeDamage(float fDamageAmount, struct FDamageEvent const 
 		ATGCOGameState* GameState = Cast<ATGCOGameState>(World->GetGameState());
 		if (GameState != NULL)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, .5f, FColor::Red, TEXT("Take damage"));
+			UE_LOG(LogDebug, Warning, TEXT("Player take damage"));
 			// Active shield
 			ActiveShield(true);
 
 			// Decrease energy in the GameState
-			GameState->DecreaseEnergy(fDamageAmount);
+			if (GameState->DecreaseEnergy(fDamageAmount) == 0)
+			{
+				KillPlayerThenRespawn();
+				return 0;
+			}
 
 			return fDamageAmount;
 		}
@@ -295,37 +378,59 @@ void ATGCOCharacter::ActiveShield(bool bActivate)
 {
 	if (bActivate)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, .5f, FColor::Red, TEXT("Active Shield"));
+		UE_LOG(LogDebug, Warning, TEXT("Active Shield"));
 		// Activate the shield
 		PlayShieldAnimation();
 		PlayShieldSound();
 	}
 	else
 	{
-		// Deactivate the shield
+		// TODO : Deactivate the shield
 		// Need to do something ?
 	}
 }
 
 void ATGCOCharacter::PlayShieldAnimation()
 {
-	// TO DO
-	GEngine->AddOnScreenDebugMessage(-1, .5f, FColor::Red, TEXT("TO DO : play activate shield animation"));
+	// TODO
+	UE_LOG(LogDebug, Warning, TEXT("TO DO : play activate shield animation"));
 }
 
 void ATGCOCharacter::PlayShieldSound()
 {
-	// TO DO
-	GEngine->AddOnScreenDebugMessage(-1, .5f, FColor::Red, TEXT("TO DO : play activate shield sound"));
-
+	// TODO
+	UE_LOG(LogDebug, Warning, TEXT("TO DO : play activate shield sound"));
 }
 
-bool ATGCOCharacter::IsInsideElevator()
+UInventoryUMG* ATGCOCharacter::GetInventoryUMG()
 {
-	return bIsInsideElevator;
+	return InventoryUMG;
 }
 
-void ATGCOCharacter::SetInsideElevator()
+void ATGCOCharacter::SetInventoryUMG(UInventoryUMG* _widget)
 {
-	bIsInsideElevator = !bIsInsideElevator;
+	InventoryUMG = _widget;
+}
+
+void ATGCOCharacter::PickStockableItem(AStockable* _item)
+{
+	InventoryUMG->AddNewItem(_item);
+	
+}
+
+void ATGCOCharacter::ToggleInventory()
+{
+	APlayerController* MyController = GetWorld()->GetFirstPlayerController();
+
+	if (InventoryUMG->IsVisible())
+	{
+		InventoryUMG->SetVisibility(ESlateVisibility::Hidden);
+		MyController->bShowMouseCursor = false;
+	}
+	else
+	{
+		InventoryUMG->SetVisibility(ESlateVisibility::Visible);
+		MyController->bShowMouseCursor = true;
+	}
+	
 }

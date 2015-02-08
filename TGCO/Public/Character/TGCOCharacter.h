@@ -2,14 +2,19 @@
 #pragma once
 #include "GameFramework/Character.h"
 #include "InteractiveElement.h"
+#include "Stockable.h"
+#include "InventoryUMG.h"
 #include "TGCOCharacter.generated.h"
 
+/**
+ *	Represent a Character for Player
+ */
 UCLASS(config=Game)
 class ATGCOCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
-	/** Pawn mesh: 1st person view (arms; seen only by self) */
+	/** Pawn mesh: 1st person view (seen only by self) */
 	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
 	class USkeletalMeshComponent* Mesh1P;
 	
@@ -47,10 +52,8 @@ public:
 	/** AnimMontage to play each time we fire */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	class UAnimMontage* FireAnimation;
-
-
+	
 protected:
-
 	/** Called for forwards/backward input */
 	void MoveForward(float Value);
 
@@ -86,44 +89,56 @@ protected:
 	void OnFire();
 
 public:
-	/** Handler for using */
+	/** Handler for using an InteractiveElement of the World */
 	UFUNCTION(BlueprintCallable, Category = "TGCOCharacter")
 	void Use();
 
-protected:
-	// APawn interface
-	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
-	// End of APawn interface
+	/** Set a checkpoint for re spawn */
+	bool SetCheckpoint();
 
-	//Tick
+	/** Get the checkpoint for re spawn */
+	FTransform GetCheckpoint();
+
+	/** Spawn the Player to the last checkpoint */
+	void SpawnPlayer();
+
+	/** Function called when Player is dead */
+	void KillPlayerThenRespawn();
+
+protected:
+	/** APawn interface */
+	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
+	/** End of APawn interface */
+
+	/** Tick function */
 	virtual void Tick(float DeltaSeconds) override;
 
 public:
-
 	/** Returns FirstPersonCameraComponent subobject **/
 	FORCEINLINE class UCameraComponent* GetFirstPersonCamera() const { return FirstPersonCameraComponent; }
 
 	/** Function called when the Player receive damage from Elements in the World. Decrease Player's Energy and activate Shield.
-	* @param DamageAmount How much damage to apply
-	* @param DamageEvent Datapackage that fully describes the damage received
-	* @param EventInvestigator The Controller responsible for the damage.
-	* @param DamageCauser The Actor that directly caused the damage
-	*
-	* @return The amount of damage actually applied
-	*/
+	 * @param DamageAmount How much damage to apply
+	 * @param DamageEvent Datapackage that fully describes the damage received
+	 * @param EventInvestigator The Controller responsible for the damage.
+	 * @param DamageCauser The Actor that directly caused the damage
+	 *
+	 * @return The amount of damage actually applied
+	 */
 	virtual float TakeDamage(float fDamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser) override;
 
-	void IncreaseNumberElement();
-	void DecreaseNumberElement();
+	/** Increase the iNumberOfCloseInteractiveElement */
+	void IncreaseNumberOfCloseInteractiveElement();
+	/** Decrease the iNumberOfCloseInteractiveElement */
+	void DecreaseNumberOfCloseInteractiveElement();
 
 	bool IsInsideElevator();
 	void SetInsideElevator();
 
 private:
-
 	/** Activates the protection of the Character. When active the Character can't die but loose some energy.
-	* @param bActivate To active or deactivate the shield
-	*/
+	 * @param bActivate To active or deactivate the shield
+	 */
 	void ActiveShield(bool bActivate);
 
 	/** Play the shield animation when the Player is taking damage */
@@ -132,8 +147,37 @@ private:
 	/** Play the shield sound when the Player is taking damage */
 	void PlayShieldSound();
 
-	AInteractiveElement* PreviousInteractiveElement; //Previous element which was highlighted
+	/** Highlight the InteractiveElement that the Character look */
+	void HightlightCloseInteractiveElement();
+
+private:
+	/** Previous element which was highlighted */
+	AInteractiveElement* PreviousInteractiveElement;
+	/** Number of InteractiveElement that the Player can use in their perimeter */
 	int32 iNumberOfCloseInteractiveElement;
-	bool bIsInsideElevator;
+	/** Last Character checkpoint */
+	FTransform LastCheckpoint;
+	/** Character PlayerStart */
+	APlayerStart* LastSpawn;
+	/** Character Pawn */
+	ATGCOCharacter* PlayerPawn;
+
+public:
+	/** Function to add a stockable item in the inventory*/
+	void PickStockableItem(AStockable* _item);
+
+	/**Getter / Setter */
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	UInventoryUMG* GetInventoryUMG();
+
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	void SetInventoryUMG(UInventoryUMG* _widget);
+
+	/** Toggle the visibility of the mouse and of the widget */
+	void ToggleInventory();
+
+protected:
+	/** The UMG Inventory */
+	UInventoryUMG* InventoryUMG;
 };
 

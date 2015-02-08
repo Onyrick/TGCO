@@ -1,58 +1,55 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
 #pragma once
 
 #include "CharacterAI.h"
 #include "Monster.generated.h"
 
+/**
+ *	TODO
+ */
 UCLASS()
 class TGCO_API AMonster : public ACharacterAI
 {
 	GENERATED_UCLASS_BODY()
 public:
-	//////////////////////////////////////////////////////////////////////////////////////////////
-	//Method called when the player wants to use the object which is currently hightlighted.
-	//This method will be overriden by each of the class' children
-	//////////////////////////////////////////////////////////////////////////////////////////////
+	/** Event launch when the Monster take damage */
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser) override;
 
-	//////////////////////////////////////////////////////////////////////////////////////////////
-	//Return wether the AI is stunned
-	//////////////////////////////////////////////////////////////////////////////////////////////
+	/** Return wether the Monster is stunned */
 	UFUNCTION(BlueprintCallable, Category = "Monster")
-		virtual bool IsStun();
+	virtual bool IsStun();
 	
-	//////////////////////////////////////////////////////////////////////////////////////////////
-	//Stun the AI during a laps of time
-	//////////////////////////////////////////////////////////////////////////////////////////////
+	/** Stun the Monster during a laps of time */
 	UFUNCTION(BlueprintCallable, Category = "Monster")
-		virtual void Stun();
+	virtual void Stun();
 
-	//////////////////////////////////////////////////////////////////////////////////////////////
-	//Unstun the AI during a laps of time
-	//////////////////////////////////////////////////////////////////////////////////////////////
+	/** Unstun the Monster */
 	UFUNCTION(BlueprintCallable, Category = "Monster")
-		virtual void UnStun();
+	virtual void UnStun();
 
-	//////////////////////////////////////////////////////////////////////////////////////////////
-	//Move the actor to a location
-	//////////////////////////////////////////////////////////////////////////////////////////////
+	/** Move the actor to a location */
 	UFUNCTION(BlueprintCallable, Category = "Monster")
-		virtual EPathFollowingRequestResult::Type MoveToLocation(const FVector & Dest);// const FVector & Dest, float AcceptanceRadius, bool bStopOnOverlap, bool bUsePathfinding, bool bProjectDestinationToNavigation, bool bCanStrafe, TSubclassOf< class UNavigationQueryFilter > FilterClass);
+	virtual EPathFollowingRequestResult::Type MoveToLocation(const FVector & Dest);// const FVector & Dest, float AcceptanceRadius, bool bStopOnOverlap, bool bUsePathfinding, bool bProjectDestinationToNavigation, bool bCanStrafe, TSubclassOf< class UNavigationQueryFilter > FilterClass);
 
-	//////////////////////////////////////////////////////////////////////////////////////////////
-	//Play a move sound when the Monster move
-	//////////////////////////////////////////////////////////////////////////////////////////////
+	/** Play a move sound when the Monster move */
 	UFUNCTION(BlueprintCallable, Category = "Monster")
-		virtual void PlayMoveSound();
+	virtual void PlayMoveSound();
 
-	//////////////////////////////////////////////////////////////////////////////////////////////
-	//Play a move animation when the Monster move
-	//////////////////////////////////////////////////////////////////////////////////////////////
+	/** Play a move animation when the Monster move */
 	UFUNCTION(BlueprintCallable, Category = "Monster")
-		virtual void PlayMoveAnimation();
+	virtual void PlayMoveAnimation();
 	
+	/** Getter / Setter / Is */
+	UFUNCTION(BlueprintCallable, Category = "Monster")
+	virtual float GetWalkSpeed();
+
+	UFUNCTION(BlueprintCallable, Category = "Monster")
+	virtual void SetWalkSpeed(float _speed);
 
 protected:
-	bool bIsStun; // whether the monster is stunned or not
-	float fStunTime; // the time the monster stay stunned
-
+	/** Whether the Monster is stunned or not */
+	bool bIsStun;
+	/** The time the Monster stay stunned */
+	float fStunTime;
 };

@@ -1,18 +1,25 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
 #include "TGCO.h"
+#include "ControllerAI.h"
 #include "CharacterAI.h"
 
-ACharacterAI::ACharacterAI(const class FObjectInitializer& PCIP) : Super(PCIP)
+ACharacterAI::ACharacterAI(const class FObjectInitializer& PCIP) 
+	: Super(PCIP)
 {
-	StaticMesh = PCIP.CreateDefaultSubobject < UStaticMeshComponent >(this, TEXT("StaticMesh_CharacterAI"));
-
+	StaticMesh = PCIP.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("StaticMesh_CharacterAI"));
 	StaticMesh->bGenerateOverlapEvents = true;
 	StaticMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
-	RootComponent = StaticMesh;
+
+	AIControllerClass = AControllerAI::StaticClass();
+
+	RootComponent = GetCapsuleComponent();
+
 }
 
-AAIController* ACharacterAI::GetAIController()
+AControllerAI* ACharacterAI::GetAIController()
 {
-	return Cast<AAIController>(GetController());
+	return Cast<AControllerAI>(GetController());
 }
 
 void ACharacterAI::Destroy()
@@ -31,8 +38,13 @@ float ACharacterAI::TakeDamage(float DamageAmount, struct FDamageEvent const & D
 void ACharacterAI::ReceiveActorBeginOverlap(AActor* OtherActor)
 {
 	//TODO
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(0, 10.0f, FColor::White, TEXT("Receive Actor Begin Overlap"));
-	}
+	UE_LOG(LogTest, Warning, TEXT("Receive Actor Begin Overlap"));
 }
+
+void ACharacterAI::FaceRotation(FRotator NewRotation, float DeltaTime)
+{
+	FRotator CurrentRotation = FMath::RInterpTo(GetActorRotation(), NewRotation, DeltaTime, 8.0f);
+
+	Super::FaceRotation(CurrentRotation, DeltaTime);
+}
+
