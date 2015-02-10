@@ -6,12 +6,10 @@
 AMinesweeper::AMinesweeper(const class FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer)
 {
-
 	//Create all the MinesBox and initialize them without mine
-	Squares.AddUninitialized(SIZE);
 	for (int i = 0; i < SIZE; ++i)
 	{
-		Squares[i] = ObjectInitializer.CreateDefaultSubobject<AMinesBox>(this, TEXT("MineBox")) ;
+		Squares.Add(ObjectInitializer.CreateDefaultSubobject<AMinesBox>(this, FName(TEXT("MineBox%d"),i )));
 	}
 
 	//Random place mine
@@ -31,7 +29,7 @@ AMinesweeper::AMinesweeper(const class FObjectInitializer& ObjectInitializer)
 	}
 
 	CalculateNeighboursUndermined();
-	
+	UE_LOG(LogDebug, Warning, TEXT("####### END ########"));
 }
 
 
@@ -41,17 +39,29 @@ void AMinesweeper::CalculateNeighboursUndermined()
 	{
 		for (int j = -1 ; j <= 1 ; ++j)
 		{
-			if ( ((i - NB_ROW + j) / NB_COL == (i / NB_COL) - 1) && (Squares[i - NB_ROW + j]->GetIsUndermined() == true) && (i < NB_COL) )
+			if (((i - NB_ROW + j) / NB_COL == (i / NB_COL) - 1) && (i - NB_ROW + j > 0) && (i < NB_COL))
 			{
-				Squares[i]->SetNeighboursUndermined();
+				if (Squares[i - NB_ROW + j]->GetIsUndermined() == true)
+				{
+					Squares[i]->SetNeighboursUndermined();
+				}
+				
 			}
-			if (((i + j) / NB_COL == (i / NB_COL)) && (Squares[i + j]->GetIsUndermined() == true) && (j != 0))
+			if (((i + j) / NB_COL == (i / NB_COL)) && (i + j > 0) && (j != 0))
 			{
-				Squares[i]->SetNeighboursUndermined();
+				if (Squares[i + j]->GetIsUndermined() == true)
+				{
+					Squares[i]->SetNeighboursUndermined();
+				}
+				
 			}
-			if (((i + NB_ROW + j) / NB_COL == (i / NB_COL) + 1) && (Squares[i + NB_ROW + j]->GetIsUndermined() == true) && (i < SIZE - NB_ROW))
+			if (((i + NB_ROW + j) / NB_COL == (i / NB_COL) + 1) && (i + NB_ROW + j > 0) && (i < SIZE - NB_ROW))
 			{
-				Squares[i]->SetNeighboursUndermined();
+				if (Squares[i + NB_ROW + j]->GetIsUndermined() == true)
+				{
+					Squares[i]->SetNeighboursUndermined();
+				}
+				
 			}
 		}
 		
@@ -61,8 +71,5 @@ void AMinesweeper::CalculateNeighboursUndermined()
 
 void AMinesweeper::DeleteMinesweeper()
 {
-	for (int i = 0; i < SIZE; ++i)
-	{
-		Squares.RemoveAt(i);
-	}
+	Squares.Empty();
 }
