@@ -5,11 +5,27 @@
 
 AMinesweeper::AMinesweeper(const class FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer)
+{}
+
+void AMinesweeper::CreateMinesweeper()
 {
 	//Create all the MinesBox and initialize them without mine
+	unsigned int x = 0;
+	unsigned int y = 0;
 	for (int i = 0; i < SIZE; ++i)
 	{
-		Squares.Add(ObjectInitializer.CreateDefaultSubobject<AMinesBox>(this, FName(TEXT("MineBox%d"),i )));
+		UWorld* const World = GetWorld();
+		if (World != NULL)
+		{
+			x = i / NB_COL;
+			y = i % NB_COL;
+			const FVector SpawnLocation = GetActorLocation() + FVector(x, y, 5.0);
+			const FRotator SpawnRotation = FRotator(0.0);
+			AMinesBox* m = (AMinesBox*)World->SpawnActor<AMinesBox>(AMinesBox::StaticClass(), SpawnLocation, SpawnRotation);
+			Squares.Add(m);
+		}
+
+		//Squares.Add(ObjectInitializer.CreateDefaultSubobject<AMinesBox>(this, FName(TEXT("MineBox%d"),i )));
 	}
 
 	//Random place mine

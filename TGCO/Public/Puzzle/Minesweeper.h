@@ -5,7 +5,7 @@
 #include "GameFramework/Actor.h"
 #include <vector>
 #include <ctime>
-#include "Puzzle/MinesBox.h"
+#include "Triggerable/MinesBox.h"
 #include "Minesweeper.generated.h"
 
 
@@ -19,14 +19,23 @@ class TGCO_API AMinesweeper : public AActor
 
 public:
 	AMinesweeper(const FObjectInitializer& PCIP);
+
+	/** Create the Minesweeper */
+	UFUNCTION(BlueprintCallable, Category = "Minesweeper")
+	void CreateMinesweeper();
+
+	/** Delete the array that contains AMinesBox */
 	void DeleteMinesweeper();
 
 	void CalculateNeighboursUndermined();
 
-	const int NB_COL = 10;
-	const int NB_ROW = 10;
-	const int SIZE = NB_COL * NB_ROW;
-	const int NB_MINES = 9;
+	/** Content all the mine box */
 	TArray< AMinesBox* > Squares;
+
+private:
+	const int NB_COL = 2;
+	const int NB_ROW = 2;
+	const int SIZE = NB_COL * NB_ROW;
+	const int NB_MINES = 1;
 
 };
