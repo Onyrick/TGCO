@@ -31,10 +31,11 @@ public:
 
 	/** Content all the mine box */
 	TArray< AMinesBox* > Squares;
+	TSubclassOf<class AMinesBox> MineBoxBP;
 
 private:
-	const int NB_COL = 2;
-	const int NB_ROW = 2;
+	const int NB_COL = 5;
+	const int NB_ROW = 5;
 	const int SIZE = NB_COL * NB_ROW;
 	const int NB_MINES = 1;
 
