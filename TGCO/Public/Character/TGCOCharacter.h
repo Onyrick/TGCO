@@ -135,6 +135,9 @@ public:
 	/** Decrease the iNumberOfCloseInteractiveElement */
 	void DecreaseNumberOfCloseInteractiveElement();
 
+	bool IsInsideElevator();
+	void SetInsideElevator();
+
 private:
 	/** Activates the protection of the Character. When active the Character can't die but loose some energy.
 	 * @param bActivate To active or deactivate the shield
