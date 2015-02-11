@@ -25,7 +25,7 @@ void AMinesweeper::CreateMinesweeper()
 		{
 			unsigned int x = i / NB_COL;
 			unsigned int y = i % NB_COL;
-			const FVector SpawnLocation = GetActorLocation() + FVector(x*400 , y*400, 5.0);
+			const FVector SpawnLocation = GetActorLocation() + FVector(x*405 , y*405, 5.0);
 			const FRotator SpawnRotation = GetActorRotation();
 			AMinesBox* m = (AMinesBox*)World->SpawnActor<AMinesBox>(MineBoxBP, SpawnLocation, SpawnRotation);
 			Squares.Add(m);
