@@ -63,7 +63,6 @@ void UTGCOGameInstance::StartGameInstance()
 	GotoInitialState();
 }
 
-
 void UTGCOGameInstance::ShowMessageThenGotoState(const FString& Message, const FName& NewState)
 {
 	UE_LOG(LogOnline, Log, TEXT("ShowMessageThenGotoState: Message: %s, NewState: %s"), *Message, *NewState.ToString());
