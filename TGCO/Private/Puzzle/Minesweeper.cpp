@@ -85,6 +85,10 @@ void AMinesweeper::CalculateNeighboursUndermined()
 				
 			}
 		}
+		if (Squares[i]->Number != NULL)
+		{
+			Squares[i]->Number->SetText(FString::Printf(TEXT("%d"), Squares[i]->GetNeighboursUndermined()));
+		}
 		
 	}
 }
