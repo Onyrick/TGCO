@@ -1,17 +1,56 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "TGCO.h"
+#include "SolutionType.h"
 #include "SolutionGenerator.h"
 
 ASolutionGenerator::ASolutionGenerator(const class FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer)
 {
-	SolutionType = ESolutionType::ACID;
+	//SolutionType = ESolutionType::NONE;
+	Player = NULL;
+
+	PointLight = ObjectInitializer.CreateDefaultSubobject<UPointLightComponent>(this, "PointLight");
+	PointLight->Intensity = 1000.f;
+	PointLight->bVisible = true;
+	
+	PointLight->RegisterComponentWithWorld(GetWorld());
+	PointLight->AttachTo(RootComponent);
+	AddOwnedComponent(PointLight);
+
+	FVector GeneratorPosition = GetActorLocation();
+	PointLight->SetWorldLocation(FVector(GeneratorPosition.X, GeneratorPosition.Y, GeneratorPosition.Z + 30));
 }
 
 bool ASolutionGenerator::OnInteract()
 {
 	//TODO
-	UE_LOG(LogTest, Warning, TEXT("Solution Generator activate"));
+	
+	if (Player != NULL)
+	{
+		Player->SetSolutionType(SolutionType);
+
+		UE_LOG(LogTest, Warning, TEXT("Active Solution Generator"));
+	}
 	return true;
+}
+
+void ASolutionGenerator::OnOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	Super::OnOverlapBegin(OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
+
+	Player = Cast<ATGCOCharacter>(OtherActor);
+
+}
+
+void ASolutionGenerator::OnOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	Super::OnOverlapEnd(OtherActor, OtherComp, OtherBodyIndex);
+	Player = NULL;
+	
+}
+
+void ASolutionGenerator::UpdateColor()
+{
+	PointLight->SetLightColor(GetColorOfTheSolution(SolutionType));
 }

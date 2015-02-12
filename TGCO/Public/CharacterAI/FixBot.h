@@ -18,5 +18,5 @@ public:
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser) override;
 
 	UPROPERTY(EditAnywhere, Category = Behavior)
-		int32 MaxRoutes;
+	int32 MaxRoutes;
 };

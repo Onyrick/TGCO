@@ -25,6 +25,7 @@ float AFixBot::TakeDamage(float DamageAmount, struct FDamageEvent const & Damage
 	{
 		Stun();
 	}*/
+	Stun();
 	UE_LOG(LogDebug, Warning, TEXT("Take Damage FixBot"));
 
 	return -1.f;

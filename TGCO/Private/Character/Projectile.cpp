@@ -51,8 +51,19 @@ void AProjectile::OnHit(AActor* OtherActor, UPrimitiveComponent* OtherComp, FVec
 	AMonster* Monster = Cast<AMonster>(OtherActor);
 	if (Monster != NULL)
 	{
-		Monster->Stun();
+		FDamageEvent damage;
+		Monster->TakeDamage(0.f, damage, Monster->GetController(), this);
 	}
 
 	Destroy();
+}
+
+ESolutionType::Type AProjectile::GetSolutionType()
+{
+	return SolutionType;
+}
+
+void AProjectile::SetSolutionType(ESolutionType::Type _solution)
+{
+	SolutionType = _solution;
 }

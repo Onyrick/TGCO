@@ -5,6 +5,7 @@
 #include "GameFramework/Actor.h"
 #include "InteractiveElement.h"
 #include "SolutionType.h"
+#include "TGCOCharacter.h"
 #include "SolutionGenerator.generated.h"
 
 /**
@@ -21,6 +22,19 @@ public:
 	virtual bool OnInteract() override;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Solution")
-	ESolutionType SolutionType;
+	TEnumAsByte<ESolutionType::Type> SolutionType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Light")
+	class UPointLightComponent* PointLight;
+
+	UFUNCTION(BlueprintCallable, Category = "Color Solution")
+	void UpdateColor();
+
+	virtual void OnOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
+
+	virtual void OnOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+protected:
+	ATGCOCharacter * Player;
 
 };

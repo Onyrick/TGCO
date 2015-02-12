@@ -52,6 +52,8 @@ ATGCOCharacter::ATGCOCharacter(const FObjectInitializer& ObjectInitializer)
 	PlayerPawn = nullptr;
 	LastSpawn = nullptr;
 
+	SolutionType = ESolutionType::NONE;
+
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
 }
@@ -164,7 +166,8 @@ void ATGCOCharacter::OnFire()
 			if (World != NULL)
 			{
 				// spawn the projectile at the muzzle
-				World->SpawnActor<AProjectile>(ProjectileClass, SpawnLocation, SpawnRotation);
+				AProjectile* Projectile = World->SpawnActor<AProjectile>(ProjectileClass, SpawnLocation, SpawnRotation);
+				Projectile->SetSolutionType(SolutionType);
 			}
 		}
 
@@ -447,4 +450,14 @@ void ATGCOCharacter::ToggleInventory()
 		MyController->bShowMouseCursor = true;
 	}
 	
+}
+
+ESolutionType::Type ATGCOCharacter::GetSolutionType()
+{
+	return SolutionType;
+}
+
+void ATGCOCharacter::SetSolutionType(ESolutionType::Type _solution)
+{
+	SolutionType = _solution;
 }

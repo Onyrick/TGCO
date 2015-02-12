@@ -16,16 +16,19 @@ public:
 	/** Event launch when the Monster take damage */
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser) override;
 
+	/** Event launched when the monster has to be destroyed */
+	virtual void Destroyed();
+
 	/** Return wether the Monster is stunned */
 	UFUNCTION(BlueprintCallable, Category = "Monster")
 	virtual bool IsStun();
 	
 	/** Stun the Monster during a laps of time */
-	UFUNCTION(BlueprintCallable, Category = "Monster")
+	//UFUNCTION(BlueprintCallable, Category = "Monster")
 	virtual void Stun();
 
 	/** Unstun the Monster */
-	UFUNCTION(BlueprintCallable, Category = "Monster")
+	//UFUNCTION(BlueprintCallable, Category = "Monster")
 	virtual void UnStun();
 
 	/** Move the actor to a location */
@@ -47,9 +50,13 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Monster")
 	virtual void SetWalkSpeed(float _speed);
 
+	virtual void RespawnAI();
+
 protected:
 	/** Whether the Monster is stunned or not */
 	bool bIsStun;
 	/** The time the Monster stay stunned */
 	float fStunTime;
+	/** The time before the Monster respawn */
+	float fRespawnTime;
 };

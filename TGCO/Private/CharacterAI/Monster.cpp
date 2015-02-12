@@ -6,6 +6,7 @@
 AMonster::AMonster(const class FObjectInitializer& PCIP)
 : Super(PCIP)
 , fStunTime(1.f)
+, fRespawnTime(1.f)
 {
 	GetCharacterMovement()->MaxWalkSpeed = 100.f;
 }
@@ -14,6 +15,12 @@ float AMonster::TakeDamage(float DamageAmount, struct FDamageEvent const & Damag
 {
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	return -1.f;
+}
+
+void AMonster::Destroyed()
+{
+	Super::Destroyed();
+	GetAIController()->PauseMove(GetAIController()->GetCurrentMoveRequestID());
 }
 
 bool AMonster::IsStun()
@@ -28,6 +35,8 @@ void AMonster::Stun()
 
 	// Stop MoveToLocation
 	GetAIController()->PauseMove(GetAIController()->GetCurrentMoveRequestID());
+
+	UE_LOG(LogDebug, Warning, TEXT("Stun Monster"));
 }
 
 void AMonster::UnStun()
@@ -60,4 +69,10 @@ float AMonster::GetWalkSpeed()
 void AMonster::SetWalkSpeed(float _speed)
 {
 	GetCharacterMovement()->MaxWalkSpeed = _speed;
+}
+
+void AMonster::RespawnAI()
+{
+	Super::RespawnAI();
+	GetAIController()->ResumeMove(GetAIController()->GetCurrentMoveRequestID());
 }

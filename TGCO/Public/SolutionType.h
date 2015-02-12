@@ -2,12 +2,15 @@
 
 #pragma once
 
+#include "SolutionType.generated.h"
+
+UENUM(BlueprintType)
 namespace ESolutionType
 {
 	/** List of solution type */
-	UENUM(BlueprintType)
-	enum class Type : uint8
+	enum Type
 	{
+		NONE UMETA(DisplayName = "None"),
 		ACID UMETA(DisplayName = "Acid"),
 		CAUSTIC_SODA UMETA(DisplayName = "Caustic Soda"),
 		SALTED_WATER UMETA(DisplayName = "Salted Water"),
@@ -17,7 +20,7 @@ namespace ESolutionType
 		INFLAMMABLE_PRODUCT UMETA(DisplayName = "Inflammable"),
 		FROZEN_PRODUCT UMETA(DisplayName = "Frozen Product"),
 		NITROGLYCERINE UMETA(DisplayName = "Nitroglycerine"),
-		RIGIDIFY UMETA(DisplayName = "Rigidify")
+		RIGIDIFY UMETA(DisplayName = "Rigidify"),
 	};
 }
 
@@ -29,3 +32,12 @@ namespace ESolutionType
  * @return FString string of the solution type
  */
 FString GetNameOfTheSolution(const ESolutionType::Type SolutionType);
+
+/**
+* Return the color of the solution type
+*
+* @param SolutionType value of the enum ESolutionType
+*
+* @return FColor color of the solution type
+*/
+FColor GetColorOfTheSolution(const ESolutionType::Type SolutionType);
