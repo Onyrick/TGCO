@@ -9,20 +9,37 @@ AMinesBox::AMinesBox(const class FObjectInitializer& ObjectInitializer)
 , bIsUndermined(false)
 , iNeighboursUndermined(0)
 , bIsDisplayed(false)
-{}
+{
+	Number = ObjectInitializer.CreateDefaultSubobject<UTextRenderComponent>(this, TEXT("Number_MineBox"), true );
+	Number->SetRelativeRotation(FRotator(90.0, 90.0, 0.0));
+	Number->SetRelativeLocation(FVector(0.0,0.0,25.0));
+	Number->SetText(TEXT("0"));
+	Number->SetWorldSize(150.0);
+	Number->SetVisibility(false);
+	Number->AttachParent = RootComponent;
+}
 
 void AMinesBox::OnOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
-	UE_LOG(LogDebug, Warning, TEXT("Begin Overlap MineBox"));
 	if (bIsUndermined)
 	{
 		Explode();
+	}
+	else
+	{
+		if (Number != NULL)
+		{
+			Number->SetVisibility(true);
+		}	
 	}
 }
 
 void AMinesBox::OnOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	UE_LOG(LogDebug, Warning, TEXT("End Overlap MineBox"));
+	if (Number != NULL)
+	{
+		Number->SetVisibility(false);
+	}
 }
 
 void AMinesBox::SetIsUndermined()

@@ -37,6 +37,6 @@ private:
 	const int NB_COL = 5;
 	const int NB_ROW = 5;
 	const int SIZE = NB_COL * NB_ROW;
-	const int NB_MINES = 1;
+	const int NB_MINES = 4;
 
 };
