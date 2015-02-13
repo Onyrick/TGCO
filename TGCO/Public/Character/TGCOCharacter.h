@@ -114,6 +114,9 @@ protected:
 	virtual void Tick(float DeltaSeconds) override;
 
 public:
+	/** Returns Mesh1P subobject **/
+	FORCEINLINE class USkeletalMeshComponent* GetMesh1P() const { return Mesh1P; }
+
 	/** Returns FirstPersonCameraComponent subobject **/
 	FORCEINLINE class UCameraComponent* GetFirstPersonCamera() const { return FirstPersonCameraComponent; }
 
@@ -131,6 +134,9 @@ public:
 	void IncreaseNumberOfCloseInteractiveElement();
 	/** Decrease the iNumberOfCloseInteractiveElement */
 	void DecreaseNumberOfCloseInteractiveElement();
+
+	bool IsInsideElevator();
+	void SetInsideElevator();
 
 private:
 	/** Activates the protection of the Character. When active the Character can't die but loose some energy.
