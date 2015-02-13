@@ -34,6 +34,8 @@ public:
 
 	virtual void OnOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
+	virtual void BeginPlay() override;
+
 protected:
 	ATGCOCharacter * Player;
 

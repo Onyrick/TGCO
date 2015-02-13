@@ -44,14 +44,19 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Light")
 	class UStaticMeshComponent* SolutionSphere3;
 
+	UFUNCTION(BlueprintCallable, Category = "MaterialInstance")
+	UMaterialInstanceDynamic *GetMaterialInstance(uint32 _num);
+	
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Update MontroLight")
+	void UpdateLights(FColor _color1, FColor _color2, FColor _color3 );
+
 protected:
 	TArray<ESolutionType::Type> SolutionResistence;
-
-	void UpdateLights();
-
 	UMaterialInstanceDynamic *MaterialInstance1;
 	UMaterialInstanceDynamic *MaterialInstance2;
 	UMaterialInstanceDynamic *MaterialInstance3;
 
 	virtual void Tick(float DeltaSeconds) override;
+
+	int m_iIdToReplace;
 };

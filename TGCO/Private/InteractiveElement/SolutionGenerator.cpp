@@ -29,10 +29,14 @@ bool ASolutionGenerator::OnInteract()
 	if (Player != NULL)
 	{
 		Player->SetSolutionType(SolutionType);
-
-		UE_LOG(LogTest, Warning, TEXT("Active Solution Generator"));
 	}
 	return true;
+}
+
+void ASolutionGenerator::BeginPlay()
+{
+	Super::BeginPlay();
+	UpdateColor();
 }
 
 void ASolutionGenerator::OnOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
