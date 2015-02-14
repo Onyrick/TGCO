@@ -55,7 +55,6 @@ bool AMinesBox::GetIsUndermined()
 void AMinesBox::Explode()
 {
 	UE_LOG(LogDebug, Warning, TEXT("BOOM !!!"));
-
 }
 
 void AMinesBox::SetNeighboursUndermined()
