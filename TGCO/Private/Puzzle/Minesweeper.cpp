@@ -30,11 +30,31 @@ void AMinesweeper::CreateMinesweeper()
 			AMinesBox* m = (AMinesBox*)World->SpawnActor<AMinesBox>(MineBoxBP, SpawnLocation, SpawnRotation);
 			Squares.Add(m);
 		}
-
-		//Squares.Add(ObjectInitializer.CreateDefaultSubobject<AMinesBox>(this, FName(TEXT("MineBox%d"),i )));
 	}
 
-	//Random place mine
+	PutMinesRandomly();
+	CalculateNeighboursUndermined();
+}
+
+void AMinesweeper::ResetMinesweeper()
+{
+	if (Squares.Num() == 0)
+	{
+		CreateMinesweeper();
+	}
+	else
+	{
+		for (int i = 0; i < Squares.Num(); ++i)
+		{
+			Squares[i]->Destroy();
+		}
+		Squares.Empty(Squares.Num());
+		CreateMinesweeper();
+	}
+}
+
+void AMinesweeper::PutMinesRandomly()
+{
 	int iSecret;
 	srand(time(NULL));
 	for (int cpt = 0; cpt < NB_MINES; ++cpt)
@@ -49,10 +69,7 @@ void AMinesweeper::CreateMinesweeper()
 			--cpt;
 		}
 	}
-
-	CalculateNeighboursUndermined();
 }
-
 
 void AMinesweeper::CalculateNeighboursUndermined()
 {
@@ -73,19 +90,16 @@ void AMinesweeper::CalculateNeighboursUndermined()
 			if ((i/NB_COL > 0) && (Squares[i - NB_COL + j]->GetIsUndermined() == true))
 			{
 				Squares[i]->SetNeighboursUndermined();
-				UE_LOG(LogDebug, Warning, TEXT("%d is undermined"), i);
 			}
 			// Check the neighbours on the left and on the right
 			if ((j != 0) && (Squares[i + j]->GetIsUndermined() == true))
 			{
 				Squares[i]->SetNeighboursUndermined();
-				UE_LOG(LogDebug, Warning, TEXT("%d is undermined"), i);
 			}
 			// Check the neighbours down
 			if ((i / NB_COL < NB_COL-1) && (Squares[i + NB_COL + j]->GetIsUndermined() == true))
 			{
 				Squares[i]->SetNeighboursUndermined();
-				UE_LOG(LogDebug, Warning, TEXT("%d is undermined"), i);
 			}
 			
 		}
