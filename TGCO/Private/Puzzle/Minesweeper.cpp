@@ -29,6 +29,7 @@ void AMinesweeper::CreateMinesweeper()
 			const FRotator SpawnRotation = GetActorRotation();
 			AMinesBox* m = (AMinesBox*)World->SpawnActor<AMinesBox>(MineBoxBP, SpawnLocation, SpawnRotation);
 			Squares.Add(m);
+			Squares[i]->Number->SetVisibility(false);
 		}
 	}
 
