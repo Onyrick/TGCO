@@ -29,7 +29,7 @@ public:
 	void SetNeighboursUndermined();
 	unsigned int GetNeighboursUndermined();
 	/** Launch an explosion animation. Reinit the DeminorPuzzle. Do some damage to the Player. Eject the Player to the Checkpoint of the Level */
-	void Explode();
+	void Explode(class AActor* OtherActor);
 
 	/** Reinit the information displayed by the past. Set bInfoPast to false. */
 	void ReinitDisplayInformation();

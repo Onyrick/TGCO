@@ -1,6 +1,8 @@
 
 
 #include "TGCO.h"
+#include "TGCOGameState.h"
+#include "TGCOCharacter.h"
 #include "MinesBox.h"
 
 
@@ -23,7 +25,7 @@ void AMinesBox::OnOverlapBegin(class AActor* OtherActor, class UPrimitiveCompone
 {
 	if (bIsUndermined)
 	{
-		Explode();
+		Explode(OtherActor);
 	}
 	else
 	{
@@ -52,9 +54,19 @@ bool AMinesBox::GetIsUndermined()
 	return bIsUndermined;
 }
 
-void AMinesBox::Explode()
+void AMinesBox::Explode(class AActor* OtherActor)
 {
 	UE_LOG(LogDebug, Warning, TEXT("BOOM !!!"));
+	ATGCOGameState* gameState = Cast<ATGCOGameState>(GetWorld()->GetGameState());
+	if (gameState)
+	{
+		gameState->DecreaseEnergy(5);
+	}
+	ATGCOCharacter* Character = Cast<ATGCOCharacter>(OtherActor);
+	if (Character)
+	{
+		Character->SetActorTransform(Character->GetCheckpoint());
+	}
 }
 
 void AMinesBox::SetNeighboursUndermined()
