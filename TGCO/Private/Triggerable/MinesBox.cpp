@@ -3,6 +3,7 @@
 #include "TGCO.h"
 #include "TGCOGameState.h"
 #include "TGCOCharacter.h"
+#include "Minesweeper.h"
 #include "MinesBox.h"
 
 
@@ -66,6 +67,14 @@ void AMinesBox::Explode(class AActor* OtherActor)
 	if (Character)
 	{
 		Character->SetActorTransform(Character->GetCheckpoint());
+	}
+	for (TActorIterator<AActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+	{
+		if (ActorItr->GetName().Contains("Minesweeper"))
+		{
+			AMinesweeper* Minesweeper = Cast<AMinesweeper>(*ActorItr);
+			Minesweeper->ResetMinesweeper();
+		}
 	}
 }
 
