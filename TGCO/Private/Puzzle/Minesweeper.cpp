@@ -49,9 +49,7 @@ void AMinesweeper::ResetMinesweeper()
 			Squares[i]->Destroy();
 		}
 		Squares.Empty(Squares.Num());
-		UE_LOG(LogDebug, Warning, TEXT("Squares.Num() = %d"), Squares.Num());
 		CreateMinesweeper();
-		UE_LOG(LogDebug, Warning, TEXT("Squares.Num() = %d"), Squares.Num());
 	}
 }
 
