@@ -9,6 +9,7 @@ ATGCOPlayerState::ATGCOPlayerState(const FObjectInitializer& ObjectInitializer)
 {
 	PlayerNumber = 0;
 	bReplicates = true;
+	PropsAffectedByTime = NULL;
 }
 
 int32 ATGCOPlayerState::GetPlayerNumber()
@@ -60,4 +61,13 @@ void ATGCOPlayerState::AddNewInventoryItem(AStockable* _item)
 void ATGCOPlayerState::RemoveInventoryItem(AStockable* _item)
 {
 	InventoryListItems.Remove(_item);
+}
+
+void ATGCOPlayerState::SetPropsAffected(AProps* PropsAffected)
+{
+	if (PropsAffectedByTime)
+	{
+		PropsAffectedByTime->ReinitSpeed();
+	}
+	PropsAffectedByTime = PropsAffected;
 }

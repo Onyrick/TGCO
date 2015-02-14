@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "Props.h"
+
 #include "GameFramework/GameState.h"
 #include "TGCOGameState.generated.h"
 
@@ -24,6 +26,9 @@ private:
 
 public:
 
+	/** Get skills unlock by players */
+	const TMap<int, FString>& GetUnlockSkills();
+
 	/** Add an amount of energy to the total Player's energy */
 	UFUNCTION(BlueprintCallable, Category = "Players")
 	void AddEnergy(int32 iEnergyAmount);
@@ -36,16 +41,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Players")
 	int32 GetEnergy();
 
-	/** Exchange value of PlayerState to exchange character */
-	UFUNCTION(BlueprintCallable, Category = "Players")
-	void ExchangeCharacter();
-
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FBindableEvent_ExchangeCharactersFinished);
-
-	/** Called when exchange is finished */
-	UPROPERTY(BlueprintAssignable, Category = "Players")
-	FBindableEvent_ExchangeCharactersFinished OnExchangeCharacters;
-
 	/** Remove all widgets attached to viewport */
 	UFUNCTION(Netmulticast, reliable)
 	void MulticastRemoveAllWidgets();
@@ -57,6 +52,9 @@ private:
 
 	/** Check if Players have remaining energy and can continue the game. If not launch Game Over. */
 	bool CheckRemainingEnergy();
+
+	/** Array that contains the skill that the Player unlock */
+	TMap<int, FString> MapUnlockSkills;
 
 };
 

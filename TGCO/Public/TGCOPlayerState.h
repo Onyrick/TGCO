@@ -37,10 +37,16 @@ public:
 	void AddNewInventoryItem(AStockable* _item);
 	void RemoveInventoryItem(AStockable* _item);
 
+	/** Set the Props affected by time */
+	void SetPropsAffected(AProps* PropsAffected);
+
 protected:
 	/** Player number (0 = Maximilien = futur / 1 = Samantha = past */
 	UPROPERTY(Replicated)
 	int32 PlayerNumber;
 	
 	TArray<AStockable*> InventoryListItems;
+
+	/** Pointer to the Props who is affected by time */
+	AProps* PropsAffectedByTime;
 };
