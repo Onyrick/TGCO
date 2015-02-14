@@ -30,11 +30,31 @@ void AMinesweeper::CreateMinesweeper()
 			AMinesBox* m = (AMinesBox*)World->SpawnActor<AMinesBox>(MineBoxBP, SpawnLocation, SpawnRotation);
 			Squares.Add(m);
 		}
-
-		//Squares.Add(ObjectInitializer.CreateDefaultSubobject<AMinesBox>(this, FName(TEXT("MineBox%d"),i )));
 	}
 
-	//Random place mine
+	PutMinesRandomly();
+	CalculateNeighboursUndermined();
+}
+
+void AMinesweeper::ResetMinesweeper()
+{
+	if (Squares.Num() == 0)
+	{
+		CreateMinesweeper();
+	}
+	else
+	{
+		for (int i = 0; i < Squares.Num(); ++i)
+		{
+			Squares[i]->Destroy();
+		}
+		Squares.Empty(Squares.Num());
+		CreateMinesweeper();
+	}
+}
+
+void AMinesweeper::PutMinesRandomly()
+{
 	int iSecret;
 	srand(time(NULL));
 	for (int cpt = 0; cpt < NB_MINES; ++cpt)
@@ -49,42 +69,41 @@ void AMinesweeper::CreateMinesweeper()
 			--cpt;
 		}
 	}
-
-	CalculateNeighboursUndermined();
 }
-
 
 void AMinesweeper::CalculateNeighboursUndermined()
 {
+	//For all MineBox
 	for (int i = 0; i < SIZE; ++i)
 	{
-		for (int j = -1 ; j <= 1 ; ++j)
+		//Check the neighbours
+		for (int j = -1; j <= 1; ++j)
 		{
-			if (((i - NB_ROW + j) / NB_COL == (i / NB_COL) - 1) && (i - NB_ROW + j > 0) && (i < NB_COL))
+			// If the MineBox is at the beginning of a row, don't check the previous one. 
+			// And if it is at the end of the row, don't check the next one.
+			if (((i%NB_COL == 0) && (j == -1)) 
+				|| ((i%NB_COL == NB_COL - 1) && (j == 1)) )
 			{
-				if (Squares[i - NB_ROW + j]->GetIsUndermined() == true)
-				{
-					Squares[i]->SetNeighboursUndermined();
-				}
-				
+				continue;
 			}
-			if (((i + j) / NB_COL == (i / NB_COL)) && (i + j > 0) && (j != 0))
+			// Check the neighbours up
+			if ((i/NB_COL > 0) && (Squares[i - NB_COL + j]->GetIsUndermined() == true))
 			{
-				if (Squares[i + j]->GetIsUndermined() == true)
-				{
-					Squares[i]->SetNeighboursUndermined();
-				}
-				
+				Squares[i]->SetNeighboursUndermined();
 			}
-			if (((i + NB_ROW + j) / NB_COL == (i / NB_COL) + 1) && (i + NB_ROW + j > 0) && (i < SIZE - NB_ROW))
+			// Check the neighbours on the left and on the right
+			if ((j != 0) && (Squares[i + j]->GetIsUndermined() == true))
 			{
-				if (Squares[i + NB_ROW + j]->GetIsUndermined() == true)
-				{
-					Squares[i]->SetNeighboursUndermined();
-				}
-				
+				Squares[i]->SetNeighboursUndermined();
 			}
+			// Check the neighbours down
+			if ((i / NB_COL < NB_COL-1) && (Squares[i + NB_COL + j]->GetIsUndermined() == true))
+			{
+				Squares[i]->SetNeighboursUndermined();
+			}
+			
 		}
+		
 		if (Squares[i]->Number != NULL)
 		{
 			Squares[i]->Number->SetText(FString::Printf(TEXT("%d"), Squares[i]->GetNeighboursUndermined()));

@@ -47,6 +47,8 @@ ATGCOCharacter::ATGCOCharacter(const FObjectInitializer& ObjectInitializer)
 	GetCharacterMovement()->MaxWalkSpeed = 400;
 
 	bShootMode = true;
+	WristMode = "STOP";
+	WristModeIndex = 0;
 
 	PreviousInteractiveElement = nullptr;
 	iNumberOfCloseInteractiveElement = 0;
@@ -75,6 +77,11 @@ void ATGCOCharacter::SetupPlayerInputComponent(class UInputComponent* InputCompo
 
 	InputComponent->BindAction("Run", IE_Pressed, this, &ATGCOCharacter::Run);
 	InputComponent->BindAction("Run", IE_Released, this, &ATGCOCharacter::StopRunning);
+
+	InputComponent->BindAction("SwitchModeUp", IE_Pressed, this, &ATGCOCharacter::SetPreviousWristMode);
+	InputComponent->BindAction("SwitchModeDown", IE_Pressed, this, &ATGCOCharacter::SetNextWristMode);
+
+	InputComponent->BindAction("Cancel", IE_Pressed, this, &ATGCOCharacter::CancelActionTime);
 
 	InputComponent->BindAxis("MoveForward", this, &ATGCOCharacter::MoveForward);
 	InputComponent->BindAxis("MoveRight", this, &ATGCOCharacter::MoveRight);
@@ -166,7 +173,8 @@ void ATGCOCharacter::OnFire()
 			if (World != NULL)
 			{
 				// spawn the projectile at the muzzle
-				World->SpawnActor<AProjectile>(ProjectileClass, SpawnLocation, SpawnRotation);
+				AProjectile* Projectile = World->SpawnActor<AProjectile>(ProjectileClass, SpawnLocation, SpawnRotation);
+				Projectile->SetMode(WristMode);
 			}
 		}
 
@@ -218,6 +226,46 @@ void ATGCOCharacter::Use()
 	{
 		//TODO : PlaySound "Nothing to Use"
 	}
+}
+
+void ATGCOCharacter::SetPreviousWristMode()
+{
+	ATGCOGameState * GS = Cast<ATGCOGameState>(GetWorld()->GetGameState());
+	const TMap<int, FString>& UnlockSkills = GS->GetUnlockSkills();
+
+	int lengthMap = UnlockSkills.Num();
+
+	WristModeIndex = WristModeIndex - 1;
+	if (WristModeIndex < 0)
+	{
+		WristModeIndex = lengthMap - 1;
+	}
+
+	WristMode = UnlockSkills[WristModeIndex];
+
+	UE_LOG(LogDebug, Warning, TEXT("Previous : %s"), *WristMode);
+}
+
+void ATGCOCharacter::SetNextWristMode()
+{
+	ATGCOGameState * GS = Cast<ATGCOGameState>(GetWorld()->GetGameState());
+	const TMap<int, FString>& UnlockSkills = GS->GetUnlockSkills();
+
+	int lengthMap = UnlockSkills.Num();
+
+	WristModeIndex = (WristModeIndex + 1) % lengthMap;
+
+	WristMode = UnlockSkills[WristModeIndex];
+
+	UE_LOG(LogDebug, Warning, TEXT("Next : %s"), *WristMode);
+}
+
+void ATGCOCharacter::CancelActionTime()
+{
+	ATGCOPlayerState * PS = Cast<ATGCOPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
+	PS->SetPropsAffected(NULL);
+
+	UE_LOG(LogDebug, Warning, TEXT("Cancel action time"));
 }
 
 bool ATGCOCharacter::SetCheckpoint()

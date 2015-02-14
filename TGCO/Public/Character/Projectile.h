@@ -38,4 +38,10 @@ public:
 	/** Returns ProjectileMovement subobject **/
 	FORCEINLINE class UProjectileMovementComponent* GetProjectileMovement() const { return ProjectileMovement; }
 
+
+	void SetMode(FString _Mode);
+	FString GetProjectileMode();
+
+protected:
+	FString ProjectileMode;
 };

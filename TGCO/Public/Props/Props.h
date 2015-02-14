@@ -16,15 +16,23 @@ class TGCO_API AProps : public AActor
 public:
 	/** Constructors */
 	AProps(const FObjectInitializer& PCIP);
-
-	//UPROPERTY(EditAnywhere, Category = "Triggers")
-	//UBoxComponent* TriggerBox;
 	
 	/** TODO */
 	virtual UStaticMeshComponent* getStaticMesh();
+
+	float TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser);
+
+	void ReinitSpeed();
 
 public: 
 	/** TODO */
 	UPROPERTY(EditAnywhere, Category = "PropsComponents")
 	UStaticMeshComponent* StaticMeshProps;
+
+	UPROPERTY(EditAnywhere, Category = "Speed")
+	float initialSpeed;
+
+	UPROPERTY(EditAnywhere, Category = "Speed")
+	float speed;
+
 };

@@ -153,6 +153,16 @@ private:
 	/** Highlight the InteractiveElement that the Character look */
 	void HightlightCloseInteractiveElement();
 
+	/** Switch Wrist Mode to the previous mode in the Enumeration */
+	void SetPreviousWristMode();
+	
+	/** Switch Wrist Mode to the previous mode in the Enumeration */
+	void SetNextWristMode();
+
+	/** Cancel Action on the Props that is affected by time because of Projectile Shoot */
+	void CancelActionTime();
+
+
 private:
 	/** Previous element which was highlighted */
 	AInteractiveElement* PreviousInteractiveElement;
@@ -164,6 +174,9 @@ private:
 	APlayerStart* LastSpawn;
 	/** Character Pawn */
 	ATGCOCharacter* PlayerPawn;
+	/** Wrist Mode for Shoot */
+	FString WristMode;
+	int WristModeIndex;
 
 public:
 	/** Function to add a stockable item in the inventory*/

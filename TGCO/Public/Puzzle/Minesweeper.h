@@ -21,12 +21,18 @@ public:
 	AMinesweeper(const FObjectInitializer& PCIP);
 
 	/** Create the Minesweeper */
-	UFUNCTION(BlueprintCallable, Category = "Minesweeper")
 	void CreateMinesweeper();
+
+	/** Reset all values of the array of MinesweeperBox. Called when the player in the past walk on a mine. */
+	UFUNCTION(BlueprintCallable, Category = "Minesweeper")
+		void ResetMinesweeper();
 
 	/** Delete the array that contains AMinesBox */
 	void DeleteMinesweeper();
 
+	/** Put mines randomly in the TArray of MineBox */
+	void PutMinesRandomly();
+	/** Calculate the number of neighbours that are undermined */
 	void CalculateNeighboursUndermined();
 
 	/** Content all the mine box */
