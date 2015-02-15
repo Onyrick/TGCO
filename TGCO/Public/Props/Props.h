@@ -20,19 +20,19 @@ public:
 	/** TODO */
 	virtual UStaticMeshComponent* getStaticMesh();
 
-	float TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser);
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser);
 
-	void ReinitSpeed();
+	virtual void ReinitSpeed();
 
 public: 
 	/** TODO */
-	UPROPERTY(EditAnywhere, Category = "PropsComponents")
+	UPROPERTY(EditAnywhere, Category = PropsComponents)
 	UStaticMeshComponent* StaticMeshProps;
 
-	UPROPERTY(EditAnywhere, Category = "Speed")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Speed)
 	float initialSpeed;
 
-	UPROPERTY(EditAnywhere, Category = "Speed")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Speed)
 	float speed;
 
 };
