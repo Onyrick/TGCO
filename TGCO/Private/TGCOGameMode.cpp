@@ -3,6 +3,7 @@
 #include "TGCO.h"
 #include "TGCOGameMode.h"
 #include "TGCOPlayerState.h"
+#include "TGCOPlayerController.h"
 #include "TGCOGameState.h"
 #include "TGCOCharacter.h"
 #include "TGCOGameSession.h"
@@ -23,6 +24,7 @@ ATGCOGameMode::ATGCOGameMode(const FObjectInitializer& ObjectInitializer)
 	HUDClass = ATGCOHUD::StaticClass();
 	GameStateClass = ATGCOGameState::StaticClass();
 	PlayerStateClass = ATGCOPlayerState::StaticClass();
+	PlayerControllerClass = ATGCOPlayerController::StaticClass();
 
 	bUseSeamlessTravel = false;
 }
