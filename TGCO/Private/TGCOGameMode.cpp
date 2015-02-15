@@ -24,7 +24,7 @@ ATGCOGameMode::ATGCOGameMode(const FObjectInitializer& ObjectInitializer)
 	HUDClass = ATGCOHUD::StaticClass();
 	GameStateClass = ATGCOGameState::StaticClass();
 	PlayerStateClass = ATGCOPlayerState::StaticClass();
-	PlayerControllerClass = ATGCOPlayerController::StaticClass();
+	//PlayerControllerClass = ATGCOPlayerController::StaticClass();
 
 	bUseSeamlessTravel = false;
 }
