@@ -1,7 +1,7 @@
 
 #include "TGCO.h"
 #include "RainbowBoxHandlerFutur.h"
-#include "UnrealNetwork.h"
+#include "Net/UnrealNetwork.h"
 
 ARainbowBoxHandlerFutur::ARainbowBoxHandlerFutur(const FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer)
@@ -17,7 +17,6 @@ void ARainbowBoxHandlerFutur::GetLifetimeReplicatedProps(TArray< FLifetimeProper
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	// Replicate to everyone
 	DOREPLIFETIME(ARainbowBoxHandlerFutur, Squares);
 }
 

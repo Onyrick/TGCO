@@ -28,8 +28,6 @@ public:
 	/** Hide all rainbow box of the color of the passed box color except those passed*/
 	void HideAllExcepted(ARainbowBox* StayRainbowBox);
 
-	void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const;
-
 	/** Content all the rainbow box */
 	UPROPERTY(Replicated)
 	TArray< ARainbowBox* > Squares;

@@ -2,7 +2,7 @@
 
 #include "TGCO.h"
 #include "RainbowBoxHandlerPast.h"
-#include "UnrealNetwork.h"
+#include "Net/UnrealNetwork.h"
 
 ARainbowBoxHandlerPast::ARainbowBoxHandlerPast(const FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer)
