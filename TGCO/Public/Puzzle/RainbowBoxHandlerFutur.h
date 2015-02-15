@@ -26,15 +26,19 @@ public:
 	/** Delete the array that contains ARainbowBox */
 	void DeleteRainbow();
 
-	/** Hide all rainbow box except those of the passed color */
-	void HideAllExcepted(ERainbowBoxColor::Color StayColor);
+	/** Hide all rainbow box of the passed color */
+	void HideAllOfThisColor(ERainbowBoxColor::Color StayColor);
+
+	/** Hide all rainbow box of the color of the passed box color except those passed*/
+	void HideAllExcepted(ARainbowBox* StayRainbowBox);
+
 
 	/** Content all the rainbow box */
 	TArray< ARainbowBox* > Squares;
 	TSubclassOf<class ARainbowBox> RainbowBoxBP;
 
 private:
-	const int NB_COL = 5;
-	const int NB_ROW = 5;
+	const int NB_COL = 8;
+	const int NB_ROW = 8;
 	const int SIZE = NB_COL * NB_ROW;
 };

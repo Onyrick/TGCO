@@ -3,25 +3,50 @@
 #include "TGCO.h"
 #include "RainbowBox.h"
 #include "RainbowBoxHandlerFutur.h"
+#include "RainbowBoxHandlerPast.h"
 
 ARainbowBox::ARainbowBox(const class FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer),
 Color(ERainbowBoxColor::NONE),
-bShouldNotify(false)
+bShouldNotify(false),
+bIsHideInPast(false)
 {
 }
 
 void ARainbowBox::OnOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
+	ARainbowBoxHandlerFutur* RainbowBoxHandlerFutur = nullptr;
+	ARainbowBoxHandlerPast* RainbowBoxHandlerPast = nullptr;
+
+	for (TActorIterator<AActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+	{
+		if (ActorItr->GetName().Contains("RainbowBoxHandlerFutur_BP"))
+		{
+			RainbowBoxHandlerFutur = Cast<ARainbowBoxHandlerFutur>(*ActorItr);
+		}
+		if (ActorItr->GetName().Contains("RainbowBoxHandlerPast_BP"))
+		{
+			RainbowBoxHandlerPast = Cast<ARainbowBoxHandlerPast>(*ActorItr);
+		}
+	}
+
 	if (bShouldNotify)
 	{
-		for (TActorIterator<AActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+		if (RainbowBoxHandlerFutur != nullptr)
 		{
-			if (ActorItr->GetName().Contains("RainbowBoxHandlerFutur_BP"))
-			{
-				ARainbowBoxHandlerFutur* RainbowBoxHandlerFutur = Cast<ARainbowBoxHandlerFutur>(*ActorItr);
-				RainbowBoxHandlerFutur->HideAllExcepted(Color);
-			}
+			RainbowBoxHandlerFutur->HideAllOfThisColor(Color);
+		}
+
+		if (RainbowBoxHandlerPast != nullptr)
+		{
+			RainbowBoxHandlerPast->HideAllExcepted(this);
+		}
+	}
+	else
+	{
+		if (RainbowBoxHandlerFutur)
+		{
+			RainbowBoxHandlerFutur->HideAllExcepted(this);
 		}
 	}
 }
@@ -62,5 +87,15 @@ ERainbowBoxColor::Color ARainbowBox::GetColor()
 void ARainbowBox::SetShouldNotify(bool bNewShouldNotify)
 {
 	bShouldNotify = bNewShouldNotify;
+}
+
+void ARainbowBox::SetIsHideInPast(bool bNewIsHideInPast)
+{
+	bIsHideInPast = bNewIsHideInPast;
+}
+
+bool ARainbowBox::GetIsHideInPast()
+{
+	return bIsHideInPast;
 }
 

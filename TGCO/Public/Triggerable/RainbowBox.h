@@ -30,9 +30,12 @@ public:
 	void SetColor(const ERainbowBoxColor::Color eColor);
 	ERainbowBoxColor::Color GetColor();
 	void SetShouldNotify(bool bNewShouldNotify);
+	void SetIsHideInPast(bool bNewIsHideInPast);
+	bool GetIsHideInPast();
 	
 private:
 	ERainbowBoxColor::Color Color;
 	UMaterialInstanceDynamic* MaterialInstanceDynamic;
 	bool bShouldNotify;
+	bool bIsHideInPast;
 };
