@@ -1,6 +1,7 @@
 
 #include "TGCO.h"
 #include "RainbowBoxHandlerFutur.h"
+#include "UnrealNetwork.h"
 
 ARainbowBoxHandlerFutur::ARainbowBoxHandlerFutur(const FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer)
@@ -10,6 +11,14 @@ ARainbowBoxHandlerFutur::ARainbowBoxHandlerFutur(const FObjectInitializer& Objec
 	{
 		RainbowBoxBP = (UClass*)ItemBlueprint.Class;
 	}
+}
+
+void ARainbowBoxHandlerFutur::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	// Replicate to everyone
+	DOREPLIFETIME(ARainbowBoxHandlerFutur, Squares);
 }
 
 void ARainbowBoxHandlerFutur::CreateRainbowBoxHandler()
@@ -73,8 +82,15 @@ void ARainbowBoxHandlerFutur::HideAllOfThisColor(ERainbowBoxColor::Color StayCol
 		}
 		else
 		{
-			RainbowBox->Show();
-			RainbowBox->SetIsHideInPast(false);
+			if (RainbowBox->GetIsHideInPast())
+			{
+				RainbowBox->Hide();
+			}
+			else
+			{
+				RainbowBox->Show();
+				RainbowBox->SetIsHideInPast(false);
+			}
 		}
 	}
 }

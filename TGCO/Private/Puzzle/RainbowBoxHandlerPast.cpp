@@ -2,6 +2,7 @@
 
 #include "TGCO.h"
 #include "RainbowBoxHandlerPast.h"
+#include "UnrealNetwork.h"
 
 ARainbowBoxHandlerPast::ARainbowBoxHandlerPast(const FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer)
@@ -11,6 +12,14 @@ ARainbowBoxHandlerPast::ARainbowBoxHandlerPast(const FObjectInitializer& ObjectI
 	{
 		RainbowBoxBP = (UClass*)ItemBlueprint.Class;
 	}
+} 
+
+void ARainbowBoxHandlerPast::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	// Replicate to everyone
+	DOREPLIFETIME(ARainbowBoxHandlerPast, Squares);
 }
 
 void ARainbowBoxHandlerPast::CreateRainbowBoxHandler()
