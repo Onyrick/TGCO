@@ -13,6 +13,9 @@ AMinesBox::AMinesBox(const class FObjectInitializer& ObjectInitializer)
 , iNeighboursUndermined(0)
 , bIsDisplayed(false)
 {
+	MineFlag = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("MineFlag_MineBox"));
+	MineFlag->AttachParent = RootComponent;
+
 	Number = ObjectInitializer.CreateDefaultSubobject<UTextRenderComponent>(this, TEXT("Number_MineBox"), true );
 	Number->SetRelativeRotation(FRotator(90.0, 90.0, 0.0));
 	Number->SetRelativeLocation(FVector(0.0,0.0,25.0));

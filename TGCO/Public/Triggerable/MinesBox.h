@@ -38,6 +38,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Text)
 		UTextRenderComponent* Number;
 
+	UPROPERTY(EditAnywhere, Category = Meshes)
+		UStaticMeshComponent* MineFlag;
+
 protected:
 	/** Wheteher a mineBox is undermined */
 	bool bIsUndermined;
