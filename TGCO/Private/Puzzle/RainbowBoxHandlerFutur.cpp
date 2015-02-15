@@ -11,6 +11,7 @@ ARainbowBoxHandlerFutur::ARainbowBoxHandlerFutur(const FObjectInitializer& Objec
 	{
 		RainbowBoxBP = (UClass*)ItemBlueprint.Class;
 	}
+	Squares = TArray< ARainbowBox* >();
 }
 
 void ARainbowBoxHandlerFutur::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
