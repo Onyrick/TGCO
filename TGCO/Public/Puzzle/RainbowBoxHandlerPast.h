@@ -22,6 +22,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Rainbow")
 	void CreateRainbowBoxHandler();
 
+	UFUNCTION(BlueprintCallable, Category = "Rainbow", Server, WithValidation, Reliable)
+	void ServerCreateRainbowBoxHandler();
+
 	/** Delete the array that contains ARainbowBox */
 	void DeleteRainbow();
 
@@ -29,6 +32,7 @@ public:
 	void HideAllExcepted(ARainbowBox* StayRainbowBox);
 
 	/** Content all the rainbow box */
+	UPROPERTY(Replicated)
 	TArray< ARainbowBox* > Squares;
 	TSubclassOf<class ARainbowBox> RainbowBoxBP;
 

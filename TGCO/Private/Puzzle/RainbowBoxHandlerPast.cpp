@@ -1,6 +1,7 @@
 
 
 #include "TGCO.h"
+#include "Net/UnrealNetwork.h"
 #include "RainbowBoxHandlerPast.h"
 
 ARainbowBoxHandlerPast::ARainbowBoxHandlerPast(const FObjectInitializer& ObjectInitializer)
@@ -14,9 +15,17 @@ ARainbowBoxHandlerPast::ARainbowBoxHandlerPast(const FObjectInitializer& ObjectI
 	Squares = TArray< ARainbowBox* >();
 }
 
+void ARainbowBoxHandlerPast::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	// Replicate to everyone
+	DOREPLIFETIME(ARainbowBoxHandlerPast, Squares);
+}
+
 void ARainbowBoxHandlerPast::CreateRainbowBoxHandler()
 {
-	srand(time(NULL));
+	//srand(time(NULL));
+	srand(10);
 	UE_LOG(LogTest, Warning, TEXT("In past"));
 
 	//Create all the RainbowBox and set a random color between red, blue and green
@@ -60,6 +69,16 @@ void ARainbowBoxHandlerPast::CreateRainbowBoxHandler()
 			}
 		}
 	}
+}
+
+bool ARainbowBoxHandlerPast::ServerCreateRainbowBoxHandler_Validate()
+{
+	return true;
+}
+
+void ARainbowBoxHandlerPast::ServerCreateRainbowBoxHandler_Implementation()
+{
+	CreateRainbowBoxHandler();
 }
 
 /** Delete the array that contains ARainbowBox */
