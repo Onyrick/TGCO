@@ -1,6 +1,7 @@
 
 
 #include "TGCO.h"
+#include "TGCOGameState.h"
 #include "Net/UnrealNetwork.h"
 #include "RainbowBoxHandlerPast.h"
 
@@ -25,48 +26,56 @@ ARainbowBoxHandlerPast::ARainbowBoxHandlerPast(const FObjectInitializer& ObjectI
 void ARainbowBoxHandlerPast::CreateRainbowBoxHandler()
 {
 	//srand(time(NULL));
-	srand(10);
 	UE_LOG(LogTest, Warning, TEXT("In past"));
 
-	//Create all the RainbowBox and set a random color between red, blue and green
-	for (int i = 0; i < SIZE; ++i)
+	UWorld* const World = GetWorld();
+	if (World != NULL)
 	{
-		UWorld* const World = GetWorld();
-		if (World != NULL)
+		ATGCOGameState* GameState = Cast<ATGCOGameState>(World->GetGameState());
+		if (GameState)
 		{
-			int iAddrandom = rand() % 6;
-			if (iAddrandom > 0)
-			{
-				unsigned int x = i / NB_COL;
-				unsigned int y = i % NB_COL;
-				const FVector SpawnLocation = GetActorLocation() + FVector(x * 480, y * 480, 5.0);
-				const FRotator SpawnRotation = GetActorRotation();
-				ARainbowBox* RainbowBox = (ARainbowBox*)World->SpawnActor<ARainbowBox>(RainbowBoxBP, SpawnLocation, SpawnRotation);
+			srand(GameState->GetSeed());
 
-				int iColorRandom = rand() % 3;
-				switch (iColorRandom)
+			UE_LOG(LogTest, Warning, TEXT("Seed :  %i"), GameState->GetSeed());
+
+			//Create all the RainbowBox and set a random color between red, blue and green
+			for (int i = 0; i < SIZE; ++i)
+			{
+				int iAddrandom = rand() % 6;
+				if (iAddrandom > 0)
 				{
-				case 0:
-					RainbowBox->SetColor(ERainbowBoxColor::RED);
-					UE_LOG(LogTest, Warning, TEXT("RainbowBox %i is RED"), i);
-					break;
-				case 1:
-					RainbowBox->SetColor(ERainbowBoxColor::GREEN);
-					UE_LOG(LogTest, Warning, TEXT("RainbowBox %i is RED"), i);
-					break;
-				case 2:
-					RainbowBox->SetColor(ERainbowBoxColor::BLUE);
-					UE_LOG(LogTest, Warning, TEXT("RainbowBox %i is RED"), i);
-					break;
-				default:
-					RainbowBox->SetColor(ERainbowBoxColor::NONE);
-					UE_LOG(LogTest, Warning, TEXT("RainbowBox %i is RED"), i);
-					break;
+					unsigned int x = i / NB_COL;
+					unsigned int y = i % NB_COL;
+					const FVector SpawnLocation = GetActorLocation() + FVector(x * 480, y * 480, 5.0);
+					const FRotator SpawnRotation = GetActorRotation();
+					ARainbowBox* RainbowBox = (ARainbowBox*)World->SpawnActor<ARainbowBox>(RainbowBoxBP, SpawnLocation, SpawnRotation);
+
+					int iColorRandom = rand() % 3;
+					switch (iColorRandom)
+					{
+					case 0:
+						RainbowBox->SetColor(ERainbowBoxColor::RED);
+						UE_LOG(LogTest, Warning, TEXT("RainbowBox %i is RED"), i);
+						break;
+					case 1:
+						RainbowBox->SetColor(ERainbowBoxColor::GREEN);
+						UE_LOG(LogTest, Warning, TEXT("RainbowBox %i is RED"), i);
+						break;
+					case 2:
+						RainbowBox->SetColor(ERainbowBoxColor::BLUE);
+						UE_LOG(LogTest, Warning, TEXT("RainbowBox %i is RED"), i);
+						break;
+					default:
+						RainbowBox->SetColor(ERainbowBoxColor::NONE);
+						UE_LOG(LogTest, Warning, TEXT("RainbowBox %i is RED"), i);
+						break;
+					}
+					RainbowBox->SetShouldNotify(true);
+					Squares.Add(RainbowBox);
 				}
-				RainbowBox->SetShouldNotify(true);
-				Squares.Add(RainbowBox);
 			}
 		}
+		
 	}
 }
 

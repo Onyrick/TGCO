@@ -27,6 +27,17 @@ void ATGCOGameState::AddEnergy(int32 iEnergyAmount)
 	UE_LOG(LogTest, Warning, TEXT("Next Energy : %d"), iPlayersEnergy);
 }
 
+int32 ATGCOGameState::GetSeed()
+{
+	return iSeed;
+}
+
+void ATGCOGameState::SetRandomSeed()
+{
+	srand(time(NULL));
+	iSeed = rand();
+}
+
 bool ATGCOGameState::DecreaseEnergy(int32 iEnergyAmount)
 {
 	UE_LOG(LogTest, Warning, TEXT("Previous Energy : %d"), iPlayersEnergy);

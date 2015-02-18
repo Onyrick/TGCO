@@ -504,6 +504,11 @@ void UTGCOGameInstance::BeginHostingState()
 	UGameViewportClient* GVC = GEngine->GameViewport;
 	GVC->RemoveAllViewportWidgets();
 	GetWorld()->ServerTravel(TravelURL);
+	ATGCOGameState* GameState = Cast<ATGCOGameState>(GetWorld()->GetGameState());
+	if (GameState)
+	{
+		GameState->SetRandomSeed();
+	}
 	//UGameplayStatics::OpenLevel(GetWorld(), FName(*TravelURL), true, FString(TEXT("listen")));
 	//UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("/Game/Maps/HostMap")), true);
 }

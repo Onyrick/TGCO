@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Props.h"
+#include <ctime>
 
 #include "GameFramework/GameState.h"
 #include "TGCOGameState.generated.h"
@@ -24,6 +25,9 @@ private:
 	/** Maximum amount of energy Players can have */
 	int32 iMaxPlayersEnergy;
 
+	/** Seed to generate random puzzle */
+	int32 iSeed;
+
 public:
 
 	/** Get skills unlock by players */
@@ -40,6 +44,14 @@ public:
 	/** Get the Player's energy*/
 	UFUNCTION(BlueprintCallable, Category = "Players")
 	int32 GetEnergy();
+
+	/** Get the seed */
+	UFUNCTION(BlueprintCallable, Category = "Players")
+	int32 GetSeed();
+
+	/** Set a random seed */
+	UFUNCTION(BlueprintCallable, Category = "Players")
+	void SetRandomSeed();
 
 	/** Remove all widgets attached to viewport */
 	UFUNCTION(Netmulticast, reliable)
