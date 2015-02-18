@@ -35,7 +35,7 @@ void ARainbowBoxHandlerPast::CreateRainbowBoxHandler()
 		if (World != NULL)
 		{
 			int iAddrandom = rand() % 6;
-			if (iAddrandom > 1)
+			if (iAddrandom > 0)
 			{
 				unsigned int x = i / NB_COL;
 				unsigned int y = i % NB_COL;
