@@ -15,12 +15,12 @@ ARainbowBoxHandlerFutur::ARainbowBoxHandlerFutur(const FObjectInitializer& Objec
 	MustStayRainbowBox = nullptr;
 }
 
-void ARainbowBoxHandlerFutur::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
+/*void ARainbowBoxHandlerFutur::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	// Replicate to everyone
 	DOREPLIFETIME(ARainbowBoxHandlerFutur, Squares);
-}
+}*/
 
 void ARainbowBoxHandlerFutur::CreateRainbowBoxHandler()
 {
@@ -34,8 +34,7 @@ void ARainbowBoxHandlerFutur::CreateRainbowBoxHandler()
 		UWorld* const World = GetWorld();
 		if (World != NULL)
 		{
-			//int iAddrandom = rand() % 6;
-			int iAddrandom = 10;
+			int iAddrandom = rand() % 6;
 			if (iAddrandom > 1)
 			{
 				unsigned int x = i / NB_COL;

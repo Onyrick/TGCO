@@ -32,7 +32,6 @@ public:
 	void HideAllExcepted(ARainbowBox* StayRainbowBox);
 
 	/** Content all the rainbow box */
-	UPROPERTY(Replicated)
 	TArray< ARainbowBox* > Squares;
 	TSubclassOf<class ARainbowBox> RainbowBoxBP;
 
