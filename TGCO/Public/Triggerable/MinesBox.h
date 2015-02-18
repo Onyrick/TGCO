@@ -34,6 +34,10 @@ public:
 	/** Reinit the information displayed by the past. Set bInfoPast to false. */
 	void ReinitDisplayInformation();
 
+	/** */
+	UFUNCTION(BlueprintCallable, Category = "MineBox")
+	void SetVisibilityOfFlag();
+
 	/** The Text Render representing the number of Neighbours which are undermined */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Text)
 		UTextRenderComponent* Number;

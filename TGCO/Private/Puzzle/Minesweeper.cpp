@@ -112,6 +112,18 @@ void AMinesweeper::CalculateNeighboursUndermined()
 	}
 }
 
+int32 AMinesweeper::GetMinesweeperSize()
+{
+	return SIZE;
+}
+
+AMinesBox* AMinesweeper::GetMineBoxAt(int32 index)
+{
+	if (index > SIZE) return NULL;
+
+	return Squares[index];
+}
+
 
 void AMinesweeper::DeleteMinesweeper()
 {

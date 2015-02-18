@@ -90,3 +90,8 @@ unsigned int AMinesBox::GetNeighboursUndermined()
 {
 	return iNeighboursUndermined;
 }
+
+void AMinesBox::SetVisibilityOfFlag()
+{
+	MineFlag->SetVisibility(!(MineFlag->IsVisible);
+}
