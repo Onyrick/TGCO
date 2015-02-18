@@ -93,5 +93,5 @@ unsigned int AMinesBox::GetNeighboursUndermined()
 
 void AMinesBox::SetVisibilityOfFlag()
 {
-	MineFlag->SetVisibility(!(MineFlag->IsVisible);
+	MineFlag->SetVisibility(!(MineFlag->IsVisible()));
 }
