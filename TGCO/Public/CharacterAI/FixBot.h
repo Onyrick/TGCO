@@ -11,12 +11,14 @@
 UCLASS()
 class TGCO_API AFixBot : public AMonster
 {
-	GENERATED_UCLASS_BODY()
+	GENERATED_BODY()
 
 public:
+	AFixBot(const FObjectInitializer& ObjectInitializer);
+
 	/** Event launch when the FixBot take damage */
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser) override;
 
 	UPROPERTY(EditAnywhere, Category = Behavior)
-		int32 MaxRoutes;
+	int32 MaxRoutes;
 };

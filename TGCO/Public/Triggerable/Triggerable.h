@@ -16,7 +16,7 @@ class TGCO_API ATriggerable : public AActor
 
 public:
 	/** Constructor */
-	ATriggerable(const FObjectInitializer& PCIP);
+	ATriggerable(const FObjectInitializer& ObjectInitializer);
 
 	/** Event launch when Player begin to trigger the TriggerBox component. */
 	UFUNCTION()

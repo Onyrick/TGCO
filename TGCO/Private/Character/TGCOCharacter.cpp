@@ -278,7 +278,7 @@ bool ATGCOCharacter::SetCheckpoint()
 	return !vLocation.IsZero();
 }
 
-FTransform ATGCOCharacter::GetCheckpoint()
+FTransform ATGCOCharacter::GetCheckpoint() const
 {
 	return LastCheckpoint;
 }
@@ -453,7 +453,7 @@ void ATGCOCharacter::PlayShieldSound()
 	UE_LOG(LogDebug, Warning, TEXT("TO DO : play activate shield sound"));
 }
 
-UInventoryUMG* ATGCOCharacter::GetInventoryUMG()
+UInventoryUMG* ATGCOCharacter::GetInventoryUMG() const
 {
 	return InventoryUMG;
 }

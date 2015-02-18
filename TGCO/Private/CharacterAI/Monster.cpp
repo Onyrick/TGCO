@@ -3,8 +3,8 @@
 #include "TGCO.h"
 #include "Monster.h"
 
-AMonster::AMonster(const class FObjectInitializer& PCIP)
-: Super(PCIP)
+AMonster::AMonster(const FObjectInitializer& ObjectInitializer)
+: Super(ObjectInitializer)
 , fStunTime(1.f)
 {
 	GetCharacterMovement()->MaxWalkSpeed = 100.f;

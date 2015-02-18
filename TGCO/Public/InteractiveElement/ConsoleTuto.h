@@ -12,9 +12,11 @@
 UCLASS()
 class TGCO_API AConsoleTuto : public AInteractiveElement
 {
-	GENERATED_UCLASS_BODY()
+	GENERATED_BODY()
 
 public:
+	AConsoleTuto(const FObjectInitializer& ObjectInitializer);
+
 	/** Called when the Player uses the object */
 	UFUNCTION(BlueprintCallable, Category = "InteractiveElement")
 	virtual bool OnInteract() override;

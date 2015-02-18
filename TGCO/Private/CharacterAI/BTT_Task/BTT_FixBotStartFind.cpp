@@ -6,7 +6,9 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BTT_FixBotStartFind.h"
 
-UBTT_FixBotStartFind::UBTT_FixBotStartFind(const class FObjectInitializer& PCIP) : Super(PCIP), BeginToRun(true)
+UBTT_FixBotStartFind::UBTT_FixBotStartFind(const FObjectInitializer& ObjectInitializer) 
+: Super(ObjectInitializer)
+, BeginToRun(true)
 {
 	BotTargetPoint = NULL;
 }
@@ -43,7 +45,8 @@ EBTNodeResult::Type UBTT_FixBotStartFind::ExecuteTask(UBehaviorTreeComponent* Ow
 
 		//Direction
 		int TargetID;
-		do {
+		do 
+		{
 			TargetID = rand() % FixBotCharacter->MaxRoutes;
 		} while (TargetID == StartID);
 

@@ -97,7 +97,7 @@ public:
 	bool SetCheckpoint();
 
 	/** Get the checkpoint for re spawn */
-	FTransform GetCheckpoint();
+	FTransform GetCheckpoint() const;
 
 	/** Spawn the Player to the last checkpoint */
 	void SpawnPlayer();
@@ -162,7 +162,6 @@ private:
 	/** Cancel Action on the Props that is affected by time because of Projectile Shoot */
 	void CancelActionTime();
 
-
 private:
 	/** Previous element which was highlighted */
 	AInteractiveElement* PreviousInteractiveElement;
@@ -184,7 +183,7 @@ public:
 
 	/**Getter / Setter */
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
-	UInventoryUMG* GetInventoryUMG();
+	UInventoryUMG* GetInventoryUMG() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void SetInventoryUMG(UInventoryUMG* _widget);

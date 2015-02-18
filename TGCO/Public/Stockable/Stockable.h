@@ -16,7 +16,7 @@ class TGCO_API AStockable : public ATriggerable
 
 public:
 	/** Constructors */
-	AStockable(const FObjectInitializer& PCIP);
+	AStockable(const FObjectInitializer& ObjectInitializer);
 
 	/** When the Player enters the area where he can use an object, this interactive element receives OnComponentBeginOverlap. */
 	virtual void OnOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);

@@ -13,7 +13,10 @@
 UCLASS()
 class TGCO_API ATGCOGameState : public AGameState
 {
-	GENERATED_UCLASS_BODY()
+	GENERATED_BODY()
+
+public:
+	ATGCOGameState(const FObjectInitializer& ObjectInitializer);
 
 protected:
 	/** Amount of energy remaining for both Players */
@@ -25,7 +28,6 @@ private:
 	int32 iMaxPlayersEnergy;
 
 public:
-
 	/** Get skills unlock by players */
 	const TMap<int, FString>& GetUnlockSkills();
 
@@ -49,7 +51,6 @@ public:
 	void MulticastGoToPlayingState();
 
 private:
-
 	/** Check if Players have remaining energy and can continue the game. If not launch Game Over. */
 	bool CheckRemainingEnergy();
 

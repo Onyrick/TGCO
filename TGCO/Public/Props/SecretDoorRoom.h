@@ -15,5 +15,5 @@ class TGCO_API ASecretDoorRoom : public AProps
 
 public:
 	/** Constructors */
-	ASecretDoorRoom(const FObjectInitializer& PCIP);
+	ASecretDoorRoom(const FObjectInitializer& ObjectInitializer);
 };
