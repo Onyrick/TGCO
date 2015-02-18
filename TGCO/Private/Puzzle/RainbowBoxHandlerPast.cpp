@@ -2,7 +2,6 @@
 
 #include "TGCO.h"
 #include "RainbowBoxHandlerPast.h"
-#include "Net/UnrealNetwork.h"
 
 ARainbowBoxHandlerPast::ARainbowBoxHandlerPast(const FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer)
@@ -13,19 +12,12 @@ ARainbowBoxHandlerPast::ARainbowBoxHandlerPast(const FObjectInitializer& ObjectI
 		RainbowBoxBP = (UClass*)ItemBlueprint.Class;
 	}
 	Squares = TArray< ARainbowBox* >();
-} 
-
-void ARainbowBoxHandlerPast::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	// Replicate to everyone
-	DOREPLIFETIME(ARainbowBoxHandlerPast, Squares);
 }
 
 void ARainbowBoxHandlerPast::CreateRainbowBoxHandler()
 {
 	srand(time(NULL));
+	UE_LOG(LogTest, Warning, TEXT("In past"));
 
 	//Create all the RainbowBox and set a random color between red, blue and green
 	for (int i = 0; i < SIZE; ++i)
@@ -33,7 +25,8 @@ void ARainbowBoxHandlerPast::CreateRainbowBoxHandler()
 		UWorld* const World = GetWorld();
 		if (World != NULL)
 		{
-			int iAddrandom = rand() % 6;
+			//int iAddrandom = rand() % 6;
+			int iAddrandom = 10;
 			if (iAddrandom > 0)
 			{
 				unsigned int x = i / NB_COL;
@@ -47,15 +40,19 @@ void ARainbowBoxHandlerPast::CreateRainbowBoxHandler()
 				{
 				case 0:
 					RainbowBox->SetColor(ERainbowBoxColor::RED);
+					UE_LOG(LogTest, Warning, TEXT("RainbowBox %i is RED"), i);
 					break;
 				case 1:
 					RainbowBox->SetColor(ERainbowBoxColor::GREEN);
+					UE_LOG(LogTest, Warning, TEXT("RainbowBox %i is RED"), i);
 					break;
 				case 2:
 					RainbowBox->SetColor(ERainbowBoxColor::BLUE);
+					UE_LOG(LogTest, Warning, TEXT("RainbowBox %i is RED"), i);
 					break;
 				default:
 					RainbowBox->SetColor(ERainbowBoxColor::NONE);
+					UE_LOG(LogTest, Warning, TEXT("RainbowBox %i is RED"), i);
 					break;
 				}
 				RainbowBox->SetShouldNotify(true);
@@ -73,23 +70,19 @@ void ARainbowBoxHandlerPast::DeleteRainbow()
 
 void ARainbowBoxHandlerPast::HideAllExcepted(ARainbowBox* StayRainbowBox)
 {
-	UE_LOG(LogTest, Warning, TEXT("Before FOR loop"));
+	
 	for (int i = 0; i < Squares.Num(); ++i)
 	{
-		UE_LOG(LogTest, Warning, TEXT("FOR loop %i"), i);
 		ARainbowBox* RainbowBox = Squares[i];
 		if (GetNameOfTheColor(RainbowBox->GetColor()).IsEqual(GetNameOfTheColor(StayRainbowBox->GetColor())))
 		{
 			if (!(RainbowBox->GetActorLocation() == StayRainbowBox->GetActorLocation()))
 			{
-				UE_LOG(LogTest, Warning, TEXT("Hide"));
 				RainbowBox->Hide();
 			}
-			UE_LOG(LogTest, Warning, TEXT("Do nothing"));
 		}
 		else
 		{
-			UE_LOG(LogTest, Warning, TEXT("Show"));
 			RainbowBox->Show();
 		}
 	}
