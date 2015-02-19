@@ -45,12 +45,17 @@ public:
 
 	/** Content all the mine box */
 	TArray< AMinesBox* > Squares;
+	/** Content the BluePrint of the MineBox */
 	TSubclassOf<class AMinesBox> MineBoxBP;
 
 private:
+	/** The number of columns */
 	const int NB_COL = 5;
+	/** The number of rows */
 	const int NB_ROW = 5;
+	/** The size of the Minesweeper */
 	const int SIZE = NB_COL * NB_ROW;
+	/** The number of mines presents in minesweeper */
 	const int NB_MINES = 4;
 
 };
