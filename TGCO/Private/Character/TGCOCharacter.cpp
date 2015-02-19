@@ -412,7 +412,8 @@ float ATGCOCharacter::TakeDamage(float fDamageAmount, struct FDamageEvent const 
 			ActiveShield(true);
 
 			// Decrease energy in the GameState
-			if (GameState->DecreaseEnergy(fDamageAmount) == 0)
+			GameState->DecreaseEnergy(fDamageAmount);
+			if (GameState->CheckRemainingEnergy() == 0)
 			{
 				KillPlayerThenRespawn();
 				return 0;

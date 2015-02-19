@@ -4,6 +4,7 @@
 #include "TGCOGameState.h"
 #include "TGCOPlayerState.h"
 #include "TGCOGameInstance.h"
+#include "Net/UnrealNetwork.h"
 
 ATGCOGameState::ATGCOGameState(const FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer)
@@ -22,24 +23,56 @@ const TMap<int, FString>& ATGCOGameState::GetUnlockSkills()
 
 void ATGCOGameState::AddEnergy(int32 iEnergyAmount)
 {
-	UE_LOG(LogTest, Warning, TEXT("Previous Energy : %d"), iPlayersEnergy);
-	iPlayersEnergy = FMath::Min(iMaxPlayersEnergy, iPlayersEnergy + iEnergyAmount);
-	UE_LOG(LogTest, Warning, TEXT("Next Energy : %d"), iPlayersEnergy);
+	if (Role < ROLE_Authority)
+	{
+		ServerAddEnergy(iEnergyAmount);
+	}
+	else
+	{
+		UE_LOG(LogTest, Warning, TEXT("Previous Energy : %d"), iPlayersEnergy);
+		iPlayersEnergy = FMath::Min(iMaxPlayersEnergy, iPlayersEnergy + iEnergyAmount);
+		UE_LOG(LogTest, Warning, TEXT("Next Energy : %d"), iPlayersEnergy);
+	}
 }
 
-bool ATGCOGameState::DecreaseEnergy(int32 iEnergyAmount)
+bool ATGCOGameState::ServerAddEnergy_Validate(int32 iEnergyAmount)
 {
-	UE_LOG(LogTest, Warning, TEXT("Previous Energy : %d"), iPlayersEnergy);
-	if (iEnergyAmount < 0)
+	return true;
+}
+
+void ATGCOGameState::ServerAddEnergy_Implementation(int32 iEnergyAmount)
+{
+	AddEnergy(iEnergyAmount);
+}
+
+void ATGCOGameState::DecreaseEnergy(int32 iEnergyAmount)
+{
+	if (Role < ROLE_Authority)
 	{
-		iEnergyAmount = -iEnergyAmount;
+		return ServerDecreaseEnergy(iEnergyAmount);
 	}
+	else
+	{
+		UE_LOG(LogTest, Warning, TEXT("Previous Energy : %d"), iPlayersEnergy);
+		if (iEnergyAmount < 0)
+		{
+			iEnergyAmount = -iEnergyAmount;
+		}
 
-	iPlayersEnergy = FMath::Max(0, iPlayersEnergy - iEnergyAmount);
+		iPlayersEnergy = FMath::Max(0, iPlayersEnergy - iEnergyAmount);
 
-	UE_LOG(LogTest, Warning, TEXT("Next Energy : %d"), iPlayersEnergy);
+		UE_LOG(LogTest, Warning, TEXT("Next Energy : %d"), iPlayersEnergy);
+	}
+}
 
-	return CheckRemainingEnergy();
+bool ATGCOGameState::ServerDecreaseEnergy_Validate(int32 iEnergyAmount)
+{
+	return true;
+}
+
+void ATGCOGameState::ServerDecreaseEnergy_Implementation(int32 iEnergyAmount)
+{
+	DecreaseEnergy(iEnergyAmount);
 }
 
 bool ATGCOGameState::CheckRemainingEnergy()
@@ -52,6 +85,7 @@ void ATGCOGameState::MulticastRemoveAllWidgets_Implementation()
 	UGameViewportClient* GVC = GEngine->GameViewport;
 	GVC->RemoveAllViewportWidgets();
 }
+
 void ATGCOGameState::MulticastGoToPlayingState_Implementation()
 {
 	UWorld* const World = GetWorld();
@@ -63,4 +97,11 @@ void ATGCOGameState::MulticastGoToPlayingState_Implementation()
 			GameInstance->SetCurrentState(FName(TEXT("Playing")));
 		}
 	}
+}
+
+void ATGCOGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> & OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	// Replicate to everyone
+	DOREPLIFETIME(ATGCOGameState, iPlayersEnergy);
 }

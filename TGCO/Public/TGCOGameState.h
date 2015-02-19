@@ -20,7 +20,7 @@ public:
 
 protected:
 	/** Amount of energy remaining for both Players */
-	UPROPERTY(SaveGame)
+	UPROPERTY(SaveGame, Replicated)
 	int32 iPlayersEnergy;
 
 private:
@@ -37,7 +37,7 @@ public:
 
 	/** Remove an amount of energy to the total Player's energy*/
 	UFUNCTION(BlueprintCallable, Category = "Players")
-	bool DecreaseEnergy(int32 iEnergyAmount);
+	void DecreaseEnergy(int32 iEnergyAmount);
 
 	/** Get the Player's energy*/
 	UFUNCTION(BlueprintCallable, Category = "Players")
@@ -50,10 +50,20 @@ public:
 	UFUNCTION(Netmulticast, reliable)
 	void MulticastGoToPlayingState();
 
-private:
 	/** Check if Players have remaining energy and can continue the game. If not launch Game Over. */
 	bool CheckRemainingEnergy();
 
+private:
+
+	UFUNCTION(Server, WithValidation, reliable)
+	void ServerAddEnergy(int32 iEnergyAmount);
+
+	UFUNCTION(Server, WithValidation, reliable)
+	void ServerDecreaseEnergy(int32 iEnergyAmount);
+	/*
+	UFUNCTION(NetMulticast)
+	void MulticastAddEnergy(int32 iEnergyAmount);
+	*/
 	/** Array that contains the skill that the Player unlock */
 	TMap<int, FString> MapUnlockSkills;
 
