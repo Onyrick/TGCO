@@ -22,30 +22,34 @@ void ARainbowBoxHandlerFutur::CreateRainbowBoxHandler()
 		UWorld* const World = GetWorld();
 		if (World != NULL)
 		{
-			unsigned int x = i / NB_COL;
-			unsigned int y = i % NB_COL;
-			const FVector SpawnLocation = GetActorLocation() + FVector(x * 405, y * 405, 5.0);
-			const FRotator SpawnRotation = GetActorRotation();
-			ARainbowBox* RainbowBox = (ARainbowBox*)World->SpawnActor<ARainbowBox>(RainbowBoxBP, SpawnLocation, SpawnRotation);
-
-			int iColorRandom = rand() % 3;
-			switch (iColorRandom)
+			int iAddrandom = rand() % 6;
+			if (iAddrandom > 1)
 			{
-			case 0:
-				RainbowBox->SetColor(ERainbowBoxColor::RED);
-				break;
-			case 1:
-				RainbowBox->SetColor(ERainbowBoxColor::GREEN);
-				break;
-			case 2:
-				RainbowBox->SetColor(ERainbowBoxColor::BLUE);
-				break;
-			default:
-				RainbowBox->SetColor(ERainbowBoxColor::NONE);
-				break;
+				unsigned int x = i / NB_COL;
+				unsigned int y = i % NB_COL;
+				const FVector SpawnLocation = GetActorLocation() + FVector(x * 480, y * 480, 5.0);
+				const FRotator SpawnRotation = GetActorRotation();
+				ARainbowBox* RainbowBox = (ARainbowBox*)World->SpawnActor<ARainbowBox>(RainbowBoxBP, SpawnLocation, SpawnRotation);
+
+				int iColorRandom = rand() % 3;
+				switch (iColorRandom)
+				{
+				case 0:
+					RainbowBox->SetColor(ERainbowBoxColor::RED);
+					break;
+				case 1:
+					RainbowBox->SetColor(ERainbowBoxColor::GREEN);
+					break;
+				case 2:
+					RainbowBox->SetColor(ERainbowBoxColor::BLUE);
+					break;
+				default:
+					RainbowBox->SetColor(ERainbowBoxColor::NONE);
+					break;
+				}
+				RainbowBox->Hide();
+				Squares.Add(RainbowBox);
 			}
-			RainbowBox->Hide();
-			Squares.Add(RainbowBox);
 		}
 	}
 }
@@ -56,19 +60,48 @@ void ARainbowBoxHandlerFutur::DeleteRainbow()
 	Squares.Empty();
 }
 
-void ARainbowBoxHandlerFutur::HideAllExcepted(ERainbowBoxColor::Color StayColor)
+void ARainbowBoxHandlerFutur::HideAllOfThisColor(ERainbowBoxColor::Color StayColor)
 {
-	for (int i = 0; i < SIZE; ++i)
+	for (int i = 0; i < Squares.Num(); ++i)
 	{
 
 		ARainbowBox* RainbowBox = Squares[i];
 		if (GetNameOfTheColor(RainbowBox->GetColor()).IsEqual(GetNameOfTheColor(StayColor)))
 		{
 			RainbowBox->Hide();
+			RainbowBox->SetIsHideInPast(true);
 		}
 		else
 		{
 			RainbowBox->Show();
+			RainbowBox->SetIsHideInPast(false);
+		}
+	}
+}
+
+void ARainbowBoxHandlerFutur::HideAllExcepted(ARainbowBox* StayRainbowBox)
+{
+	for (int i = 0; i < Squares.Num(); ++i)
+	{
+
+		ARainbowBox* RainbowBox = Squares[i];
+		if (GetNameOfTheColor(RainbowBox->GetColor()).IsEqual(GetNameOfTheColor(StayRainbowBox->GetColor())))
+		{
+			if (! (RainbowBox == StayRainbowBox) )
+			{
+				RainbowBox->Hide();
+			}
+		}
+		else
+		{
+			if (RainbowBox->GetIsHideInPast())
+			{
+				RainbowBox->Hide();
+			}
+			else
+			{
+				RainbowBox->Show();
+			}
 		}
 	}
 }

@@ -8,7 +8,7 @@
 AProps::AProps(const class FObjectInitializer& PCIP)
 : Super(PCIP)
 {
-	StaticMeshProps = PCIP.CreateDefaultSubobject < UStaticMeshComponent >(this, TEXT("StaticMesh_InteractiveElement"));
+	StaticMeshProps = PCIP.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("StaticMesh_InteractiveElement"));
 	
 	RootComponent = StaticMeshProps;
 	initialSpeed = 1000.f;
@@ -22,8 +22,6 @@ UStaticMeshComponent* AProps::getStaticMesh()
 
 float AProps::TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser)
 {
-	UE_LOG(LogDebug, Warning, TEXT("Initial speed : %f , %f"), initialSpeed, speed);
-
 	AProjectile* Projectile = Cast<AProjectile>(DamageCauser);
 
 	if (Projectile == NULL)
@@ -56,6 +54,5 @@ float AProps::TakeDamage(float DamageAmount, struct FDamageEvent const & DamageE
 
 void AProps::ReinitSpeed()
 {
-	UE_LOG(LogDebug, Warning, TEXT("Reinit speed : %f"), speed);
 	speed = initialSpeed;
 }
