@@ -19,10 +19,11 @@ public:
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser);
 
 	virtual void ReinitSpeed();
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Force)
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Component)
 	URotatingMovementComponent* RotatingMovement;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Force)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Component)
 	URadialForceComponent* RadialForce;
 };
+

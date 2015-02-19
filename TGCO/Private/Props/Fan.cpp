@@ -49,4 +49,3 @@ void AFan::ReinitSpeed()
 		RadialForce->ImpulseStrength = speed * 0;
 	}
 }
-

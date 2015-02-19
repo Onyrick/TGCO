@@ -31,7 +31,7 @@ void AEnergyCell::Consumed()
 
 	if (Destroy(true, false))
 	{
-		UE_LOG(LogDebug, Warning, TEXT("Energy celle consumed"));
+		UE_LOG(LogDebug, Warning, TEXT("Energy cell consumed"));
 	}
 }
 
