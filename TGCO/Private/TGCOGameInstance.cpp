@@ -491,7 +491,7 @@ void UTGCOGameInstance::BeginPlayingState()
 		GameState->MulticastGoToPlayingState();
 	}
 
-	GetWorld()->ServerTravel(FString("/Game/Maps/TestMap/MapTestLionel?listen"));
+	GetWorld()->ServerTravel(FString("/Game/Maps/TestMap/GymRainbow?listen"));
 }
 
 void UTGCOGameInstance::EndPlayingState()
@@ -504,11 +504,6 @@ void UTGCOGameInstance::BeginHostingState()
 	UGameViewportClient* GVC = GEngine->GameViewport;
 	GVC->RemoveAllViewportWidgets();
 	GetWorld()->ServerTravel(TravelURL);
-	ATGCOGameState* GameState = Cast<ATGCOGameState>(GetWorld()->GetGameState());
-	if (GameState)
-	{
-		GameState->SetRandomSeed();
-	}
 	//UGameplayStatics::OpenLevel(GetWorld(), FName(*TravelURL), true, FString(TEXT("listen")));
 	//UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("/Game/Maps/HostMap")), true);
 }

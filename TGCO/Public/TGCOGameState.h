@@ -29,6 +29,7 @@ private:
 	int32 iMaxPlayersEnergy;
 
 	/** Seed to generate random puzzle */
+	UPROPERTY(Replicated)
 	int32 iSeed;
 
 public:
@@ -72,6 +73,9 @@ private:
 
 	UFUNCTION(Server, WithValidation, reliable)
 	void ServerDecreaseEnergy(int32 iEnergyAmount);
+
+	UFUNCTION(Server, WithValidation, reliable)
+	void ServerSetSeed();
 	/*
 	UFUNCTION(NetMulticast)
 	void MulticastAddEnergy(int32 iEnergyAmount);

@@ -52,8 +52,26 @@ int32 ATGCOGameState::GetSeed()
 
 void ATGCOGameState::SetRandomSeed()
 {
-	srand(time(NULL));
-	iSeed = rand();
+	if (Role < ROLE_Authority)
+	{
+		ServerSetSeed();
+	}
+	else
+	{
+		srand(time(NULL));
+		iSeed = rand();
+		UE_LOG(LogTest, Warning, TEXT("Set Seed : %i"), iSeed);
+	}
+}
+
+bool ATGCOGameState::ServerSetSeed_Validate()
+{
+	return true;
+}
+
+void ATGCOGameState::ServerSetSeed_Implementation()
+{
+	SetRandomSeed();
 }
 
 void ATGCOGameState::DecreaseEnergy(int32 iEnergyAmount)
@@ -115,4 +133,5 @@ void ATGCOGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> & OutL
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	// Replicate to everyone
 	DOREPLIFETIME(ATGCOGameState, iPlayersEnergy);
+	DOREPLIFETIME(ATGCOGameState, iSeed);
 }

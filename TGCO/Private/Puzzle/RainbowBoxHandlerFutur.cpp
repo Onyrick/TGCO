@@ -57,15 +57,15 @@ void ARainbowBoxHandlerFutur::CreateRainbowBoxHandler()
 						break;
 					case 1:
 						RainbowBox->SetColor(ERainbowBoxColor::GREEN);
-						UE_LOG(LogTest, Warning, TEXT("RainbowBox %i is RED"), i);
+						UE_LOG(LogTest, Warning, TEXT("RainbowBox %i is GREEN"), i);
 						break;
 					case 2:
 						RainbowBox->SetColor(ERainbowBoxColor::BLUE);
-						UE_LOG(LogTest, Warning, TEXT("RainbowBox %i is RED"), i);
+						UE_LOG(LogTest, Warning, TEXT("RainbowBox %i is BLUE"), i);
 						break;
 					default:
 						RainbowBox->SetColor(ERainbowBoxColor::NONE);
-						UE_LOG(LogTest, Warning, TEXT("RainbowBox %i is RED"), i);
+						UE_LOG(LogTest, Warning, TEXT("RainbowBox %i is NONE"), i);
 						break;
 					}
 					RainbowBox->Hide();
