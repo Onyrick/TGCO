@@ -34,7 +34,7 @@ public:
 	/** Reinit the information displayed by the past. Set bInfoPast to false. */
 	void ReinitDisplayInformation();
 
-	/** */
+	/** Set the visibility of the flag */
 	UFUNCTION(BlueprintCallable, Category = "MineBox")
 	void SetVisibilityOfFlag();
 
@@ -42,6 +42,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Text)
 		UTextRenderComponent* Number;
 
+	/** The Mesh representing a flag. Will be visible thanks to the console */
 	UPROPERTY(EditAnywhere, Category = Meshes)
 		UStaticMeshComponent* MineFlag;
 
