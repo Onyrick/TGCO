@@ -5,10 +5,10 @@
 #include "Projectile.h"
 #include "TGCOPlayerState.h"
 
-AProps::AProps(const class FObjectInitializer& PCIP)
-: Super(PCIP)
+AProps::AProps(const FObjectInitializer& ObjectInitializer)
+: Super(ObjectInitializer)
 {
-	StaticMeshProps = PCIP.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("StaticMesh_InteractiveElement"));
+	StaticMeshProps = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("StaticMesh_InteractiveElement"));
 	
 	RootComponent = StaticMeshProps;
 	initialSpeed = 1000.f;

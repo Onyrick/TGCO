@@ -23,9 +23,11 @@ namespace TGCOGameInstanceState
 UCLASS(config = Game)
 class TGCO_API UTGCOGameInstance : public UGameInstance
 {
-	GENERATED_UCLASS_BODY()
+	GENERATED_BODY()
 
 public:
+	UTGCOGameInstance(const FObjectInitializer& ObjectInitializer);
+
 	bool Tick(float DeltaSeconds);
 
 	UFUNCTION(BlueprintCallable, Category = "Online")

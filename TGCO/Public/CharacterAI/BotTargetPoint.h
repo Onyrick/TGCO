@@ -1,3 +1,4 @@
+
 #pragma once
 
 //#include "GameFramework/TargetPoint.h"
@@ -6,8 +7,10 @@
 UCLASS()
 class TGCO_API ABotTargetPoint : public ATargetPoint
 {
-	GENERATED_UCLASS_BODY()
+	GENERATED_BODY()
+
 public:
+	ABotTargetPoint(const FObjectInitializer& ObjectInitializer);
 
 	UPROPERTY(EditAnywhere, Category = "Id Target Point")
 	int32 iIDTargetPoint;

@@ -278,7 +278,7 @@ bool ATGCOCharacter::SetCheckpoint()
 	return !vLocation.IsZero();
 }
 
-FTransform ATGCOCharacter::GetCheckpoint()
+FTransform ATGCOCharacter::GetCheckpoint() const
 {
 	return LastCheckpoint;
 }
@@ -412,7 +412,8 @@ float ATGCOCharacter::TakeDamage(float fDamageAmount, struct FDamageEvent const 
 			ActiveShield(true);
 
 			// Decrease energy in the GameState
-			if (GameState->DecreaseEnergy(fDamageAmount) == 0)
+			GameState->DecreaseEnergy(fDamageAmount);
+			if (GameState->CheckRemainingEnergy() == 0)
 			{
 				KillPlayerThenRespawn();
 				return 0;
@@ -453,7 +454,7 @@ void ATGCOCharacter::PlayShieldSound()
 	UE_LOG(LogDebug, Warning, TEXT("TO DO : play activate shield sound"));
 }
 
-UInventoryUMG* ATGCOCharacter::GetInventoryUMG()
+UInventoryUMG* ATGCOCharacter::GetInventoryUMG() const
 {
 	return InventoryUMG;
 }

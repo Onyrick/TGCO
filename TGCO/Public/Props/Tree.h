@@ -14,6 +14,6 @@ class TGCO_API UTree : public UStaticMeshComponent
 	GENERATED_BODY()
 
 public:
-	UTree(const FObjectInitializer& PCIP);
+	UTree(const FObjectInitializer& ObjectInitializer);
 		
 };

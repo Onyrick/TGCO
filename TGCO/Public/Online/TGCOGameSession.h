@@ -34,9 +34,11 @@ struct FTGCOGameSessionsParams
 UCLASS(config = Game)
 class TGCO_API ATGCOGameSession : public AGameSession
 {
-	GENERATED_UCLASS_BODY()
+	GENERATED_BODY()
 
 protected:
+	ATGCOGameSession(const FObjectInitializer& ObjectInitializer);
+
 	/*
 	 * Event triggered when a presence session is created
 	 *

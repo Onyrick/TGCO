@@ -4,17 +4,17 @@
 #include "Fan.h"
 #include "TGCOCharacter.h"
 
-AFan::AFan(const FObjectInitializer& PCIP)
-	: Super(PCIP)
+AFan::AFan(const FObjectInitializer& ObjectInitializer)
+: Super(ObjectInitializer)
 {
 	initialSpeed = 600; 
 	speed = 600;
-	RotatingMovement = PCIP.CreateDefaultSubobject<URotatingMovementComponent>(this, TEXT("RotatingMovement"));
+	RotatingMovement = ObjectInitializer.CreateDefaultSubobject<URotatingMovementComponent>(this, TEXT("RotatingMovement"));
 	RotatingMovement->RotationRate = FRotator(0, 0, initialSpeed);
 	RotatingMovement->PivotTranslation = FVector(0, 0, 0);
 	RotatingMovement->SetUpdatedComponent(StaticMeshProps);
 
-	RadialForce = PCIP.CreateDefaultSubobject<URadialForceComponent>(this, TEXT("RadialForce_"));
+	RadialForce = ObjectInitializer.CreateDefaultSubobject<URadialForceComponent>(this, TEXT("RadialForce_"));
 	RadialForce->ForceStrength = initialSpeed * 1000;
 	RadialForce->ImpulseStrength = 0;
 	RadialForce->Radius = 800;
@@ -32,7 +32,7 @@ float AFan::TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEve
 	if (RadialForce)
 	{
 		RadialForce->ForceStrength = speed * 1000;
-		RadialForce->ImpulseStrength = speed * 1000;
+		RadialForce->ImpulseStrength = speed * 0;
 	}
 	return returnValue;
 }
@@ -46,7 +46,7 @@ void AFan::ReinitSpeed()
 	if (RadialForce)
 	{
 		RadialForce->ForceStrength = speed * 1000;
-		RadialForce->ImpulseStrength = speed * 1000;
+		RadialForce->ImpulseStrength = speed * 0;
 	}
 }
 

@@ -17,7 +17,7 @@ class TGCO_API UInventoryUMG : public UUserWidget
 
 public:
 	/** Constructors */
-	UInventoryUMG(const FObjectInitializer& PCIP);
+	UInventoryUMG(const FObjectInitializer& ObjectInitializer);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "InventoryUMG")
 	void AddNewItem(AStockable* _stockable);

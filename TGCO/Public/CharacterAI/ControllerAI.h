@@ -9,15 +9,18 @@ class UBlackboardComponent;
 UCLASS()
 class TGCO_API AControllerAI : public AAIController
 {
-	GENERATED_UCLASS_BODY()
+	GENERATED_BODY()
+
+public:
+	AControllerAI(const FObjectInitializer& ObjectInitializer);
 
 private:
 	UPROPERTY(transient)
-		UBlackboardComponent* BlackboardComp;
+	UBlackboardComponent* BlackboardComp;
 
 	/* Cached BT component */
 	UPROPERTY(transient)
-		UBehaviorTreeComponent* BehaviorComp;
+	UBehaviorTreeComponent* BehaviorComp;
 
 	void Respawn();
 	
