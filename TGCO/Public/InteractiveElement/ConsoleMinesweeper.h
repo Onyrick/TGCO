@@ -23,5 +23,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "ConsoleMinesweeper")
 		TSubclassOf<class AMinesweeper> Minesweeper;
 
-	
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "ConsoleMinesweeper")
+		void ResetMinesweeper();
+
 };
