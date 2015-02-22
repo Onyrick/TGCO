@@ -21,4 +21,6 @@ bool AConsoleMinesweeper::OnInteract()
 	return true;
 }
 
-
+void AConsoleMinesweeper::ResetMinesweeper_Implementation()
+{
+}
