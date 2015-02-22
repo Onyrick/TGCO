@@ -22,8 +22,6 @@ public:
 	/** Create the RainbowBoxHandler */
 	UFUNCTION(BlueprintCallable, Category = "Rainbow")
 	void CreateRainbowBoxHandler();
-	UFUNCTION(BlueprintCallable, Category = "Rainbow", Server, WithValidation, Reliable)
-	void ServerCreateRainbowBoxHandler();
 
 
 	/** Delete the array that contains ARainbowBox */
@@ -45,4 +43,8 @@ private:
 	const int SIZE = NB_COL * NB_ROW;
 
 	ARainbowBox* MustStayRainbowBox;
+
+	UFUNCTION(Server, WithValidation, Reliable)
+	void ServerCreateRainbowBoxHandler();
+
 };
