@@ -18,7 +18,7 @@ class TGCO_API AMinesweeper : public AActor
 	GENERATED_BODY()
 
 public:
-	AMinesweeper(const FObjectInitializer& PCIP);
+	AMinesweeper(const FObjectInitializer& ObjectInitializer);
 
 	/** Create the Minesweeper */
 	void CreateMinesweeper();
@@ -44,7 +44,7 @@ public:
 	void CalculateNeighboursUndermined();
 
 	/** Content all the mine box */
-	TArray< AMinesBox* > Squares;
+	TArray<AMinesBox*> Squares;
 	/** Content the BluePrint of the MineBox */
 	TSubclassOf<class AMinesBox> MineBoxBP;
 

@@ -4,10 +4,10 @@
 #include "ControllerAI.h"
 #include "CharacterAI.h"
 
-ACharacterAI::ACharacterAI(const class FObjectInitializer& PCIP) 
-	: Super(PCIP)
+ACharacterAI::ACharacterAI(const FObjectInitializer& ObjectInitializer)
+: Super(ObjectInitializer)
 {
-	StaticMesh = PCIP.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("StaticMesh_CharacterAI"));
+	StaticMesh = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("StaticMesh_CharacterAI"));
 	StaticMesh->bGenerateOverlapEvents = true;
 	StaticMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
 

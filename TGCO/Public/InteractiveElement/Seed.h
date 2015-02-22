@@ -15,7 +15,7 @@ class TGCO_API ASeed : public AInteractiveElement
 
 public:
 	/** Constructors */
-	ASeed(const FObjectInitializer& PCIP);
+	ASeed(const FObjectInitializer& ObjectInitializer);
 
 	/** Called when the Player uses the object */
 	UFUNCTION(BlueprintCallable, Category = "Seed")

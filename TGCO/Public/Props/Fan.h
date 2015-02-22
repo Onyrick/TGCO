@@ -14,7 +14,7 @@ class TGCO_API AFan : public AProps
 
 public:
 	/** Constructors */
-	AFan(const FObjectInitializer& PCIP);
+	AFan(const FObjectInitializer& ObjectInitializer);
 
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser);
 

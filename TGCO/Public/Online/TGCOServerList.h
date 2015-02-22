@@ -27,9 +27,9 @@ struct FServerEntry
 UCLASS()
 class TGCO_API UTGCOServerList : public UObject
 {
-	GENERATED_UCLASS_BODY()
+	GENERATED_BODY()
 public:
-	UTGCOServerList(class FObjectInitializer& ObjectInitializer);
+	UTGCOServerList(const FObjectInitializer& ObjectInitializer);
 
 	/** Init the object with the Player that own it */
 	void UTGCOServerList::Init(TWeakObjectPtr<class ULocalPlayer> pPlayer);

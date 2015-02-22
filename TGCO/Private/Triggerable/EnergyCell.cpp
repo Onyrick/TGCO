@@ -28,7 +28,11 @@ void AEnergyCell::Consumed()
 	{
 		gameState->AddEnergy(iAmountOfEnergy);
 	}
-	Destroy();
+
+	if (Destroy(true, false))
+	{
+		UE_LOG(LogDebug, Warning, TEXT("Energy celle consumed"));
+	}
 }
 
 int32 AEnergyCell::GetAmountOfEnergy()

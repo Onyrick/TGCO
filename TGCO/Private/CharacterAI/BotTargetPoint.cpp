@@ -3,7 +3,8 @@
 #include "TGCO.h"
 #include "BotTargetPoint.h"
 
-ABotTargetPoint::ABotTargetPoint(const class FObjectInitializer& PCIP) : Super(PCIP)
+ABotTargetPoint::ABotTargetPoint(const FObjectInitializer& ObjectInitializer) 
+: Super(ObjectInitializer)
 {
 	iIDTargetPoint = 0;
 }

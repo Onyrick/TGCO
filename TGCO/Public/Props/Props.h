@@ -15,7 +15,7 @@ class TGCO_API AProps : public AActor
 	
 public:
 	/** Constructors */
-	AProps(const FObjectInitializer& PCIP);
+	AProps(const FObjectInitializer& ObjectInitializer);
 	
 	/** TODO */
 	virtual UStaticMeshComponent* getStaticMesh();

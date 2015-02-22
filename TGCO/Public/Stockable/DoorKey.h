@@ -12,6 +12,9 @@
 UCLASS()
 class TGCO_API ADoorKey : public AStockable
 {
-	GENERATED_UCLASS_BODY()
+	GENERATED_BODY()
+
+public:
+	ADoorKey(const FObjectInitializer& ObjectInitializer);
 
 };

@@ -1,3 +1,4 @@
+
 #pragma once
 
 #include "BehaviorTree/BehaviorTreeComponent.h"
@@ -8,8 +9,9 @@
 UCLASS()
 class TGCO_API UBTT_FixBotStartFind : public UBTTask_BlackboardBase
 {
-	GENERATED_UCLASS_BODY()
+	GENERATED_BODY()
 public:
+	UBTT_FixBotStartFind(const FObjectInitializer& ObjectInitializer);
 
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent* OwnerComp, uint8* NodeMemory) override;
 

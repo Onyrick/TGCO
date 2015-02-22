@@ -22,6 +22,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Rainbow")
 	void CreateRainbowBoxHandler();
 
+	UFUNCTION(BlueprintCallable, Category = "Rainbow", Server, WithValidation, Reliable)
+	void ServerCreateRainbowBoxHandler();
+
 	/** Delete the array that contains ARainbowBox */
 	void DeleteRainbow();
 
