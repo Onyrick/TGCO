@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Props.h"
+#include <ctime>
 
 #include "GameFramework/GameState.h"
 #include "TGCOGameState.generated.h"
@@ -60,6 +61,7 @@ private:
 
 	UFUNCTION(Server, WithValidation, reliable)
 	void ServerDecreaseEnergy(int32 iEnergyAmount);
+
 	/*
 	UFUNCTION(NetMulticast)
 	void MulticastAddEnergy(int32 iEnergyAmount);

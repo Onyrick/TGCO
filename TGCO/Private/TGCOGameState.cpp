@@ -45,6 +45,7 @@ void ATGCOGameState::ServerAddEnergy_Implementation(int32 iEnergyAmount)
 	AddEnergy(iEnergyAmount);
 }
 
+
 void ATGCOGameState::DecreaseEnergy(int32 iEnergyAmount)
 {
 	if (Role < ROLE_Authority)

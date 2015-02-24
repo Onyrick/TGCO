@@ -1,6 +1,7 @@
 
 
 #include "TGCO.h"
+#include "ConsoleMinesweeper.h"
 #include "Minesweeper.h"
 
 AMinesweeper::AMinesweeper(const class FObjectInitializer& ObjectInitializer)
@@ -34,6 +35,15 @@ void AMinesweeper::CreateMinesweeper()
 
 	PutMinesRandomly();
 	CalculateNeighboursUndermined();
+
+	for (TActorIterator<AActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+	{
+		if (ActorItr->GetName().Contains("ConsoleMinesweeper") && ActorItr->GetActorClass()->GetDescription() == FString(TEXT("Console Minesweeper BP")) )
+		{
+			AConsoleMinesweeper* ConsoleMinesweeper = Cast<AConsoleMinesweeper>(*ActorItr);
+			ConsoleMinesweeper->ResetMinesweeper();
+		}
+	}
 }
 
 void AMinesweeper::ResetMinesweeper()

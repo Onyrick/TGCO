@@ -46,3 +46,9 @@ float GetBlueValueOfTheColor(const ERainbowBoxColor::Color RainbowBoxColor);
 * @return FName name of the color
 */
 FName GetNameOfTheColor(const ERainbowBoxColor::Color RainbowBoxColor);
+
+/** Convert a int to a RainbowBoxColor */
+ERainbowBoxColor::Color GetColorFromInt(int iColor);
+
+/** Convert a RainbowBoxColor to a int */
+int GetIntFromColor(ERainbowBoxColor::Color RainbowBoxColor);

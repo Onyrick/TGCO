@@ -36,5 +36,7 @@ private:
 	const int NB_COL = 8;
 	const int NB_ROW = 8;
 	const int SIZE = NB_COL * NB_ROW;
-	
+
+	UFUNCTION(Server, WithValidation, Reliable)
+	void ServerCreateRainbowBoxHandler();
 };
