@@ -24,15 +24,22 @@ public:
 
 	virtual void ReinitSpeed();
 
+	void UpdateSpeedValue(float fNewSpeed);
+
+	UFUNCTION()
+	void OnRep_Speed();
+
+	virtual void UpdateSpeed();
+
 public: 
 	/** TODO */
 	UPROPERTY(EditAnywhere, Category = PropsComponents)
 	UStaticMeshComponent* StaticMeshProps;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Speed)
-	float initialSpeed;
+	float fInitialSpeed;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Speed)
-	float speed;
+	UPROPERTY(Transient, ReplicatedUsing=OnRep_Speed, EditAnywhere, BlueprintReadWrite, Category = Speed)
+	float fSpeed;
 
 };

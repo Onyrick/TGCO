@@ -16,11 +16,12 @@ FString GetNameOfTheSolution(const ESolutionType::Type SolutionType)
 		case ESolutionType::INFLAMMABLE_PRODUCT:	return TEXT("Inflammable product");
 		case ESolutionType::FROZEN_PRODUCT:			return TEXT("Frozen product");
 		case ESolutionType::NITROGLYCERINE:			return TEXT("Nitroglycerine");
-		case ESolutionType::RIGIDIFY:				return TEXT("Rigidify");
+		case ESolutionType::RIGIDIFY:			return TEXT("Rigidify");
 		default:									return TEXT("Unknown");
 	}
 
 }
+
 ESolutionType::Type GetSolutionFromInt(int iNumber)
 {
 	switch (iNumber)
@@ -42,4 +43,22 @@ ESolutionType::Type GetSolutionFromInt(int iNumber)
 int GetNumberOfSolution()
 {
 	return 10;
+}
+
+FColor GetColorOfTheSolution(const ESolutionType::Type SolutionType)
+{
+	switch (SolutionType)
+	{
+	case ESolutionType::ACID:					return FColor(226, 230, 93);
+	case ESolutionType::CAUSTIC_SODA:			return FColor(255, 255, 255);
+	case ESolutionType::SALTED_WATER:			return FColor(64, 141, 157);
+	case ESolutionType::ETHANOL:				return FColor(216, 190, 36);
+	case ESolutionType::MERCURY:				return FColor(237, 56, 1);
+	case ESolutionType::WEEDKILLING:			return FColor(222, 222, 222);
+	case ESolutionType::INFLAMMABLE_PRODUCT:	return FColor(128, 30, 30);
+	case ESolutionType::FROZEN_PRODUCT:			return FColor(91, 144, 172);
+	case ESolutionType::NITROGLYCERINE:			return FColor(255, 0, 255);
+	case ESolutionType::RIGIDIFY:				return FColor(0, 0, 0);
+	default:									return FColor(0, 0, 0);
+	}
 }

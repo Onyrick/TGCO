@@ -4,15 +4,19 @@
 #include "Props.h"
 #include "Projectile.h"
 #include "TGCOPlayerState.h"
+#include "TGCOPlayerController.h"
+#include "Net/UnrealNetwork.h"
 
 AProps::AProps(const FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer)
 {
+	bReplicates = true;
+
 	StaticMeshProps = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("StaticMesh_InteractiveElement"));
 	
 	RootComponent = StaticMeshProps;
-	initialSpeed = 1000.f;
-	speed = 1000.f;
+	fInitialSpeed = 1000.f;
+	fSpeed = 1000.f;
 }
 
 UStaticMeshComponent* AProps::getStaticMesh()
@@ -28,31 +32,67 @@ float AProps::TakeDamage(float DamageAmount, struct FDamageEvent const & DamageE
 	{
 		return -1.f;
 	}
-
+	// TODO Check that
 	ATGCOPlayerState * PS = Cast<ATGCOPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
 	PS->SetPropsAffected(this);
 
 	FString ProjectileMode = Projectile->GetProjectileMode();
 
+	float newSpeed = fSpeed;
 	if (ProjectileMode.Equals(TEXT("STOP"), ESearchCase::IgnoreCase))
 	{
-		speed = 0;
+		newSpeed = 0;
 	}
 	else if (ProjectileMode.Equals(TEXT("SLOW"), ESearchCase::IgnoreCase))
 	{
-		speed = speed * 0.5;
+		newSpeed = fSpeed * 0.5;
 	}
 	else if (ProjectileMode.Equals(TEXT("SPEED"), ESearchCase::IgnoreCase))
 	{
-		speed = speed * 2;
+		newSpeed = fSpeed * 2;
 	}
 
-	UE_LOG(LogDebug, Warning, TEXT("Hit by projectile %s, now speed : %f"), *ProjectileMode, speed);
+	UpdateSpeedValue(newSpeed);
 
 	return -1.f;
 }
 
+void AProps::UpdateSpeedValue(float fNewSpeed)
+{
+	if (Role < ROLE_Authority)
+	{
+		ATGCOPlayerController * PC;
+		for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
+		{
+			PC = Cast<ATGCOPlayerController>(Iterator->Get());
+			PC->ServerUpdateSpeedValueOnProps(this, fNewSpeed);
+		}
+	}
+	else
+	{
+		fSpeed = fNewSpeed;
+		UpdateSpeed();
+	}
+}
+
 void AProps::ReinitSpeed()
 {
-	speed = initialSpeed;
+	fSpeed = fInitialSpeed;
+}
+
+void AProps::OnRep_Speed()
+{
+	UpdateSpeed();
+}
+
+void AProps::UpdateSpeed()
+{
+	unimplemented();
+}
+
+void AProps::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> & OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	// Replicate to everyone
+	DOREPLIFETIME(AProps, fSpeed);
 }

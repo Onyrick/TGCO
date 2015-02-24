@@ -66,6 +66,16 @@ void AProjectile::OnHit(AActor* OtherActor, UPrimitiveComponent* OtherComp, FVec
 	Destroy();
 }
 
+ESolutionType::Type AProjectile::GetSolutionType()
+{
+	return SolutionType;
+}
+
+void AProjectile::SetSolutionType(ESolutionType::Type _solution)
+{
+	SolutionType = _solution;
+}
+
 void AProjectile::SetMode(FString _Mode)
 {
 	ProjectileMode = _Mode;
