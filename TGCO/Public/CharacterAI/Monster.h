@@ -24,12 +24,14 @@ public:
 	virtual bool IsStun();
 	
 	/** Stun the Monster during a laps of time */
-	//UFUNCTION(BlueprintCallable, Category = "Monster")
 	virtual void Stun();
 
 	/** Unstun the Monster */
-	//UFUNCTION(BlueprintCallable, Category = "Monster")
 	virtual void UnStun();
+
+	/** Return wether the Monster is stunned */
+	UFUNCTION(BlueprintCallable, Category = "Monster")
+	virtual bool IsDead();
 
 	/** Move the actor to a location */
 	UFUNCTION(BlueprintCallable, Category = "Monster")
@@ -59,4 +61,6 @@ protected:
 	float fStunTime;
 	/** The time before the Monster respawn */
 	float fRespawnTime;
+	/** Whether the Monster is dead or not */
+	bool bIsDead;
 };

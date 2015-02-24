@@ -7,6 +7,7 @@ AMonster::AMonster(const class FObjectInitializer& PCIP)
 : Super(PCIP)
 , fStunTime(1.f)
 , fRespawnTime(1.f)
+, bIsDead(false)
 {
 	GetCharacterMovement()->MaxWalkSpeed = 100.f;
 }
@@ -20,7 +21,11 @@ float AMonster::TakeDamage(float DamageAmount, struct FDamageEvent const & Damag
 void AMonster::Destroyed()
 {
 	Super::Destroyed();
-	GetAIController()->PauseMove(GetAIController()->GetCurrentMoveRequestID());
+	if (GetAIController() != NULL)
+	{
+		GetAIController()->StopMovement();
+	}
+	bIsDead = true;
 }
 
 bool AMonster::IsStun()
@@ -33,17 +38,15 @@ void AMonster::Stun()
 	bIsStun = true;
 	GetWorldTimerManager().SetTimer(this, &AMonster::UnStun, fStunTime, false);
 
-	// Stop MoveToLocation
-	GetAIController()->PauseMove(GetAIController()->GetCurrentMoveRequestID());
-
-	UE_LOG(LogDebug, Warning, TEXT("Stun Monster"));
+	if (GetAIController() != NULL)
+	{
+		GetAIController()->StopMovement();
+	}
 }
 
 void AMonster::UnStun()
 {
 	bIsStun = false;
-	// Resume MoveToLocation
-	GetAIController()->ResumeMove(GetAIController()->GetCurrentMoveRequestID());
 }
 
 EPathFollowingRequestResult::Type AMonster::MoveToLocation(const FVector & Dest)
@@ -75,4 +78,10 @@ void AMonster::RespawnAI()
 {
 	Super::RespawnAI();
 	GetAIController()->ResumeMove(GetAIController()->GetCurrentMoveRequestID());
+	bIsDead = false;
+}
+
+bool AMonster::IsDead()
+{
+	return bIsDead;
 }

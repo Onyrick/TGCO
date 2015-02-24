@@ -31,7 +31,13 @@ EBTNodeResult::Type UBTT_MonstroStartFind::ExecuteTask(UBehaviorTreeComponent* O
 		if ( MonstroCharacter == NULL )
 			return EBTNodeResult::Failed;
 		
+		if (MonstroCharacter->IsDead() || MonstroCharacter->IsStun())
+			return EBTNodeResult::Failed;
+
 		ATGCOCharacter *Player = Cast<ATGCOCharacter>(MyBlackboard->GetValueAsObject("PlayerToChase"));
+		MyBlackboard->SetValueAsBool("Avoiding", false);
+		MonstroCharacter->GetAIController()->StopMovement();
+		MonstroCharacter->SpeedDefault();		
 
 		if (Player == NULL)
 		{
@@ -40,26 +46,38 @@ EBTNodeResult::Type UBTT_MonstroStartFind::ExecuteTask(UBehaviorTreeComponent* O
 				if (It->GetController()->IsLocalPlayerController())
 				{
 					MyBlackboard->SetValueAsObject("PlayerToChase", *It);
+					MyBlackboard->SetValueAsBool("RunningAway", false);
 					break;
 				}
 			}
 		}
-		else
+		else if (MyController->GetPawn()->GetDistanceTo(Player) < 250.f)
 		{
-			if (MyController->GetPawn()->GetDistanceTo(Player) < 250.f)
-			{
-				float gameTime = this->GetWorld()->GetTimeSeconds();
+			float gameTime = this->GetWorld()->GetTimeSeconds();
 
-				if (gameTime - fLastHitTime >= MonstroCharacter->fSpeedHit)
+			if (gameTime - fLastHitTime >= MonstroCharacter->fSpeedHit)
+			{
+				UE_LOG(LogDebug, Warning, TEXT("Take that, bitch"));
+				ATGCOGameState* gameState = Cast<ATGCOGameState>(GetWorld()->GameState);
+				gameState->DecreaseEnergy(MonstroCharacter->fPower);
+				fLastHitTime = gameTime;
+
+				TArray<ABotTargetPoint*> ArrayTargetBot;
+				for (TActorIterator<ABotTargetPoint> It(GetWorld()); It; ++It)
 				{
-					UE_LOG(LogDebug, Warning, TEXT("Take that, bitch"));
-					ATGCOGameState* gameState = Cast<ATGCOGameState>(GetWorld()->GameState);
-					gameState->DecreaseEnergy(MonstroCharacter->fPower);
-					fLastHitTime = gameTime;
+					ArrayTargetBot.Push(*It);
 				}
+
+				int idtargetpoint = rand() % ArrayTargetBot.Num();
+				if (ArrayTargetBot[idtargetpoint] != NULL)
+				{
+					MyBlackboard->SetValueAsObject("PlayerToChase", ArrayTargetBot[idtargetpoint]);
+					MyBlackboard->SetValueAsBool("RunningAway", true);
+				}
+				MonstroCharacter->SpeedUp();
 			}
 		}
-
+	
 		return EBTNodeResult::Succeeded;
 	}
 }

@@ -19,17 +19,16 @@ AEnergyCell::AEnergyCell(const class FObjectInitializer& ObjectInitializer)
 
 void AEnergyCell::OnOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
-	UE_LOG(LogDebug, Warning, TEXT("Begin Overlap Energy"));
 	ATGCOCharacter *Player = Cast<ATGCOCharacter>(OtherActor);
 	if (Player != NULL)
 	{
+		UE_LOG(LogDebug, Warning, TEXT("Begin Overlap Energy"));
 		Consumed();
 	}
 }
 
 void AEnergyCell::OnOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	UE_LOG(LogDebug, Warning, TEXT("End Overlap Energy"));
 }
 
 void AEnergyCell::Consumed()

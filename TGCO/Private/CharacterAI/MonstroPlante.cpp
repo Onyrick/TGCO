@@ -6,31 +6,32 @@
 #include "SolutionType.h"
 #include "MonstroPlante.h"
 
-AMonstroPlante::AMonstroPlante(const class FObjectInitializer& PCIP) : Super(PCIP)
+AMonstroPlante::AMonstroPlante(const class FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	this->fStunTime = 3.f;
 	this->fRespawnTime = 3.f;
 	this->fSpeedHit = 2.f;
 	this->fPower = 2.f;
+	this->m_bNeedToAvoid = false;
 
 	AddNewResistenceSolution(ESolutionType::NONE);
 	AddNewResistenceSolution(ESolutionType::NONE);
-	AddNewResistenceSolution(ESolutionType::FROZEN_PRODUCT);
+	AddNewResistenceSolution(ESolutionType::NONE);
 
 	SpawnPoint = NULL;
 
 	GetCharacterMovement()->MaxWalkSpeed = 250.f;
 
-	SolutionSphere1 = PCIP.CreateAbstractDefaultSubobject<UStaticMeshComponent>(this, TEXT("SolutionSphere1"));
-	SolutionSphere2 = PCIP.CreateAbstractDefaultSubobject<UStaticMeshComponent>(this, TEXT("SolutionSphere2"));
-	SolutionSphere3 = PCIP.CreateAbstractDefaultSubobject<UStaticMeshComponent>(this, TEXT("SolutionSphere3"));
+	SolutionSphere1 = ObjectInitializer.CreateAbstractDefaultSubobject<UStaticMeshComponent>(this, TEXT("SolutionSphere1"));
+	SolutionSphere2 = ObjectInitializer.CreateAbstractDefaultSubobject<UStaticMeshComponent>(this, TEXT("SolutionSphere2"));
+	SolutionSphere3 = ObjectInitializer.CreateAbstractDefaultSubobject<UStaticMeshComponent>(this, TEXT("SolutionSphere3"));
 
-	ConstructorHelpers::FObjectFinder<UStaticMesh> StaticMesh(TEXT("StaticMesh'/Game/StarterContent/Shapes/Shape_Sphere'"));
+	ConstructorHelpers::FObjectFinder<UStaticMesh> StaticMeshSphere(TEXT("StaticMesh'/Game/StarterContent/Shapes/Shape_Sphere'"));
 	ConstructorHelpers::FObjectFinder<UMaterial> Material(TEXT("MaterialInstanceConstant'/Game/Blueprints/AI/MonstroPlante/Mat_Emissive'"));
 
-	SolutionSphere1->SetStaticMesh(StaticMesh.Object);
-	SolutionSphere2->SetStaticMesh(StaticMesh.Object);
-	SolutionSphere3->SetStaticMesh(StaticMesh.Object);
+	SolutionSphere1->SetStaticMesh(StaticMeshSphere.Object);
+	SolutionSphere2->SetStaticMesh(StaticMeshSphere.Object);
+	SolutionSphere3->SetStaticMesh(StaticMeshSphere.Object);
 
 	MaterialInstance1 = UMaterialInstanceDynamic::Create(Material.Object, this);
 	MaterialInstance2 = UMaterialInstanceDynamic::Create(Material.Object, this);
@@ -52,8 +53,6 @@ AMonstroPlante::AMonstroPlante(const class FObjectInitializer& PCIP) : Super(PCI
 	AddOwnedComponent(SolutionSphere2);
 	AddOwnedComponent(SolutionSphere3);
 
-	
-	FVector MonstroPosition = GetActorLocation();
 
 	SolutionSphere1->AddRelativeLocation(FVector(0.f, 40.f, 0.f));
 	SolutionSphere2->AddRelativeLocation(FVector(40.f, 0.f, 0.f));
@@ -67,15 +66,21 @@ AMonstroPlante::AMonstroPlante(const class FObjectInitializer& PCIP) : Super(PCI
 	SolutionSphere2->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 	SolutionSphere3->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 
-	SolutionSphere1->SetLockedAxis(ELockedAxis::None);
-	SolutionSphere2->SetLockedAxis(ELockedAxis::None);
-	SolutionSphere2->SetLockedAxis(ELockedAxis::None);
-
 	SolutionSphere1->SetVisibility(false);
 	SolutionSphere2->SetVisibility(false);
 	SolutionSphere3->SetVisibility(false);
 
 	m_iIdToReplace = 0;
+
+	UpdateLights();
+
+	TriggerBox = ObjectInitializer.CreateDefaultSubobject<UBoxComponent>(this, TEXT("BoxTrigger_InteractiveElement"));
+	TriggerBox->OnComponentBeginOverlap.AddDynamic(this, &AMonstroPlante::OnOverlapBegin);
+
+	TriggerBox->AttachTo(RootComponent);
+	TriggerBox->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
+
+	SpeedDefault();
 }
 
 float AMonstroPlante::TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser)
@@ -93,6 +98,10 @@ float AMonstroPlante::TakeDamage(float DamageAmount, struct FDamageEvent const &
 		m_iIdToReplace = (m_iIdToReplace + 1) % 3;
 
 		Destroyed();
+		if (GetAIController() != NULL)
+		{
+			AEnergyCell* energyCell = GetWorld()->SpawnActor<AEnergyCell>(AEnergyCell::StaticClass(), GetActorLocation(), FRotator::ZeroRotator);
+		}
 		GetWorldTimerManager().SetTimer(this, &AMonstroPlante::RespawnAI, fRespawnTime, false);
 		StaticMesh->SetVisibility(false);
 	}
@@ -116,14 +125,10 @@ void AMonstroPlante::RemoveResistenceSolution(ESolutionType::Type _solution)
 
 void AMonstroPlante::Destroyed()
 {
-	FVector Position = GetActorLocation();
 	Super::Destroyed();
 	SolutionSphere1->SetVisibility(false);
 	SolutionSphere2->SetVisibility(false);
 	SolutionSphere3->SetVisibility(false);
-
-	AEnergyCell* energyCell = GetWorld()->SpawnActor<AEnergyCell>(AEnergyCell::StaticClass(), Position, FRotator::ZeroRotator);
-
 }
 
 void AMonstroPlante::RespawnAI()
@@ -137,27 +142,26 @@ void AMonstroPlante::RespawnAI()
 	
 	StaticMesh->SetVisibility(true);
 	
-
-	UpdateLights(GetColorOfTheSolution(SolutionResistence[0]), GetColorOfTheSolution(SolutionResistence[1]), GetColorOfTheSolution(SolutionResistence[2]));
-}
-
-void AMonstroPlante::UpdateLights_Implementation(FColor _color1, FColor _color2, FColor _color3)
-{
-	/*MaterialInstance1->SetScalarParameterValue("R", color.X, true, ERHIFeatureLevel::ES2);
-	MaterialInstance1->SetScalarParameterValue("G", color.Y, true, ERHIFeatureLevel::ES2);
-	MaterialInstance1->SetScalarParameterValue("B", color.Z, true, ERHIFeatureLevel::ES2);
-
-	MaterialInstance2->SetScalarParameterValue("R", color2.X);
-	MaterialInstance2->SetScalarParameterValue("G", color2.Y);
-	MaterialInstance2->SetScalarParameterValue("B", color2.Z);
-
-	MaterialInstance3->SetScalarParameterValue("R", 1.f);
-	MaterialInstance3->SetScalarParameterValue("G", 0.f);
-	MaterialInstance3->SetScalarParameterValue("B", 0.f);*/
-
 	SolutionSphere1->SetVisibility(SolutionResistence[0] != ESolutionType::NONE);
 	SolutionSphere2->SetVisibility(SolutionResistence[1] != ESolutionType::NONE);
 	SolutionSphere3->SetVisibility(SolutionResistence[2] != ESolutionType::NONE);
+
+	m_bNeedToAvoid = false;
+
+	SpeedDefault();
+	UpdateLights();
+}
+
+void AMonstroPlante::UpdateLights()
+{
+	MaterialInstance1->SetVectorParameterValue(FName(TEXT("Color")), GetColorOfTheSolution(SolutionResistence[0]));
+	MaterialInstance2->SetVectorParameterValue(FName(TEXT("Color")), GetColorOfTheSolution(SolutionResistence[1]));
+	MaterialInstance3->SetVectorParameterValue(FName(TEXT("Color")), GetColorOfTheSolution(SolutionResistence[2]));
+
+	SolutionSphere1->SetMaterial(0, MaterialInstance1);
+	SolutionSphere2->SetMaterial(0, MaterialInstance2);
+	SolutionSphere3->SetMaterial(0, MaterialInstance3);
+
 }
 
 void AMonstroPlante::Tick(float DeltaSeconds)
@@ -178,15 +182,27 @@ void AMonstroPlante::Tick(float DeltaSeconds)
 	SolutionSphere3->AddLocalOffset(FVector(-40.f, 0.f, 0.f));
 }
 
-UMaterialInstanceDynamic *AMonstroPlante::GetMaterialInstance(uint32 _num)
+void AMonstroPlante::OnOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
-	switch (_num)
+	AProjectile *projectile = Cast<AProjectile>(OtherActor);
+
+	if (projectile != NULL)
 	{
-	case 0:
-		return MaterialInstance1;
-	case 1:
-		return MaterialInstance2;
-	default:
-		return MaterialInstance3;
+		m_bNeedToAvoid = true;
 	}
+}
+
+void AMonstroPlante::UnStun()
+{
+	Super::UnStun();
+}
+
+void AMonstroPlante::SpeedUp()
+{
+	GetCharacterMovement()->MaxWalkSpeed = 700.f;
+}
+
+void AMonstroPlante::SpeedDefault()
+{
+	GetCharacterMovement()->MaxWalkSpeed = 400.f;
 }

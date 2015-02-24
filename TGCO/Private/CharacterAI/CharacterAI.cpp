@@ -49,7 +49,7 @@ float ACharacterAI::TakeDamage(float DamageAmount, struct FDamageEvent const & D
 void ACharacterAI::ReceiveActorBeginOverlap(AActor* OtherActor)
 {
 	//TODO
-	UE_LOG(LogTest, Warning, TEXT("Receive Actor Begin Overlap"));
+	//UE_LOG(LogTest, Warning, TEXT("Receive Actor Begin Overlap"));
 }
 
 void ACharacterAI::FaceRotation(FRotator NewRotation, float DeltaTime)

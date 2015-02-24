@@ -5,6 +5,7 @@
 #include "Monster.h"
 #include "SolutionType.h"
 #include "BotTargetPoint.h"
+#include "EnergyCell.h"
 #include "MonstroPlante.generated.h"
 
 /**
@@ -44,13 +45,22 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Light")
 	class UStaticMeshComponent* SolutionSphere3;
 
-	UFUNCTION(BlueprintCallable, Category = "MaterialInstance")
-	UMaterialInstanceDynamic *GetMaterialInstance(uint32 _num);
-	
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Update MontroLight")
-	void UpdateLights(FColor _color1, FColor _color2, FColor _color3 );
+	UPROPERTY(EditAnywhere, Category = "Triggers")
+	UBoxComponent* TriggerBox;
 
-protected:
+	/** When a projectile enter the box, the monster will try to avoid it */
+	UFUNCTION()
+	virtual void OnOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
+
+	virtual void UnStun() override;
+
+	void UpdateLights();
+	void SpeedUp();
+	void SpeedDefault();
+
+	bool m_bNeedToAvoid;
+
+protected:	
 	TArray<ESolutionType::Type> SolutionResistence;
 	UMaterialInstanceDynamic *MaterialInstance1;
 	UMaterialInstanceDynamic *MaterialInstance2;
@@ -59,4 +69,5 @@ protected:
 	virtual void Tick(float DeltaSeconds) override;
 
 	int m_iIdToReplace;
+
 };
