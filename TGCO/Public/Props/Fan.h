@@ -16,13 +16,26 @@ public:
 	/** Constructors */
 	AFan(const FObjectInitializer& ObjectInitializer);
 
-	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser);
-
 	virtual void ReinitSpeed();
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Force)
+	UFUNCTION(BlueprintCallable, Category = Activation)
+	void Activate(bool bActive);
+	
+	virtual void UpdateSpeed();
+
+private:
+	void Affect(float _fSpeed);
+
+public:
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = Force)
 	URotatingMovementComponent* RotatingMovement;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Force)
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = Force)
 	URadialForceComponent* RadialForce;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Member)
+	AFan * FuturFan;
+
+private:
+	bool bIsActive;
 };

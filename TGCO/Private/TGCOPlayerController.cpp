@@ -4,6 +4,8 @@
 #include "TGCOPlayerController.h"
 #include "TGCOGameInstance.h"
 #include "GameFramework/PlayerInput.h"
+#include "Props.h"
+#include "Fan.h"
 
 ATGCOPlayerController::ATGCOPlayerController(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -22,12 +24,12 @@ void ATGCOPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 }
+
 void ATGCOPlayerController::TickActor(float DeltaTime, enum ELevelTick TickType, FActorTickFunction& ThisTickFunction)
 {
 	Super::TickActor(DeltaTime, TickType, ThisTickFunction);
 	if (IsPaused())
 	{
-
 		if (PlayerInput != NULL)
 		{
 			//Tick the Input handler
@@ -37,7 +39,7 @@ void ATGCOPlayerController::TickActor(float DeltaTime, enum ELevelTick TickType,
 			ProcessPlayerInput(DeltaTime, false);
 		}
 	}
-};
+}
 
 void ATGCOPlayerController::OnTogglePause()
 {
@@ -50,4 +52,40 @@ bool ATGCOPlayerController::SetPause(bool bPause, FCanUnpause CanUnpauseDelegate
 	SetIgnoreMoveInput(bPause);
 	SetIgnoreLookInput(bPause);
 	return APlayerController::SetPause(bPause, CanUnpauseDelegate);
+}
+
+bool ATGCOPlayerController::ServerUpdateSpeedOnProps_Validate(class AProps* Props)
+{
+	return true;
+}
+
+void ATGCOPlayerController::ServerUpdateSpeedOnProps_Implementation(class AProps* Props)
+{
+	if (Props)
+	{
+		Props->UpdateSpeed();
+	}
+}
+
+bool ATGCOPlayerController::ServerUpdateSpeedValueOnProps_Validate(class AProps* Props, float fValue)
+{
+	return true;
+}
+
+void ATGCOPlayerController::ServerUpdateSpeedValueOnProps_Implementation(class AProps* Props, float fValue)
+{
+	if (Props)
+	{
+		Props->UpdateSpeedValue(fValue);
+	}
+}
+
+void ATGCOPlayerController::ClientAffectSpeedOnFuturFan_Implementation(class AFan* Fan, float _fSpeed)
+{
+	Fan->RotatingMovement->RotationRate = FRotator(0.f, 0.f, _fSpeed);
+	if (Fan->RadialForce)
+	{
+		Fan->RadialForce->ForceStrength = _fSpeed * 1000;
+		Fan->RadialForce->ImpulseStrength = _fSpeed * 0;
+	}
 }
