@@ -1,0 +1,46 @@
+
+
+#pragma once
+
+#include "InteractiveElement/InteractiveElement.h"
+#include "SolutionType.h"
+#include "MastermindPuzzleConsole.generated.h"
+
+
+UCLASS()
+class TGCO_API AMastermindPuzzleConsole : public AInteractiveElement
+{
+	GENERATED_BODY()
+	
+public:
+	AMastermindPuzzleConsole(const FObjectInitializer& ObjectInitializer);
+	int* SubmitAnswer(ESolutionType::Type* Answer);
+
+	/** Called when the Player uses the object */
+	UFUNCTION(BlueprintCallable, Category = "Mastermind")
+	virtual bool OnInteract() override;
+
+	UFUNCTION(BlueprintCallable, Category = "Mastermind")
+	void CreatePuzzle();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Diode")
+	class UStaticMeshComponent* Diode1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Diode")
+	class UStaticMeshComponent* Diode2;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Diode")
+	class UStaticMeshComponent* Diode3;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Diode")
+	class UStaticMeshComponent* Diode4;
+
+private:
+	ESolutionType::Type* Solution;
+	void UpdateDiode();
+
+	UMaterialInstanceDynamic *MaterialInstance1;
+	UMaterialInstanceDynamic *MaterialInstance2;
+	UMaterialInstanceDynamic *MaterialInstance3;
+	UMaterialInstanceDynamic *MaterialInstance4;
+};

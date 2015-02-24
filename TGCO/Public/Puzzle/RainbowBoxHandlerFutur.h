@@ -8,16 +8,13 @@
 #include "RainbowBoxColor.h"
 #include "RainbowBoxHandlerFutur.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class TGCO_API ARainbowBoxHandlerFutur : public AActor
 {
 	GENERATED_BODY()
 	
 public:
-	ARainbowBoxHandlerFutur(const FObjectInitializer& PCIP);
+	ARainbowBoxHandlerFutur(const FObjectInitializer& ObjectInitializer);
 
 	/** Create the RainbowBoxHandler */
 	UFUNCTION(BlueprintCallable, Category = "Rainbow")
