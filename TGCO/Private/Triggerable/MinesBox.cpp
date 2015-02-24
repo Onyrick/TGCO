@@ -1,6 +1,7 @@
 
 
 #include "TGCO.h"
+#include "Net/UnrealNetwork.h"
 #include "TGCOGameState.h"
 #include "TGCOCharacter.h"
 #include "Minesweeper.h"
@@ -25,16 +26,6 @@ AMinesBox::AMinesBox(const class FObjectInitializer& ObjectInitializer)
 	Number->AttachParent = RootComponent;
 
 	bReplicates = true;
-}
-
-void AMinesBox::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> & OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	// Replicate to everyone
-	DOREPLIFETIME(AMinesBox, iNeighboursUndermined);
-	DOREPLIFETIME(AMinesBox, Number);
-	DOREPLIFETIME(AMinesBox, iNeighboursUndermined);
-	DOREPLIFETIME(AMinesBox, bIsUndermined);
 }
 
 void AMinesBox::OnOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
@@ -98,7 +89,13 @@ void AMinesBox::Explode(class AActor* OtherActor)
 
 void AMinesBox::SetNeighboursUndermined()
 {
+	UE_LOG(LogDebug, Warning, TEXT("Set neighbours undermined"));
 	iNeighboursUndermined += 1;
+	// Object has authority
+	if (!(Role < ROLE_Authority))
+	{
+		Number->SetText(FString::Printf(TEXT("%d"), iNeighboursUndermined));
+	}
 }
 
 unsigned int AMinesBox::GetNeighboursUndermined()
@@ -119,4 +116,14 @@ void AMinesBox::OnRep_TextRender()
 		Number->SetText(FString::Printf(TEXT("%d"), iNeighboursUndermined));
 	}
 	
+}
+
+void AMinesBox::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> & OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	// Replicate to everyone
+	DOREPLIFETIME(AMinesBox, iNeighboursUndermined);
+	DOREPLIFETIME(AMinesBox, Number);
+	DOREPLIFETIME(AMinesBox, bIsUndermined);
+	DOREPLIFETIME(AMinesBox, MineFlag);
 }

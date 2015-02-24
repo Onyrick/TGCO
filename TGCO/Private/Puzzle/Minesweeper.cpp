@@ -37,7 +37,7 @@ void AMinesweeper::CreateMinesweeper()
 
 	PutMinesRandomly();
 	CalculateNeighboursUndermined();
-
+	/*
 	for (TActorIterator<AActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
 	{
 		if (ActorItr->GetName().Contains("ConsoleMinesweeper") && ActorItr->GetActorClass()->GetDescription() == FString(TEXT("Console Minesweeper BP")))
@@ -46,7 +46,7 @@ void AMinesweeper::CreateMinesweeper()
 			ConsoleMinesweeper->ResetMinesweeper();
 		}
 	}
-	
+	*/
 }
 
 bool AMinesweeper::ServerResetMinesweeper_Validate()
@@ -57,15 +57,15 @@ bool AMinesweeper::ServerResetMinesweeper_Validate()
 void AMinesweeper::ServerResetMinesweeper_Implementation()
 {
 	UE_LOG(LogTest, Warning, TEXT("Je suis dans ServerResetMinesweeper"));
-	int i = 0;
-	//ResetMinesweeper();
+	ResetMinesweeper();
 }
 
 void AMinesweeper::ResetMinesweeper()
 {
+	UE_LOG(LogTest, Warning, TEXT("Début de ResetMinesweeper"));
 	if (Role < ROLE_Authority)
 	{
-		UE_LOG(LogTest, Warning, TEXT("Call Server"));
+		UE_LOG(LogTest, Warning, TEXT("Pas autorité, appel de ServerResetMinesweeper"));
 		ServerResetMinesweeper();
 	}
 	else
@@ -73,6 +73,7 @@ void AMinesweeper::ResetMinesweeper()
 		UE_LOG(LogTest, Warning, TEXT("ResetMinesweeper logic from Server"));
 		if (Squares.Num() == 0)
 		{
+			UE_LOG(LogTest, Warning, TEXT("Appel de CreateMinesweeper car square.num() == 0"));
 			CreateMinesweeper();
 		}
 		else
@@ -94,9 +95,11 @@ void AMinesweeper::PutMinesRandomly()
 	srand(time(NULL));
 	for (int cpt = 0; cpt < NB_MINES; ++cpt)
 	{
+		UE_LOG(LogTest, Warning, TEXT("Passe dans la boucle du nombre de mine : %d"), cpt);
 		iSecret = rand() % SIZE;
 		if (Squares[iSecret]->GetIsUndermined() != true)
 		{
+			UE_LOG(LogTest, Warning, TEXT("Je met une mine sur la square"));
 			Squares[iSecret]->SetIsUndermined();
 		}
 		else
