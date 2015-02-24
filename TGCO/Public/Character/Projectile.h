@@ -38,10 +38,14 @@ public:
 	/** Returns ProjectileMovement subobject **/
 	FORCEINLINE class UProjectileMovementComponent* GetProjectileMovement() const { return ProjectileMovement; }
 
-	ESolutionType::Type GetSolutionType();
+	void SetMode(FString _Mode);
+	FString GetProjectileMode();
 
+	ESolutionType::Type GetSolutionType();
 	void SetSolutionType(ESolutionType::Type _solution);
 
 protected:
 	TEnumAsByte<ESolutionType::Type> SolutionType;
+	FString ProjectileMode;
+
 };

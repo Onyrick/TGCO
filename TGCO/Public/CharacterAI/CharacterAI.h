@@ -14,7 +14,7 @@ class TGCO_API ACharacterAI : public ACharacter
 	GENERATED_BODY()
 public:
 	/** Constructors */
-	ACharacterAI(const FObjectInitializer& PCIP);
+	ACharacterAI(const FObjectInitializer& ObjectInitializer);
 
 	/** Function to get the AIController */
 	UFUNCTION(BlueprintCallable, Category = "CharacterAI")

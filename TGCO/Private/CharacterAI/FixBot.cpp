@@ -3,7 +3,8 @@
 #include "TGCO.h"
 #include "FixBot.h"
 
-AFixBot::AFixBot(const class FObjectInitializer& PCIP) : Super(PCIP)
+AFixBot::AFixBot(const FObjectInitializer& ObjectInitializer) 
+: Super(ObjectInitializer)
 {
 	this->fStunTime = 3.f;
 	MaxRoutes = 0;

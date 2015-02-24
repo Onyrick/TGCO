@@ -3,8 +3,8 @@
 #include "TGCO.h"
 #include "Monster.h"
 
-AMonster::AMonster(const class FObjectInitializer& PCIP)
-: Super(PCIP)
+AMonster::AMonster(const FObjectInitializer& ObjectInitializer)
+: Super(ObjectInitializer)
 , fStunTime(1.f)
 , fRespawnTime(1.f)
 , bIsDead(false)

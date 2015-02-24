@@ -5,6 +5,7 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "TGCOCharacter.h"
 #include "Monster.h"
+#include "Props.h"
 
 AProjectile::AProjectile(const FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer)
@@ -55,6 +56,13 @@ void AProjectile::OnHit(AActor* OtherActor, UPrimitiveComponent* OtherComp, FVec
 		Monster->TakeDamage(0.f, damage, Monster->GetController(), this);
 	}
 
+	AProps* Props = Cast<AProps>(OtherActor);
+	if (Props != NULL)
+	{
+		FDamageEvent damage;
+		Props->TakeDamage(0.f, damage, NULL, this);
+	}
+
 	Destroy();
 }
 
@@ -66,4 +74,14 @@ ESolutionType::Type AProjectile::GetSolutionType()
 void AProjectile::SetSolutionType(ESolutionType::Type _solution)
 {
 	SolutionType = _solution;
+}
+
+void AProjectile::SetMode(FString _Mode)
+{
+	ProjectileMode = _Mode;
+}
+
+FString AProjectile::GetProjectileMode()
+{
+	return ProjectileMode;
 }

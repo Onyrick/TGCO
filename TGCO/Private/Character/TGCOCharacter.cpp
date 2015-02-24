@@ -6,6 +6,7 @@
 #include "Engine.h"
 #include "TGCOPlayerState.h"
 #include "TGCOGameState.h"
+#include "TGCOGameMode.h"
 
 #define COLLISION_HIGHLIGHT_TRACE ECC_GameTraceChannel1
 #define COLLISION_INTERACTIVE_TRACE ECC_GameTraceChannel2
@@ -48,6 +49,8 @@ ATGCOCharacter::ATGCOCharacter(const FObjectInitializer& ObjectInitializer)
 	GetCharacterMovement()->MaxWalkSpeed = 400;
 
 	bShootMode = true;
+	WristMode = "STOP";
+	WristModeIndex = 0;
 
 	PreviousInteractiveElement = nullptr;
 	iNumberOfCloseInteractiveElement = 0;
@@ -78,6 +81,11 @@ void ATGCOCharacter::SetupPlayerInputComponent(class UInputComponent* InputCompo
 
 	InputComponent->BindAction("Run", IE_Pressed, this, &ATGCOCharacter::Run);
 	InputComponent->BindAction("Run", IE_Released, this, &ATGCOCharacter::StopRunning);
+
+	InputComponent->BindAction("SwitchModeUp", IE_Pressed, this, &ATGCOCharacter::SetPreviousWristMode);
+	InputComponent->BindAction("SwitchModeDown", IE_Pressed, this, &ATGCOCharacter::SetNextWristMode);
+
+	InputComponent->BindAction("Cancel", IE_Pressed, this, &ATGCOCharacter::CancelActionTime);
 
 	InputComponent->BindAxis("MoveForward", this, &ATGCOCharacter::MoveForward);
 	InputComponent->BindAxis("MoveRight", this, &ATGCOCharacter::MoveRight);
@@ -171,6 +179,7 @@ void ATGCOCharacter::OnFire()
 				// spawn the projectile at the muzzle
 				AProjectile* Projectile = World->SpawnActor<AProjectile>(ProjectileClass, SpawnLocation, SpawnRotation);
 				Projectile->SetSolutionType(SolutionType);
+				Projectile->SetMode(WristMode);
 			}
 		}
 
@@ -224,6 +233,46 @@ void ATGCOCharacter::Use()
 	}
 }
 
+void ATGCOCharacter::SetPreviousWristMode()
+{
+	ATGCOGameState * GS = Cast<ATGCOGameState>(GetWorld()->GetGameState());
+	const TMap<int, FString>& UnlockSkills = GS->GetUnlockSkills();
+
+	int lengthMap = UnlockSkills.Num();
+
+	WristModeIndex = WristModeIndex - 1;
+	if (WristModeIndex < 0)
+	{
+		WristModeIndex = lengthMap - 1;
+	}
+
+	WristMode = UnlockSkills[WristModeIndex];
+
+	UE_LOG(LogDebug, Warning, TEXT("Previous : %s"), *WristMode);
+}
+
+void ATGCOCharacter::SetNextWristMode()
+{
+	ATGCOGameState * GS = Cast<ATGCOGameState>(GetWorld()->GetGameState());
+	const TMap<int, FString>& UnlockSkills = GS->GetUnlockSkills();
+
+	int lengthMap = UnlockSkills.Num();
+
+	WristModeIndex = (WristModeIndex + 1) % lengthMap;
+
+	WristMode = UnlockSkills[WristModeIndex];
+
+	UE_LOG(LogDebug, Warning, TEXT("Next : %s"), *WristMode);
+}
+
+void ATGCOCharacter::CancelActionTime()
+{
+	ATGCOPlayerState* PS = Cast<ATGCOPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
+	PS->SetPropsAffected(NULL);
+
+	UE_LOG(LogDebug, Warning, TEXT("Cancel action time"));
+}
+
 bool ATGCOCharacter::SetCheckpoint()
 {
 	FTransform ActorTransform = GetTransform();
@@ -234,12 +283,12 @@ bool ATGCOCharacter::SetCheckpoint()
 	return !vLocation.IsZero();
 }
 
-FTransform ATGCOCharacter::GetCheckpoint()
+FTransform ATGCOCharacter::GetCheckpoint() const
 {
 	return LastCheckpoint;
 }
 
-void ATGCOCharacter::SpawnPlayer()
+ATGCOCharacter* const ATGCOCharacter::SpawnPlayer()
 {
 	UE_LOG(LogDebug, Warning, TEXT("Spawn Player"));
 	FVector vLocation = LastCheckpoint.GetLocation();
@@ -274,30 +323,29 @@ void ATGCOCharacter::SpawnPlayer()
 		// Set this Player the current checkpoint 
 		PlayerPawn->LastCheckpoint = this->LastCheckpoint;
 	}
-
-	// Get the player controller
-	APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	if (PC)
-	{
-		// Attach it to the new Character Pawn
-		UE_LOG(LogDebug, Warning, TEXT("PLayerController possess now"));
-		PC->Possess(PlayerPawn);
-		Destroy();
-	}
-}
-
-void ATGCOCharacter::KillPlayerThenRespawn()
-{
-	UE_LOG(LogDebug, Warning, TEXT("Kill Player and respawn"));
-
-	//TODO : kill Player (Play animation etc..)
-	DetachFromControllerPendingDestroy();
-	SpawnPlayer();
+	return PlayerPawn;
 }
 
 void ATGCOCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+
+	UWorld* const World = GetWorld();
+	if (World != NULL)
+	{
+		ATGCOGameMode* GameMode = Cast<ATGCOGameMode>(World->GetAuthGameMode());
+		if (GameMode)
+		{
+			ATGCOGameState* GameState = Cast<ATGCOGameState>(World->GetGameState());
+			if (GameState != NULL)
+			{
+				if (GameState->CheckRemainingEnergy() == false)
+				{
+					GameMode->ServerKillPlayersThenRespawn();
+				}
+			}
+		}
+	}
 
 	if (iNumberOfCloseInteractiveElement <= 0)
 	{
@@ -368,11 +416,7 @@ float ATGCOCharacter::TakeDamage(float fDamageAmount, struct FDamageEvent const 
 			ActiveShield(true);
 
 			// Decrease energy in the GameState
-			if (GameState->DecreaseEnergy(fDamageAmount) == 0)
-			{
-				KillPlayerThenRespawn();
-				return 0;
-			}
+			GameState->DecreaseEnergy(fDamageAmount);
 
 			return fDamageAmount;
 		}
@@ -409,7 +453,7 @@ void ATGCOCharacter::PlayShieldSound()
 	UE_LOG(LogDebug, Warning, TEXT("TO DO : play activate shield sound"));
 }
 
-UInventoryUMG* ATGCOCharacter::GetInventoryUMG()
+UInventoryUMG* ATGCOCharacter::GetInventoryUMG() const
 {
 	return InventoryUMG;
 }

@@ -11,9 +11,11 @@
 UCLASS()
 class TGCO_API AEnergyCell : public ATriggerable
 {
-	GENERATED_UCLASS_BODY()
+	GENERATED_BODY()
 
 public:
+	AEnergyCell(const FObjectInitializer& ObjectInitializer);
+
 	/** Event launch when Player begin to trigger the TriggerBox component. */
 	virtual void OnOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult) override;
 

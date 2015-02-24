@@ -5,11 +5,12 @@
 #include "CharacterAI.h"
 #include "ControllerAI.h"
 
-AControllerAI::AControllerAI(const class FObjectInitializer& PCIP) : Super(PCIP)
+AControllerAI::AControllerAI(const FObjectInitializer& ObjectInitializer) 
+: Super(ObjectInitializer)
 {
-	BlackboardComp = PCIP.CreateDefaultSubobject<UBlackboardComponent>(this, TEXT("BlackBoardComp"));
+	BlackboardComp = ObjectInitializer.CreateDefaultSubobject<UBlackboardComponent>(this, TEXT("BlackBoardComp"));
 
-	BrainComponent = BehaviorComp = PCIP.CreateDefaultSubobject<UBehaviorTreeComponent>(this, TEXT("BehaviorComp"));
+	BrainComponent = BehaviorComp = ObjectInitializer.CreateDefaultSubobject<UBehaviorTreeComponent>(this, TEXT("BehaviorComp"));
 
 	bWantsPlayerState = true;
 }

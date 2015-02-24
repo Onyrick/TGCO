@@ -1,6 +1,9 @@
 
 
 #include "TGCO.h"
+#include "TGCOGameState.h"
+#include "TGCOCharacter.h"
+#include "Minesweeper.h"
 #include "MinesBox.h"
 
 
@@ -10,6 +13,9 @@ AMinesBox::AMinesBox(const class FObjectInitializer& ObjectInitializer)
 , iNeighboursUndermined(0)
 , bIsDisplayed(false)
 {
+	MineFlag = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("MineFlag_MineBox"));
+	MineFlag->AttachParent = RootComponent;
+
 	Number = ObjectInitializer.CreateDefaultSubobject<UTextRenderComponent>(this, TEXT("Number_MineBox"), true );
 	Number->SetRelativeRotation(FRotator(90.0, 90.0, 0.0));
 	Number->SetRelativeLocation(FVector(0.0,0.0,25.0));
@@ -23,7 +29,7 @@ void AMinesBox::OnOverlapBegin(class AActor* OtherActor, class UPrimitiveCompone
 {
 	if (bIsUndermined)
 	{
-		Explode();
+		Explode(OtherActor);
 	}
 	else
 	{
@@ -52,9 +58,29 @@ bool AMinesBox::GetIsUndermined()
 	return bIsUndermined;
 }
 
-void AMinesBox::Explode()
+void AMinesBox::Explode(class AActor* OtherActor)
 {
 	UE_LOG(LogDebug, Warning, TEXT("BOOM !!!"));
+	ATGCOGameState* gameState = Cast<ATGCOGameState>(GetWorld()->GetGameState());
+	if (gameState)
+	{
+		gameState->DecreaseEnergy(5);
+	}
+	
+	ATGCOCharacter* Character = Cast<ATGCOCharacter>(OtherActor);
+	if (Character)
+	{
+		Character->SetActorTransform(Character->GetCheckpoint());
+	}
+	
+	for (TActorIterator<AActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+	{
+		if (ActorItr->GetName().Contains("Minesweeper_Futur") && ActorItr->GetActorClass()->GetDescription() == FString(TEXT("Minesweeper BP")) )
+		{
+			AMinesweeper* Minesweeper = Cast<AMinesweeper>(*ActorItr);
+			Minesweeper->ResetMinesweeper();
+		}
+	}
 }
 
 void AMinesBox::SetNeighboursUndermined()
@@ -65,4 +91,9 @@ void AMinesBox::SetNeighboursUndermined()
 unsigned int AMinesBox::GetNeighboursUndermined()
 {
 	return iNeighboursUndermined;
+}
+
+void AMinesBox::SetVisibilityOfFlag()
+{
+	MineFlag->SetVisibility(!(MineFlag->IsVisible()));
 }

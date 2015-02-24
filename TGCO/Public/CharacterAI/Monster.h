@@ -11,8 +11,10 @@
 UCLASS()
 class TGCO_API AMonster : public ACharacterAI
 {
-	GENERATED_UCLASS_BODY()
+	GENERATED_BODY()
 public:
+	AMonster(const FObjectInitializer& ObjectInitializer);
+
 	/** Event launch when the Monster take damage */
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser) override;
 

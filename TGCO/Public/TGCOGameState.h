@@ -2,6 +2,9 @@
 
 #pragma once
 
+#include "Props.h"
+#include <ctime>
+
 #include "GameFramework/GameState.h"
 #include "TGCOGameState.generated.h"
 
@@ -11,11 +14,14 @@
 UCLASS()
 class TGCO_API ATGCOGameState : public AGameState
 {
-	GENERATED_UCLASS_BODY()
+	GENERATED_BODY()
+
+public:
+	ATGCOGameState(const FObjectInitializer& ObjectInitializer);
 
 protected:
 	/** Amount of energy remaining for both Players */
-	UPROPERTY(SaveGame)
+	UPROPERTY(SaveGame, Replicated)
 	int32 iPlayersEnergy;
 
 private:
@@ -23,6 +29,8 @@ private:
 	int32 iMaxPlayersEnergy;
 
 public:
+	/** Get skills unlock by players */
+	const TMap<int, FString>& GetUnlockSkills();
 
 	/** Add an amount of energy to the total Player's energy */
 	UFUNCTION(BlueprintCallable, Category = "Players")
@@ -30,21 +38,11 @@ public:
 
 	/** Remove an amount of energy to the total Player's energy*/
 	UFUNCTION(BlueprintCallable, Category = "Players")
-	bool DecreaseEnergy(int32 iEnergyAmount);
+	void DecreaseEnergy(int32 iEnergyAmount);
 
 	/** Get the Player's energy*/
 	UFUNCTION(BlueprintCallable, Category = "Players")
 	int32 GetEnergy();
-
-	/** Exchange value of PlayerState to exchange character */
-	UFUNCTION(BlueprintCallable, Category = "Players")
-	void ExchangeCharacter();
-
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FBindableEvent_ExchangeCharactersFinished);
-
-	/** Called when exchange is finished */
-	UPROPERTY(BlueprintAssignable, Category = "Players")
-	FBindableEvent_ExchangeCharactersFinished OnExchangeCharacters;
 
 	/** Remove all widgets attached to viewport */
 	UFUNCTION(Netmulticast, reliable)
@@ -53,10 +51,23 @@ public:
 	UFUNCTION(Netmulticast, reliable)
 	void MulticastGoToPlayingState();
 
-private:
-
 	/** Check if Players have remaining energy and can continue the game. If not launch Game Over. */
 	bool CheckRemainingEnergy();
+
+private:
+
+	UFUNCTION(Server, WithValidation, reliable)
+	void ServerAddEnergy(int32 iEnergyAmount);
+
+	UFUNCTION(Server, WithValidation, reliable)
+	void ServerDecreaseEnergy(int32 iEnergyAmount);
+
+	/*
+	UFUNCTION(NetMulticast)
+	void MulticastAddEnergy(int32 iEnergyAmount);
+	*/
+	/** Array that contains the skill that the Player unlock */
+	TMap<int, FString> MapUnlockSkills;
 
 };
 

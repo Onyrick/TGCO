@@ -17,7 +17,7 @@ class TGCO_API AFlowerPot : public AInteractiveElement
 
 public:
 	/** Constructors */
-	AFlowerPot(const FObjectInitializer& PCIP);
+	AFlowerPot(const FObjectInitializer& ObjectInitializer);
 
 	/** Called when the Player uses the object */
 	UFUNCTION(BlueprintCallable, Category = "FlowerPot")

@@ -97,13 +97,10 @@ public:
 	bool SetCheckpoint();
 
 	/** Get the checkpoint for re spawn */
-	FTransform GetCheckpoint();
+	FTransform GetCheckpoint() const;
 
 	/** Spawn the Player to the last checkpoint */
-	void SpawnPlayer();
-
-	/** Function called when Player is dead */
-	void KillPlayerThenRespawn();
+	ATGCOCharacter* const SpawnPlayer();
 
 protected:
 	/** APawn interface */
@@ -153,6 +150,15 @@ private:
 	/** Highlight the InteractiveElement that the Character look */
 	void HightlightCloseInteractiveElement();
 
+	/** Switch Wrist Mode to the previous mode in the Enumeration */
+	void SetPreviousWristMode();
+	
+	/** Switch Wrist Mode to the previous mode in the Enumeration */
+	void SetNextWristMode();
+
+	/** Cancel Action on the Props that is affected by time because of Projectile Shoot */
+	void CancelActionTime();
+
 private:
 	/** Previous element which was highlighted */
 	AInteractiveElement* PreviousInteractiveElement;
@@ -164,6 +170,9 @@ private:
 	APlayerStart* LastSpawn;
 	/** Character Pawn */
 	ATGCOCharacter* PlayerPawn;
+	/** Wrist Mode for Shoot */
+	FString WristMode;
+	int WristModeIndex;
 
 public:
 	/** Function to add a stockable item in the inventory*/
@@ -171,7 +180,7 @@ public:
 
 	/**Getter / Setter */
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
-	UInventoryUMG* GetInventoryUMG();
+	UInventoryUMG* GetInventoryUMG() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void SetInventoryUMG(UInventoryUMG* _widget);

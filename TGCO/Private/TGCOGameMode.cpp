@@ -3,6 +3,7 @@
 #include "TGCO.h"
 #include "TGCOGameMode.h"
 #include "TGCOPlayerState.h"
+#include "TGCOPlayerController.h"
 #include "TGCOGameState.h"
 #include "TGCOCharacter.h"
 #include "TGCOGameSession.h"
@@ -23,6 +24,7 @@ ATGCOGameMode::ATGCOGameMode(const FObjectInitializer& ObjectInitializer)
 	HUDClass = ATGCOHUD::StaticClass();
 	GameStateClass = ATGCOGameState::StaticClass();
 	PlayerStateClass = ATGCOPlayerState::StaticClass();
+	PlayerControllerClass = ATGCOPlayerController::StaticClass();
 
 	bUseSeamlessTravel = false;
 }
@@ -84,4 +86,46 @@ AActor* ATGCOGameMode::ChoosePlayerStart(AController* Player)
 	}
 
 	return BestStart ? BestStart : Super::ChoosePlayerStart(Player);
+}
+
+void ATGCOGameMode::KillPlayersThenRespawn()
+{
+	UE_LOG(LogDebug, Warning, TEXT("Kill Players and respawn"));
+
+	UWorld* const World = GetWorld();
+	if (World != NULL)
+	{
+		ATGCOGameState* GameState = Cast<ATGCOGameState>(World->GetGameState());
+		if (GameState != NULL)
+		{	
+			for (FConstPlayerControllerIterator Iterator = World->GetPlayerControllerIterator(); Iterator; ++Iterator)
+			{
+				// Get the Controller
+				APlayerController * PC = Iterator->Get();
+				// Get the pawn attach to this controller
+				ATGCOCharacter* Character = Cast<ATGCOCharacter>(PC->GetCharacter());
+				// Detach the pawn from the Controller
+				// Character->DetachFromControllerPendingDestroy();
+				// Spawn a new pawn and get it
+				ATGCOCharacter* NewCharacter = Character->SpawnPlayer();
+				// Attach it to the Controller
+				PC->Possess(NewCharacter);
+				// Destroy the old pawn
+				Character->Destroy(true, false);
+			}
+			// Add base energy because die
+			GameState->AddEnergy(500);
+		}
+	}
+
+}
+
+bool ATGCOGameMode::ServerKillPlayersThenRespawn_Validate()
+{
+	return true;
+}
+
+void ATGCOGameMode::ServerKillPlayersThenRespawn_Implementation()
+{
+	KillPlayersThenRespawn();
 }

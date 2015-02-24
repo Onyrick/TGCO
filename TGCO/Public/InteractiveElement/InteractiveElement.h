@@ -15,7 +15,7 @@ class TGCO_API AInteractiveElement : public AActor
 
 public:
 	/** Constructors */
-	AInteractiveElement(const FObjectInitializer& PCIP);
+	AInteractiveElement(const FObjectInitializer& ObjectInitializer);
 
 	/**
 	 * Method called when the Player wants to use the object which is currently highlighted.

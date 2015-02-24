@@ -63,7 +63,6 @@ void UTGCOGameInstance::StartGameInstance()
 	GotoInitialState();
 }
 
-
 void UTGCOGameInstance::ShowMessageThenGotoState(const FString& Message, const FName& NewState)
 {
 	UE_LOG(LogOnline, Log, TEXT("ShowMessageThenGotoState: Message: %s, NewState: %s"), *Message, *NewState.ToString());
@@ -492,7 +491,7 @@ void UTGCOGameInstance::BeginPlayingState()
 		GameState->MulticastGoToPlayingState();
 	}
 
-	GetWorld()->ServerTravel(FString("/Game/Maps/TutorialRoom?listen"));
+	GetWorld()->ServerTravel(FString("/Game/Maps/TestMap/GymFan?listen"));
 }
 
 void UTGCOGameInstance::EndPlayingState()

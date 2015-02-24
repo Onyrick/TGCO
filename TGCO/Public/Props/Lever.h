@@ -15,6 +15,6 @@ class TGCO_API ALever : public AProps
 
 public:
 	/** Constructors */
-	ALever(const FObjectInitializer& PCIP);
+	ALever(const FObjectInitializer& ObjectInitializer);
 
 };
