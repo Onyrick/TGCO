@@ -9,7 +9,7 @@
 ATGCOGameState::ATGCOGameState(const FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer)
 {
-	iPlayersEnergy = 0;
+	iPlayersEnergy = 500;
 	iMaxPlayersEnergy = 1000;
 	MapUnlockSkills.Add(0, "STOP");
 	MapUnlockSkills.Add(1, "SLOW");
@@ -45,34 +45,6 @@ void ATGCOGameState::ServerAddEnergy_Implementation(int32 iEnergyAmount)
 	AddEnergy(iEnergyAmount);
 }
 
-int32 ATGCOGameState::GetSeed()
-{
-	return iSeed;
-}
-
-void ATGCOGameState::SetRandomSeed()
-{
-	if (Role < ROLE_Authority)
-	{
-		ServerSetSeed();
-	}
-	else
-	{
-		srand(time(NULL));
-		iSeed = rand();
-		UE_LOG(LogTest, Warning, TEXT("Set Seed : %i"), iSeed);
-	}
-}
-
-bool ATGCOGameState::ServerSetSeed_Validate()
-{
-	return true;
-}
-
-void ATGCOGameState::ServerSetSeed_Implementation()
-{
-	SetRandomSeed();
-}
 
 void ATGCOGameState::DecreaseEnergy(int32 iEnergyAmount)
 {
@@ -133,5 +105,4 @@ void ATGCOGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> & OutL
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	// Replicate to everyone
 	DOREPLIFETIME(ATGCOGameState, iPlayersEnergy);
-	DOREPLIFETIME(ATGCOGameState, iSeed);
 }

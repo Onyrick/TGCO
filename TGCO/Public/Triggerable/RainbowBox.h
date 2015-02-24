@@ -27,15 +27,21 @@ public:
 	/** Show and enable collision */
 	void Show();
 
-	void SetColor(const ERainbowBoxColor::Color eColor);
+	void SetColor(const ERainbowBoxColor::Color eNewColor);
 	ERainbowBoxColor::Color GetColor();
 	void SetShouldNotify(bool bNewShouldNotify);
 	void SetIsHideInPast(bool bNewIsHideInPast);
 	bool GetIsHideInPast();
 	
 private:
-	ERainbowBoxColor::Color Color;
+	UPROPERTY(Transient, ReplicatedUsing = OnRep_Material)
+	int32 iColor;
+
+	UPROPERTY(Transient, Replicated)
 	UMaterialInstanceDynamic* MaterialInstanceDynamic;
 	bool bShouldNotify;
 	bool bIsHideInPast;
+
+	UFUNCTION()
+	void OnRep_Material();
 };
