@@ -28,10 +28,6 @@ private:
 	/** Maximum amount of energy Players can have */
 	int32 iMaxPlayersEnergy;
 
-	/** Seed to generate random puzzle */
-	UPROPERTY(Replicated)
-	int32 iSeed;
-
 public:
 	/** Get skills unlock by players */
 	const TMap<int, FString>& GetUnlockSkills();
@@ -47,14 +43,6 @@ public:
 	/** Get the Player's energy*/
 	UFUNCTION(BlueprintCallable, Category = "Players")
 	int32 GetEnergy();
-
-	/** Get the seed */
-	UFUNCTION(BlueprintCallable, Category = "Players")
-	int32 GetSeed();
-
-	/** Set a random seed */
-	UFUNCTION(BlueprintCallable, Category = "Players")
-	void SetRandomSeed();
 
 	/** Remove all widgets attached to viewport */
 	UFUNCTION(Netmulticast, reliable)
@@ -74,8 +62,6 @@ private:
 	UFUNCTION(Server, WithValidation, reliable)
 	void ServerDecreaseEnergy(int32 iEnergyAmount);
 
-	UFUNCTION(Server, WithValidation, reliable)
-	void ServerSetSeed();
 	/*
 	UFUNCTION(NetMulticast)
 	void MulticastAddEnergy(int32 iEnergyAmount);

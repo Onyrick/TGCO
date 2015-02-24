@@ -49,3 +49,27 @@ FName GetNameOfTheColor(const ERainbowBoxColor::Color RainbowBoxColor){
 		default:										return TEXT("None");
 	}
 }
+
+ERainbowBoxColor::Color GetColorFromInt(int iColor)
+{
+	switch (iColor)
+	{
+	case 0:										return ERainbowBoxColor::NONE;
+	case 1:										return ERainbowBoxColor::RED;
+	case 2:										return ERainbowBoxColor::GREEN;
+	case 3:										return ERainbowBoxColor::BLUE;
+	default:										return ERainbowBoxColor::NONE;
+	}
+}
+
+int GetIntFromColor(ERainbowBoxColor::Color RainbowBoxColor)
+{
+	switch (RainbowBoxColor)
+	{
+	case ERainbowBoxColor::NONE:					return 0;
+	case ERainbowBoxColor::RED:						return 1;
+	case ERainbowBoxColor::GREEN:					return 2;
+	case ERainbowBoxColor::BLUE:					return 3;
+	default:										return 0;
+	}
+}

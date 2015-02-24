@@ -66,14 +66,16 @@ void AMinesBox::Explode(class AActor* OtherActor)
 	{
 		gameState->DecreaseEnergy(5);
 	}
+	
 	ATGCOCharacter* Character = Cast<ATGCOCharacter>(OtherActor);
 	if (Character)
 	{
 		Character->SetActorTransform(Character->GetCheckpoint());
 	}
+	
 	for (TActorIterator<AActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
 	{
-		if (ActorItr->GetName().Contains("Minesweeper"))
+		if (ActorItr->GetName().Contains("Minesweeper_Futur") && ActorItr->GetActorClass()->GetDescription() == FString(TEXT("Minesweeper BP")) )
 		{
 			AMinesweeper* Minesweeper = Cast<AMinesweeper>(*ActorItr);
 			Minesweeper->ResetMinesweeper();
