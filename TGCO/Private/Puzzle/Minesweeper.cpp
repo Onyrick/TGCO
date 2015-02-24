@@ -14,11 +14,13 @@ AMinesweeper::AMinesweeper(const class FObjectInitializer& ObjectInitializer)
 	{
 		MineBoxBP = (UClass*)ItemBlueprint.Class;
 	}
+	bReplicates = true;
 }
 
 void AMinesweeper::CreateMinesweeper()
 {
 	//Create all the MinesBox and initialize them without mine
+	UE_LOG(LogTest, Warning, TEXT("Je suis dans la fonction CreateMinesweeper"));
 	for (int i = 0; i < SIZE; ++i)
 	{
 		UWorld* const World = GetWorld();
@@ -26,7 +28,7 @@ void AMinesweeper::CreateMinesweeper()
 		{
 			unsigned int x = i / NB_COL;
 			unsigned int y = i % NB_COL;
-			const FVector SpawnLocation = GetActorLocation() + FVector(x*405 , y*405, 5.0);
+			const FVector SpawnLocation = GetActorLocation() + FVector(x * 405, y * 405, 5.0);
 			const FRotator SpawnRotation = GetActorRotation();
 			AMinesBox* m = (AMinesBox*)World->SpawnActor<AMinesBox>(MineBoxBP, SpawnLocation, SpawnRotation);
 			Squares.Add(m);
@@ -38,33 +40,56 @@ void AMinesweeper::CreateMinesweeper()
 
 	for (TActorIterator<AActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
 	{
-		if (ActorItr->GetName().Contains("ConsoleMinesweeper") && ActorItr->GetActorClass()->GetDescription() == FString(TEXT("Console Minesweeper BP")) )
+		if (ActorItr->GetName().Contains("ConsoleMinesweeper") && ActorItr->GetActorClass()->GetDescription() == FString(TEXT("Console Minesweeper BP")))
 		{
 			AConsoleMinesweeper* ConsoleMinesweeper = Cast<AConsoleMinesweeper>(*ActorItr);
 			ConsoleMinesweeper->ResetMinesweeper();
 		}
 	}
+	
+}
+
+bool AMinesweeper::ServerResetMinesweeper_Validate()
+{
+	return true;
+}
+
+void AMinesweeper::ServerResetMinesweeper_Implementation()
+{
+	UE_LOG(LogTest, Warning, TEXT("Je suis dans ServerResetMinesweeper"));
+	int i = 0;
+	//ResetMinesweeper();
 }
 
 void AMinesweeper::ResetMinesweeper()
 {
-	if (Squares.Num() == 0)
+	if (Role < ROLE_Authority)
 	{
-		CreateMinesweeper();
+		UE_LOG(LogTest, Warning, TEXT("Call Server"));
+		ServerResetMinesweeper();
 	}
 	else
 	{
-		for (int i = 0; i < Squares.Num(); ++i)
+		UE_LOG(LogTest, Warning, TEXT("ResetMinesweeper logic from Server"));
+		if (Squares.Num() == 0)
 		{
-			Squares[i]->Destroy();
+			CreateMinesweeper();
 		}
-		Squares.Empty(Squares.Num());
-		CreateMinesweeper();
+		else
+		{
+			for (int i = 0; i < Squares.Num(); ++i)
+			{
+				Squares[i]->Destroy();
+			}
+			Squares.Empty(Squares.Num());
+			CreateMinesweeper();
+		}
 	}
 }
 
 void AMinesweeper::PutMinesRandomly()
 {
+	UE_LOG(LogTest, Warning, TEXT("Je suis dans la fonction PutMinesRandomly"));
 	int iSecret;
 	srand(time(NULL));
 	for (int cpt = 0; cpt < NB_MINES; ++cpt)
@@ -83,6 +108,7 @@ void AMinesweeper::PutMinesRandomly()
 
 void AMinesweeper::CalculateNeighboursUndermined()
 {
+	UE_LOG(LogTest, Warning, TEXT("Je suis dans la fonction CalculateNeighboursUndermined"));
 	//For all MineBox
 	for (int i = 0; i < SIZE; ++i)
 	{
@@ -112,11 +138,6 @@ void AMinesweeper::CalculateNeighboursUndermined()
 				Squares[i]->SetNeighboursUndermined();
 			}
 			
-		}
-		
-		if (Squares[i]->Number != NULL)
-		{
-			Squares[i]->Number->SetText(FString::Printf(TEXT("%d"), Squares[i]->GetNeighboursUndermined()));
 		}
 		
 	}

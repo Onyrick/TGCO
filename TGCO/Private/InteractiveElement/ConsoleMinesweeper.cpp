@@ -12,7 +12,7 @@ AConsoleMinesweeper::AConsoleMinesweeper(const class FObjectInitializer& ObjectI
 	{
 		Minesweeper = (UClass*)ItemBlueprint.Class;
 	}
-	 
+	bReplicates = true;
 }
 
 bool AConsoleMinesweeper::OnInteract()
@@ -23,4 +23,14 @@ bool AConsoleMinesweeper::OnInteract()
 
 void AConsoleMinesweeper::ResetMinesweeper_Implementation()
 {
+}
+
+bool AConsoleMinesweeper::ServerCreateConsoleMinesweeper_Validate()
+{
+	return true;
+}
+
+void AConsoleMinesweeper::ServerCreateConsoleMinesweeper_Implementation()
+{
+	
 }

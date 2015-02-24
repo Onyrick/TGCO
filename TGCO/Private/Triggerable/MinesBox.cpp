@@ -23,6 +23,18 @@ AMinesBox::AMinesBox(const class FObjectInitializer& ObjectInitializer)
 	Number->SetWorldSize(150.0);
 	Number->SetVisibility(false);
 	Number->AttachParent = RootComponent;
+
+	bReplicates = true;
+}
+
+void AMinesBox::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> & OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	// Replicate to everyone
+	DOREPLIFETIME(AMinesBox, iNeighboursUndermined);
+	DOREPLIFETIME(AMinesBox, Number);
+	DOREPLIFETIME(AMinesBox, iNeighboursUndermined);
+	DOREPLIFETIME(AMinesBox, bIsUndermined);
 }
 
 void AMinesBox::OnOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
@@ -50,6 +62,7 @@ void AMinesBox::OnOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent
 
 void AMinesBox::SetIsUndermined()
 {
+	UE_LOG(LogTest, Warning, TEXT("Je suis dans la fonction SetIsUndermined de MineBox"));
 	bIsUndermined = !(bIsUndermined);
 }
 
@@ -96,4 +109,14 @@ unsigned int AMinesBox::GetNeighboursUndermined()
 void AMinesBox::SetVisibilityOfFlag()
 {
 	MineFlag->SetVisibility(!(MineFlag->IsVisible()));
+}
+
+
+void AMinesBox::OnRep_TextRender()
+{
+	if (Number != NULL)
+	{
+		Number->SetText(FString::Printf(TEXT("%d"), iNeighboursUndermined));
+	}
+	
 }

@@ -26,4 +26,7 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "ConsoleMinesweeper")
 		void ResetMinesweeper();
 
+private:
+	UFUNCTION(Server, WithValidation, Reliable)
+		void ServerCreateConsoleMinesweeper();
 };
