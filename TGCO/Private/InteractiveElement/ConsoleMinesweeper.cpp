@@ -1,18 +1,31 @@
 
 
 #include "TGCO.h"
+#include "Runtime/UMG/Public/UMG.h"
+#include "Slate.h"
 #include "ConsoleMinesweeper.h"
 
 
 AConsoleMinesweeper::AConsoleMinesweeper(const class FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer)
 {
-	static ConstructorHelpers::FClassFinder<AMinesweeper> ItemBlueprint(TEXT("/Game/Blueprints/Minesweeper_BP"));
-	if (ItemBlueprint.Class != NULL)
-	{
-		Minesweeper = (UClass*)ItemBlueprint.Class;
-	}
 	bReplicates = true;
+}
+
+void AConsoleMinesweeper::CreateConsoleMinesweeper()
+{
+	if (!(Role < ROLE_Authority))
+	{
+		static ConstructorHelpers::FClassFinder<AMinesweeper> ItemBlueprint(TEXT("/Game/Blueprints/Minesweeper_BP"));
+		if (ItemBlueprint.Class != NULL)
+		{
+			Minesweeper = (UClass*)ItemBlueprint.Class;
+		}
+	}
+	else
+	{
+		ServerCreateConsoleMinesweeper();
+	}
 }
 
 bool AConsoleMinesweeper::OnInteract()
@@ -32,5 +45,5 @@ bool AConsoleMinesweeper::ServerCreateConsoleMinesweeper_Validate()
 
 void AConsoleMinesweeper::ServerCreateConsoleMinesweeper_Implementation()
 {
-	
+	CreateConsoleMinesweeper();
 }

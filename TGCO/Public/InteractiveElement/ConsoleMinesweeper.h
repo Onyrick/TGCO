@@ -4,6 +4,7 @@
 
 #include "InteractiveElement.h"
 #include "Minesweeper.h"
+#include "ConsoleMinesweeperUMG.h"
 #include "ConsoleMinesweeper.generated.h"
 
 /**
@@ -15,6 +16,9 @@ class TGCO_API AConsoleMinesweeper : public AInteractiveElement
 	GENERATED_UCLASS_BODY()
 
 public:
+	UFUNCTION(BlueprintCallable, Category = "ConsoleMinesweeper")
+	void CreateConsoleMinesweeper();
+
 	/** Called when the Player uses the object */
 	UFUNCTION(BlueprintCallable, Category = "InteractiveElement")
 	virtual bool OnInteract() override;
@@ -26,7 +30,11 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "ConsoleMinesweeper")
 		void ResetMinesweeper();
 
+
+
 private:
 	UFUNCTION(Server, WithValidation, Reliable)
 		void ServerCreateConsoleMinesweeper();
+
+	
 };

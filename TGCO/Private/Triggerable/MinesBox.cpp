@@ -53,7 +53,7 @@ void AMinesBox::OnOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent
 
 void AMinesBox::SetIsUndermined()
 {
-	UE_LOG(LogTest, Warning, TEXT("Je suis dans la fonction SetIsUndermined de MineBox"));
+	//UE_LOG(LogTest, Warning, TEXT("Je suis dans la fonction SetIsUndermined de MineBox"));
 	bIsUndermined = !(bIsUndermined);
 }
 
@@ -89,7 +89,7 @@ void AMinesBox::Explode(class AActor* OtherActor)
 
 void AMinesBox::SetNeighboursUndermined()
 {
-	UE_LOG(LogDebug, Warning, TEXT("Set neighbours undermined"));
+	//UE_LOG(LogDebug, Warning, TEXT("Set neighbours undermined"));
 	iNeighboursUndermined += 1;
 	// Object has authority
 	if (!(Role < ROLE_Authority))
