@@ -35,12 +35,18 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Diode")
 	class UStaticMeshComponent* Diode4;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MastermindCamera")
+	ACameraActor* CameraPuzzle;
+
 private:
 	ESolutionType::Type* Solution;
 	void UpdateDiode();
+	void SwitchDiodeOn();
+	void SwitchDiodeOff();
 
 	UMaterialInstanceDynamic *MaterialInstance1;
 	UMaterialInstanceDynamic *MaterialInstance2;
 	UMaterialInstanceDynamic *MaterialInstance3;
 	UMaterialInstanceDynamic *MaterialInstance4;
+	bool bInGame;
 };

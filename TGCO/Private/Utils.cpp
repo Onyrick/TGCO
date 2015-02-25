@@ -9,7 +9,7 @@ TArray<int32> Utils::InitWhithoutDuplication(int32 iSize)
 	TArray<int32> Result = TArray<int32>();
 	for (int i = 0; i < iSize; ++i)
 	{
-		Result[i] = i;
+		Result.Add(i);
 	}
 	return Result;
 }

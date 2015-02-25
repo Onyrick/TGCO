@@ -7,7 +7,8 @@
 #include "MastermindPuzzleConsole.h"
 
 AMastermindPuzzleConsole::AMastermindPuzzleConsole(const FObjectInitializer& ObjectInitializer)
-: Super(ObjectInitializer)
+: Super(ObjectInitializer),
+bInGame(true)
 {
 	Solution = new ESolutionType::Type[4]();
 
@@ -53,10 +54,38 @@ AMastermindPuzzleConsole::AMastermindPuzzleConsole(const FObjectInitializer& Obj
 
 void AMastermindPuzzleConsole::UpdateDiode()
 {
-	MaterialInstance1->SetVectorParameterValue(FName(TEXT("Color")), FColor(226, 230, 93));
-	MaterialInstance2->SetVectorParameterValue(FName(TEXT("Color")), FColor(226, 230, 93));
-	MaterialInstance3->SetVectorParameterValue(FName(TEXT("Color")), FColor(226, 230, 93));
-	MaterialInstance4->SetVectorParameterValue(FName(TEXT("Color")), FColor(226, 230, 93));
+	MaterialInstance1->SetVectorParameterValue(FName(TEXT("Color")), FColor(255, 255, 255));
+	MaterialInstance2->SetVectorParameterValue(FName(TEXT("Color")), FColor(255, 255, 255));
+	MaterialInstance3->SetVectorParameterValue(FName(TEXT("Color")), FColor(255, 255, 255));
+	MaterialInstance4->SetVectorParameterValue(FName(TEXT("Color")), FColor(255, 255, 255));
+
+	Diode1->SetMaterial(0, MaterialInstance1);
+	Diode2->SetMaterial(0, MaterialInstance2);
+	Diode3->SetMaterial(0, MaterialInstance3);
+	Diode4->SetMaterial(0, MaterialInstance4);
+
+}
+
+void AMastermindPuzzleConsole::SwitchDiodeOn()
+{
+	MaterialInstance1->SetVectorParameterValue(FName(TEXT("Color")), FColor(255, 255, 255));
+	MaterialInstance2->SetVectorParameterValue(FName(TEXT("Color")), FColor(255, 255, 255));
+	MaterialInstance3->SetVectorParameterValue(FName(TEXT("Color")), FColor(255, 255, 255));
+	MaterialInstance4->SetVectorParameterValue(FName(TEXT("Color")), FColor(255, 255, 255));
+
+	Diode1->SetMaterial(0, MaterialInstance1);
+	Diode2->SetMaterial(0, MaterialInstance2);
+	Diode3->SetMaterial(0, MaterialInstance3);
+	Diode4->SetMaterial(0, MaterialInstance4);
+
+}
+
+void AMastermindPuzzleConsole::SwitchDiodeOff()
+{
+	MaterialInstance1->SetVectorParameterValue(FName(TEXT("Color")), FColor(0, 0, 0));
+	MaterialInstance2->SetVectorParameterValue(FName(TEXT("Color")), FColor(0, 0, 0));
+	MaterialInstance3->SetVectorParameterValue(FName(TEXT("Color")), FColor(0, 0, 0));
+	MaterialInstance4->SetVectorParameterValue(FName(TEXT("Color")), FColor(0, 0, 0));
 
 	Diode1->SetMaterial(0, MaterialInstance1);
 	Diode2->SetMaterial(0, MaterialInstance2);
@@ -67,23 +96,61 @@ void AMastermindPuzzleConsole::UpdateDiode()
 
 void AMastermindPuzzleConsole::CreatePuzzle()
 {
-	int NbSolution = GetNumberOfSolution();
+	int32 NbSolution = GetNumberOfSolution();
 
 	srand(time(NULL));
 
 	// Init the solution
 	TArray<int> RandomNumber = Utils::InitWhithoutDuplication(NbSolution);
+	UE_LOG(LogTest, Warning, TEXT("Create Puzzle"));
+	UE_LOG(LogTest, Warning, TEXT("Size RandomNumber : %i"), RandomNumber.Num());
 	Utils::Blend(RandomNumber);
 	for (int i = 0; i < 4; ++i)
 	{
 		Solution[i] = GetSolutionFromInt(RandomNumber[i]);
 	}
+	SwitchDiodeOff();
 }
 
 bool AMastermindPuzzleConsole::OnInteract()
 {
 	//TODO
-	UE_LOG(LogTest, Warning, TEXT("Console activate"));
+	UWorld* World = GetWorld();
+	if (World)
+	{
+		APlayerController* PlayerController = World->GetFirstPlayerController();
+		if (PlayerController)
+		{
+			if (bInGame)
+			{
+				PlayerController->SetViewTargetWithBlend(CameraPuzzle, 1.5, EViewTargetBlendFunction::VTBlend_EaseInOut, 1.0, true);
+				EnableInput(PlayerController);
+				PlayerController->SetIgnoreMoveInput(true);
+				PlayerController->SetIgnoreLookInput(true);
+				PlayerController->bShowMouseCursor = true;
+				PlayerController->bEnableClickEvents = true;
+				PlayerController->bEnableMouseOverEvents = true;
+				SwitchDiodeOn();
+				UE_LOG(LogTest, Warning, TEXT("Console activate"));
+				bInGame = false;
+			}
+			else
+			{
+				ACharacter* PlayerCharacter = PlayerController->GetCharacter();
+				PlayerController->SetViewTargetWithBlend(PlayerCharacter, 1.5, EViewTargetBlendFunction::VTBlend_EaseInOut, 1.0, true);
+				DisableInput(PlayerController);
+				PlayerController->SetIgnoreMoveInput(false);
+				PlayerController->SetIgnoreLookInput(false);
+				PlayerController->bShowMouseCursor = false;
+				PlayerController->bEnableClickEvents = false;
+				PlayerController->bEnableMouseOverEvents = false;
+				SwitchDiodeOff();
+				UE_LOG(LogTest, Warning, TEXT("Console desactivate"));
+				bInGame = true;
+
+			}
+		}
+	}
 	return true;
 }
 
