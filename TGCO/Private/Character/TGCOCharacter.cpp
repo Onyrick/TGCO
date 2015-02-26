@@ -4,7 +4,9 @@
 #include "TGCOCharacter.h"
 #include "Projectile.h"
 #include "Engine.h"
+#include "TGCOPlayerState.h"
 #include "TGCOGameState.h"
+#include "TGCOGameMode.h"
 
 #define COLLISION_HIGHLIGHT_TRACE ECC_GameTraceChannel1
 #define COLLISION_INTERACTIVE_TRACE ECC_GameTraceChannel2
@@ -55,6 +57,8 @@ ATGCOCharacter::ATGCOCharacter(const FObjectInitializer& ObjectInitializer)
 
 	PlayerPawn = nullptr;
 	LastSpawn = nullptr;
+
+	SolutionType = ESolutionType::NONE;
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
@@ -174,6 +178,7 @@ void ATGCOCharacter::OnFire()
 			{
 				// spawn the projectile at the muzzle
 				AProjectile* Projectile = World->SpawnActor<AProjectile>(ProjectileClass, SpawnLocation, SpawnRotation);
+				Projectile->SetSolutionType(SolutionType);
 				Projectile->SetMode(WristMode);
 			}
 		}
@@ -262,7 +267,7 @@ void ATGCOCharacter::SetNextWristMode()
 
 void ATGCOCharacter::CancelActionTime()
 {
-	ATGCOPlayerState * PS = Cast<ATGCOPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
+	ATGCOPlayerState* PS = Cast<ATGCOPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
 	PS->SetPropsAffected(NULL);
 
 	UE_LOG(LogDebug, Warning, TEXT("Cancel action time"));
@@ -283,7 +288,7 @@ FTransform ATGCOCharacter::GetCheckpoint() const
 	return LastCheckpoint;
 }
 
-void ATGCOCharacter::SpawnPlayer()
+ATGCOCharacter* const ATGCOCharacter::SpawnPlayer()
 {
 	UE_LOG(LogDebug, Warning, TEXT("Spawn Player"));
 	FVector vLocation = LastCheckpoint.GetLocation();
@@ -318,30 +323,29 @@ void ATGCOCharacter::SpawnPlayer()
 		// Set this Player the current checkpoint 
 		PlayerPawn->LastCheckpoint = this->LastCheckpoint;
 	}
-
-	// Get the player controller
-	APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	if (PC)
-	{
-		// Attach it to the new Character Pawn
-		UE_LOG(LogDebug, Warning, TEXT("PLayerController possess now"));
-		PC->Possess(PlayerPawn);
-		Destroy();
-	}
-}
-
-void ATGCOCharacter::KillPlayerThenRespawn()
-{
-	UE_LOG(LogDebug, Warning, TEXT("Kill Player and respawn"));
-
-	//TODO : kill Player (Play animation etc..)
-	DetachFromControllerPendingDestroy();
-	SpawnPlayer();
+	return PlayerPawn;
 }
 
 void ATGCOCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+
+	UWorld* const World = GetWorld();
+	if (World != NULL)
+	{
+		ATGCOGameMode* GameMode = Cast<ATGCOGameMode>(World->GetAuthGameMode());
+		if (GameMode)
+		{
+			ATGCOGameState* GameState = Cast<ATGCOGameState>(World->GetGameState());
+			if (GameState != NULL)
+			{
+				if (GameState->CheckRemainingEnergy() == false)
+				{
+					GameMode->ServerKillPlayersThenRespawn();
+				}
+			}
+		}
+	}
 
 	if (iNumberOfCloseInteractiveElement <= 0)
 	{
@@ -413,11 +417,6 @@ float ATGCOCharacter::TakeDamage(float fDamageAmount, struct FDamageEvent const 
 
 			// Decrease energy in the GameState
 			GameState->DecreaseEnergy(fDamageAmount);
-			if (GameState->CheckRemainingEnergy() == 0)
-			{
-				KillPlayerThenRespawn();
-				return 0;
-			}
 
 			return fDamageAmount;
 		}
@@ -466,8 +465,21 @@ void ATGCOCharacter::SetInventoryUMG(UInventoryUMG* _widget)
 
 void ATGCOCharacter::PickStockableItem(AStockable* _item)
 {
-	InventoryUMG->AddNewItem(_item);
 	
+
+	InventoryUMG->AddNewItem(_item);
+	TArray<APlayerState*> MyPlayerArray = GetWorld()->GetGameState()->PlayerArray;
+	for (int i = 0; i < MyPlayerArray.Num(); ++i)
+	{
+		ATGCOPlayerState* PlayerState = Cast<ATGCOPlayerState>(MyPlayerArray[i]);
+
+		//UE_LOG(LogTest, Warning, TEXT("State %d Current %d "), PlayerState->GetUniqueID(), this->GetUniqueID());
+		if (PlayerState->GetUniqueID() == this->GetUniqueID())
+		{
+			PlayerState->AddNewInventoryItem(_item);
+			break;
+		}
+	}
 }
 
 void ATGCOCharacter::ToggleInventory()
@@ -485,4 +497,14 @@ void ATGCOCharacter::ToggleInventory()
 		MyController->bShowMouseCursor = true;
 	}
 	
+}
+
+ESolutionType::Type ATGCOCharacter::GetSolutionType()
+{
+	return SolutionType;
+}
+
+void ATGCOCharacter::SetSolutionType(ESolutionType::Type _solution)
+{
+	SolutionType = _solution;
 }

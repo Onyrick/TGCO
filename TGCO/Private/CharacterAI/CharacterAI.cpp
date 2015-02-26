@@ -13,7 +13,11 @@ ACharacterAI::ACharacterAI(const FObjectInitializer& ObjectInitializer)
 
 	AIControllerClass = AControllerAI::StaticClass();
 
-	RootComponent = GetCapsuleComponent();
+	//RootComponent = GetCapsuleComponent();
+	
+	StaticMesh->RegisterComponentWithWorld(GetWorld());
+	StaticMesh->AttachTo(RootComponent);
+	AddOwnedComponent(StaticMesh);
 
 }
 
@@ -22,11 +26,18 @@ AControllerAI* ACharacterAI::GetAIController()
 	return Cast<AControllerAI>(GetController());
 }
 
-void ACharacterAI::Destroy()
+void ACharacterAI::Destroyed()
 {
 	//TODO
-	Super::Destroy();
-	StaticMesh->DestroyComponent();
+	//Super::Destroyed();
+	CapsuleResponseContainer = GetCapsuleComponent()->GetCollisionResponseToChannels();
+	GetCapsuleComponent()->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+	//StaticMesh->DestroyComponent();
+}
+
+void ACharacterAI::RespawnAI()
+{
+	GetCapsuleComponent()->SetCollisionResponseToChannels(CapsuleResponseContainer);
 }
 
 float ACharacterAI::TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser)
@@ -38,7 +49,7 @@ float ACharacterAI::TakeDamage(float DamageAmount, struct FDamageEvent const & D
 void ACharacterAI::ReceiveActorBeginOverlap(AActor* OtherActor)
 {
 	//TODO
-	UE_LOG(LogTest, Warning, TEXT("Receive Actor Begin Overlap"));
+	//UE_LOG(LogTest, Warning, TEXT("Receive Actor Begin Overlap"));
 }
 
 void ACharacterAI::FaceRotation(FRotator NewRotation, float DeltaTime)

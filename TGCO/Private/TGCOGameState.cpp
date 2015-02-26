@@ -9,7 +9,7 @@
 ATGCOGameState::ATGCOGameState(const FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer)
 {
-	iPlayersEnergy = 0;
+	iPlayersEnergy = 500;
 	iMaxPlayersEnergy = 1000;
 	MapUnlockSkills.Add(0, "STOP");
 	MapUnlockSkills.Add(1, "SLOW");

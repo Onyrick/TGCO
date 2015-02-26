@@ -100,10 +100,7 @@ public:
 	FTransform GetCheckpoint() const;
 
 	/** Spawn the Player to the last checkpoint */
-	void SpawnPlayer();
-
-	/** Function called when Player is dead */
-	void KillPlayerThenRespawn();
+	ATGCOCharacter* const SpawnPlayer();
 
 protected:
 	/** APawn interface */
@@ -191,8 +188,15 @@ public:
 	/** Toggle the visibility of the mouse and of the widget */
 	void ToggleInventory();
 
+	UFUNCTION(BlueprintCallable, Category = "SolutionType")
+	ESolutionType::Type GetSolutionType();
+
+	UFUNCTION(BlueprintCallable, Category = "SolutionType")
+	void SetSolutionType(ESolutionType::Type _solution);
+
 protected:
 	/** The UMG Inventory */
 	UInventoryUMG* InventoryUMG;
+	TEnumAsByte<ESolutionType::Type> SolutionType;
 };
 

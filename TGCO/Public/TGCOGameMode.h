@@ -15,6 +15,12 @@ public:
 
 	virtual void StartPlay() override;
 
+	/** Function called when Player is dead */
+	void KillPlayersThenRespawn();
+
+	UFUNCTION(Server, WithValidation, reliable)
+	void ServerKillPlayersThenRespawn();
+
 protected:
 	/** Return game session class to use */
 	virtual TSubclassOf<AGameSession> GetGameSessionClass() const override;
