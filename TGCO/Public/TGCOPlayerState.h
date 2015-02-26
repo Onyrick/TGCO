@@ -40,6 +40,9 @@ public:
 	/** Set the Props affected by time */
 	void SetPropsAffected(AProps* PropsAffected);
 
+	UFUNCTION(BlueprintCallable, Category = "TGCOPlayerState")
+	TArray<AStockable*> GetInventoryListItems();
+
 protected:
 	/** Player number (0 = Maximilien = futur / 1 = Samantha = past */
 	UPROPERTY(Replicated)
