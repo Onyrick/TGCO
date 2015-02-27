@@ -36,7 +36,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Member)
 	AFan * FuturFan;
 
+	UFUNCTION()
+	void OnRep_Activate();
+
 private:
+	UPROPERTY(ReplicatedUsing = OnRep_Activate)
 	bool bIsActive;
 };
 

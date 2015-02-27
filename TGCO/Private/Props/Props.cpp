@@ -45,12 +45,14 @@ float AProps::TakeDamage(float DamageAmount, struct FDamageEvent const & DamageE
 	}
 	else if (ProjectileMode.Equals(TEXT("SLOW"), ESearchCase::IgnoreCase))
 	{
-		newSpeed = fSpeed * 0.5;
+		newSpeed = fInitialSpeed * 0.5;
 	}
 	else if (ProjectileMode.Equals(TEXT("SPEED"), ESearchCase::IgnoreCase))
 	{
-		newSpeed = fSpeed * 2;
-	}
+		newSpeed = fInitialSpeed * 2;
+	} 
+
+	UE_LOG(LogDebug, Warning, TEXT("Newspeed vaut : %f"), newSpeed);
 
 	UpdateSpeedValue(newSpeed);
 
