@@ -11,7 +11,7 @@ AMonstroPlante::AMonstroPlante(const class FObjectInitializer& ObjectInitializer
 	this->fStunTime = 3.f;
 	this->fRespawnTime = 3.f;
 	this->fSpeedHit = 2.f;
-	this->fPower = 2.f;
+	this->fPower = 50.f;
 	this->m_bNeedToAvoid = false;
 
 	AddNewResistenceSolution(ESolutionType::NONE);

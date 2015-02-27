@@ -166,40 +166,46 @@ void ATGCOCharacter::OnFire()
 	// if player is in FireMode
 	if (bShootMode == true)
 	{
-		// try and fire a projectile
-		if (ProjectileClass != NULL)
+		ATGCOGameState* gameState = Cast<ATGCOGameState>(GetWorld()->GetGameState());
+		if (gameState && gameState->GetEnergy() > 20)
 		{
-			const FRotator SpawnRotation = GetControlRotation();
-			// MuzzleOffset is in camera space, so transform it to world space before offsetting from the character location to find the final muzzle position
-			const FVector SpawnLocation = GetActorLocation() + SpawnRotation.RotateVector(GunOffset);
+			gameState->DecreaseEnergy(20);
 
-			UWorld* const World = GetWorld();
-			if (World != NULL)
+			// try and fire a projectile
+			if (ProjectileClass != NULL)
 			{
-				// spawn the projectile at the muzzle
-				AProjectile* Projectile = World->SpawnActor<AProjectile>(ProjectileClass, SpawnLocation, SpawnRotation);
-				Projectile->SetSolutionType(SolutionType);
-				Projectile->SetMode(WristMode);
+				const FRotator SpawnRotation = GetControlRotation();
+				// MuzzleOffset is in camera space, so transform it to world space before offsetting from the character location to find the final muzzle position
+				const FVector SpawnLocation = GetActorLocation() + SpawnRotation.RotateVector(GunOffset);
+
+				UWorld* const World = GetWorld();
+				if (World != NULL)
+				{
+					// spawn the projectile at the muzzle
+					AProjectile* Projectile = World->SpawnActor<AProjectile>(ProjectileClass, SpawnLocation, SpawnRotation);
+					Projectile->SetSolutionType(SolutionType);
+					Projectile->SetMode(WristMode);
+				}
 			}
-		}
 
-		// try and play the sound if specified
-		if (FireSound != NULL)
-		{
-			UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
-		}
-
-		// try and play a firing animation if specified
-		if (FireAnimation != NULL)
-		{
-			/*
-			// Get the animation object for the arms mesh
-			UAnimInstance* AnimInstance = Mesh1P->GetAnimInstance();
-			if (AnimInstance != NULL)
+			// try and play the sound if specified
+			if (FireSound != NULL)
 			{
+				UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
+			}
+
+			// try and play a firing animation if specified
+			if (FireAnimation != NULL)
+			{
+				/*
+				// Get the animation object for the arms mesh
+				UAnimInstance* AnimInstance = Mesh1P->GetAnimInstance();
+				if (AnimInstance != NULL)
+				{
 				AnimInstance->Montage_Play(FireAnimation, 1.f);
+				}
+				*/
 			}
-			*/
 		}
 	}
 }
@@ -333,12 +339,14 @@ void ATGCOCharacter::Tick(float DeltaSeconds)
 	UWorld* const World = GetWorld();
 	if (World != NULL)
 	{
+		//GameMode is only on the server
 		ATGCOGameMode* GameMode = Cast<ATGCOGameMode>(World->GetAuthGameMode());
 		if (GameMode)
 		{
 			ATGCOGameState* GameState = Cast<ATGCOGameState>(World->GetGameState());
 			if (GameState != NULL)
-			{
+			{			
+				GameState->UpdateEnergy();
 				if (GameState->CheckRemainingEnergy() == false)
 				{
 					GameMode->ServerKillPlayersThenRespawn();
