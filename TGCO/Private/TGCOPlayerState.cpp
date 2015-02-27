@@ -65,6 +65,11 @@ void ATGCOPlayerState::RemoveInventoryItem(AStockable* _item)
 	InventoryListItems.Remove(_item);
 }
 
+TArray<AStockable*> ATGCOPlayerState::GetInventoryListItems()
+{
+	return InventoryListItems;
+}
+
 void ATGCOPlayerState::SetPropsAffected(AProps* PropsAffected)
 {
 	if (PropsAffectedByTime)

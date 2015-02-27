@@ -473,10 +473,15 @@ void ATGCOCharacter::SetInventoryUMG(UInventoryUMG* _widget)
 
 void ATGCOCharacter::PickStockableItem(AStockable* _item)
 {
-	
-
 	InventoryUMG->AddNewItem(_item);
-	TArray<APlayerState*> MyPlayerArray = GetWorld()->GetGameState()->PlayerArray;
+	UWorld* World = GetWorld();
+	if (World)
+	{
+		ATGCOPlayerState* PlayerState = Cast<ATGCOPlayerState>(World->GetFirstPlayerController()->PlayerState);
+		PlayerState->AddNewInventoryItem(_item);
+	}
+
+	/*TArray<APlayerState*> MyPlayerArray = GetWorld()->GetGameState()->PlayerArray;
 	for (int i = 0; i < MyPlayerArray.Num(); ++i)
 	{
 		ATGCOPlayerState* PlayerState = Cast<ATGCOPlayerState>(MyPlayerArray[i]);
@@ -487,7 +492,7 @@ void ATGCOCharacter::PickStockableItem(AStockable* _item)
 			PlayerState->AddNewInventoryItem(_item);
 			break;
 		}
-	}
+	}*/
 }
 
 void ATGCOCharacter::ToggleInventory()
