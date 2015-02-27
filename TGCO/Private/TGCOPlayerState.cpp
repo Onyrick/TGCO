@@ -56,11 +56,18 @@ void ATGCOPlayerState::CopyProperties(APlayerState* PlayerState)
 void ATGCOPlayerState::AddNewInventoryItem(AStockable* _item)
 {
 	InventoryListItems.Add(_item);
+	UE_LOG(LogTest, Warning, TEXT("Number of element %d "), InventoryListItems.Num());
+
 }
 
 void ATGCOPlayerState::RemoveInventoryItem(AStockable* _item)
 {
 	InventoryListItems.Remove(_item);
+}
+
+TArray<AStockable*> ATGCOPlayerState::GetInventoryListItems()
+{
+	return InventoryListItems;
 }
 
 void ATGCOPlayerState::SetPropsAffected(AProps* PropsAffected)

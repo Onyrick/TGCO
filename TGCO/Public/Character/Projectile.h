@@ -41,6 +41,11 @@ public:
 	void SetMode(FString _Mode);
 	FString GetProjectileMode();
 
+	ESolutionType::Type GetSolutionType();
+	void SetSolutionType(ESolutionType::Type _solution);
+
 protected:
+	TEnumAsByte<ESolutionType::Type> SolutionType;
 	FString ProjectileMode;
+
 };

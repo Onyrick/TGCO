@@ -22,7 +22,9 @@ public:
 	
 	/** Event launch when the CharacterAI has to be destroyed */
 	UFUNCTION(BlueprintCallable, Category = "CharacterAI")
-	virtual void Destroy();
+	virtual void Destroyed();
+
+	virtual void RespawnAI();
 
 	/** Event launch when the CharacterAI take damage */
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser) override;
@@ -39,4 +41,6 @@ public:
 	/** Function to make the character face a direction */
 	virtual void FaceRotation(FRotator NewRotation, float DeltaTime = 0.f) override;
 
+protected:
+	FCollisionResponseContainer CapsuleResponseContainer;
 };
