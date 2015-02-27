@@ -13,19 +13,14 @@ sDescription("Stockable")
 void AStockable::OnOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	UE_LOG(LogDebug, Warning, TEXT("Begin Overlap Stockable"));
-	//PickStockableItem(this);
 	ATGCOCharacter* PlayerCharacter = Cast<ATGCOCharacter>(OtherActor);
 
 	if (PlayerCharacter != NULL)
 	{
 		PlayerCharacter->PickStockableItem(this);
-		Destroy();
+		StaticMesh->DestroyComponent();
+		TriggerBox->DestroyComponent();
 	}
-}
-
-void AStockable::OnOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
-{
-	UE_LOG(LogDebug, Warning, TEXT("End Overlap Stockable"));
 }
 
 FString AStockable::GetDescription()

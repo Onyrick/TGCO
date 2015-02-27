@@ -481,18 +481,6 @@ void ATGCOCharacter::PickStockableItem(AStockable* _item)
 		PlayerState->AddNewInventoryItem(_item);
 	}
 
-	/*TArray<APlayerState*> MyPlayerArray = GetWorld()->GetGameState()->PlayerArray;
-	for (int i = 0; i < MyPlayerArray.Num(); ++i)
-	{
-		ATGCOPlayerState* PlayerState = Cast<ATGCOPlayerState>(MyPlayerArray[i]);
-
-		//UE_LOG(LogTest, Warning, TEXT("State %d Current %d "), PlayerState->GetUniqueID(), this->GetUniqueID());
-		if (PlayerState->GetUniqueID() == this->GetUniqueID())
-		{
-			PlayerState->AddNewInventoryItem(_item);
-			break;
-		}
-	}*/
 }
 
 void ATGCOCharacter::ToggleInventory()
