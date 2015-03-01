@@ -37,6 +37,7 @@ float AProps::TakeDamage(float DamageAmount, struct FDamageEvent const & DamageE
 	PS->SetPropsAffected(this);
 
 	FString ProjectileMode = Projectile->GetProjectileMode();
+	PS->SetModUsed(ProjectileMode);
 
 	float newSpeed = fSpeed;
 	if (ProjectileMode.Equals(TEXT("STOP"), ESearchCase::IgnoreCase))

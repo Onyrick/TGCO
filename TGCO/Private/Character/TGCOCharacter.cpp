@@ -275,6 +275,7 @@ void ATGCOCharacter::CancelActionTime()
 {
 	ATGCOPlayerState* PS = Cast<ATGCOPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
 	PS->SetPropsAffected(NULL);
+	PS->SetModUsed("");
 
 	UE_LOG(LogDebug, Warning, TEXT("Cancel action time"));
 }
@@ -345,12 +346,60 @@ void ATGCOCharacter::Tick(float DeltaSeconds)
 		{
 			ATGCOGameState* GameState = Cast<ATGCOGameState>(World->GetGameState());
 			if (GameState != NULL)
-			{			
-				GameState->UpdateEnergy();
+			{	
+				ATGCOPlayerState* PS = Cast<ATGCOPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
+				float gameTime = this->GetWorld()->GetTimeSeconds();
+
+				if (PS->IsPropsAffected() && gameTime - fLastRegenTime >= 1.f)
+				{
+					fLastRegenTime = gameTime;
+					if (PS->GetModUsed().Equals(TEXT("STOP"), ESearchCase::IgnoreCase))
+					{
+						if (GameState->GetEnergy() < 20)
+						{
+							PS->SetPropsAffected(NULL);
+							PS->SetModUsed("");
+						}
+						else
+						{
+							GameState->DecreaseEnergy(20);
+						}
+					}
+					else if (PS->GetModUsed().Equals(TEXT("SLOW"), ESearchCase::IgnoreCase))
+					{
+						if (GameState->GetEnergy() < 20)
+						{
+							PS->SetPropsAffected(NULL);
+							PS->SetModUsed("");
+						}
+						else
+						{
+							GameState->DecreaseEnergy(20);
+						}
+					}
+					else if (PS->GetModUsed().Equals(TEXT("SPEED"), ESearchCase::IgnoreCase))
+					{
+						if (GameState->GetEnergy() < 20)
+						{
+							PS->SetPropsAffected(NULL);
+							PS->SetModUsed("");
+						}
+						else
+						{
+							GameState->DecreaseEnergy(20);
+						}
+					}
+				}
+				else
+				{
+					GameState->UpdateEnergy();
+				}
+				
+				
 				if (GameState->CheckRemainingEnergy() == false)
 				{
 					GameMode->ServerKillPlayersThenRespawn();
-				}
+				}				
 			}
 		}
 	}

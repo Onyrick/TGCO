@@ -10,6 +10,7 @@ ATGCOPlayerState::ATGCOPlayerState(const FObjectInitializer& ObjectInitializer)
 	PlayerNumber = 0;
 	bReplicates = true;
 	PropsAffectedByTime = NULL;
+	ModUsedOnProp = "";
 }
 
 int32 ATGCOPlayerState::GetPlayerNumber()
@@ -77,4 +78,19 @@ void ATGCOPlayerState::SetPropsAffected(AProps* PropsAffected)
 		PropsAffectedByTime->ReinitSpeed();
 	}
 	PropsAffectedByTime = PropsAffected;
+}
+
+bool ATGCOPlayerState::IsPropsAffected()
+{
+	return PropsAffectedByTime != NULL;
+}
+
+FString ATGCOPlayerState::GetModUsed()
+{
+	return ModUsedOnProp;
+}
+
+void ATGCOPlayerState::SetModUsed(FString _mod)
+{
+	ModUsedOnProp = _mod;
 }

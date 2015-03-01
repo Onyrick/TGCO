@@ -40,6 +40,15 @@ public:
 	/** Set the Props affected by time */
 	void SetPropsAffected(AProps* PropsAffected);
 
+	/** Test wether a prop is affected */
+	bool IsPropsAffected();
+
+	/** get the mod used on the props */
+	FString GetModUsed();
+
+	/** get the mod used on the props */
+	void SetModUsed(FString _mod);
+
 	UFUNCTION(BlueprintCallable, Category = "TGCOPlayerState")
 	TArray<AStockable*> GetInventoryListItems();
 
@@ -52,4 +61,7 @@ protected:
 
 	/** Pointer to the Props who is affected by time */
 	AProps* PropsAffectedByTime;
+
+	/** Mod Used on this prop */
+	FString ModUsedOnProp;
 };

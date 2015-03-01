@@ -46,7 +46,7 @@ public:
 
 	/** Remove an amount of energy to the total Player's energy*/
 	UFUNCTION(BlueprintCallable, Category = "Players")
-	void DecreaseEnergy(int32 iEnergyAmount);
+	void DecreaseEnergy(int32 iEnergyAmount, bool monsterHit = false);
 
 	UFUNCTION(BlueprintCallable, Category = "Players")
 	void IncreaseEnergyMax(int32 iEnergyAmount);
@@ -71,7 +71,7 @@ private:
 	void ServerAddEnergy(int32 iEnergyAmount);
 
 	UFUNCTION(Server, WithValidation, reliable)
-	void ServerDecreaseEnergy(int32 iEnergyAmount);
+	void ServerDecreaseEnergy(int32 iEnergyAmount, bool monsterHit = false);
 
 	UFUNCTION(Server, WithValidation, reliable)
 	void ServerIncreaseEnergyMax(int32 iEnergyAmount);

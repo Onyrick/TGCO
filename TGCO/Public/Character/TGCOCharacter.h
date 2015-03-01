@@ -173,6 +173,7 @@ private:
 	/** Wrist Mode for Shoot */
 	FString WristMode;
 	int WristModeIndex;
+	int EnergyToDecrease;
 
 public:
 	/** Function to add a stockable item in the inventory*/
@@ -198,5 +199,7 @@ protected:
 	/** The UMG Inventory */
 	UInventoryUMG* InventoryUMG;
 	TEnumAsByte<ESolutionType::Type> SolutionType;
+
+	float fLastRegenTime;
 };
 
