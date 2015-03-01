@@ -36,21 +36,24 @@ float AProps::TakeDamage(float DamageAmount, struct FDamageEvent const & DamageE
 	ATGCOPlayerState * PS = Cast<ATGCOPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
 	PS->SetPropsAffected(this);
 
-	FString ProjectileMode = Projectile->GetProjectileMode();
+	EShootMode::Type ProjectileMode = Projectile->GetProjectileMode();
 	PS->SetModUsed(ProjectileMode);
 
 	float newSpeed = fSpeed;
-	if (ProjectileMode.Equals(TEXT("STOP"), ESearchCase::IgnoreCase))
+
+	switch (ProjectileMode)
 	{
+	case EShootMode::STOP:
 		newSpeed = 0;
-	}
-	else if (ProjectileMode.Equals(TEXT("SLOW"), ESearchCase::IgnoreCase))
-	{
+		break;
+	case EShootMode::SLOW:
 		newSpeed = fSpeed * 0.5;
-	}
-	else if (ProjectileMode.Equals(TEXT("SPEED"), ESearchCase::IgnoreCase))
-	{
+		break;
+	case EShootMode::SPEED:
 		newSpeed = fSpeed * 2;
+		break;
+	default:
+		break;
 	}
 
 	UpdateSpeedValue(newSpeed);

@@ -15,12 +15,12 @@ ATGCOGameState::ATGCOGameState(const FObjectInitializer& ObjectInitializer)
 	fLastRegenTime = 0.f;
 	fRegenTime = 0.1f;
 	fResumeRegenAfterDecrease = 2.5f;
-	MapUnlockSkills.Add(0, "STOP");
-	MapUnlockSkills.Add(1, "SLOW");
-	MapUnlockSkills.Add(2, "SPEED");
+	MapUnlockSkills.Add(0, EShootMode::STOP);
+	MapUnlockSkills.Add(1, EShootMode::SLOW);
+	MapUnlockSkills.Add(2, EShootMode::SPEED);
 }
 
-const TMap<int, FString>& ATGCOGameState::GetUnlockSkills()
+const TMap<int, EShootMode::Type>& ATGCOGameState::GetUnlockSkills()
 {
 	return MapUnlockSkills;
 }
@@ -32,6 +32,7 @@ void ATGCOGameState::UpdateEnergy()
 	{
 		iPlayersEnergy = FMath::Min(iMaxPlayersEnergy, iPlayersEnergy + iPlayersEnergyIncrement);
 		fLastRegenTime = gameTime;
+		UE_LOG(LogTest, Warning, TEXT("Energy : %d"), iPlayersEnergy);
 	}
 	
 }

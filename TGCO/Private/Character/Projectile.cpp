@@ -76,12 +76,12 @@ void AProjectile::SetSolutionType(ESolutionType::Type _solution)
 	SolutionType = _solution;
 }
 
-void AProjectile::SetMode(FString _Mode)
+void AProjectile::SetMode(EShootMode::Type _Mode)
 {
 	ProjectileMode = _Mode;
 }
 
-FString AProjectile::GetProjectileMode()
+EShootMode::Type AProjectile::GetProjectileMode()
 {
 	return ProjectileMode;
 }

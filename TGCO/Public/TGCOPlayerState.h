@@ -4,6 +4,7 @@
 
 #include "GameFramework/PlayerState.h"
 #include "Stockable.h"
+#include "ShootMode.h"
 #include "TGCOPlayerState.generated.h"
 
 /**
@@ -44,10 +45,10 @@ public:
 	bool IsPropsAffected();
 
 	/** get the mod used on the props */
-	FString GetModUsed();
+	EShootMode::Type GetModUsed();
 
 	/** get the mod used on the props */
-	void SetModUsed(FString _mod);
+	void SetModUsed(EShootMode::Type _mod);
 
 	UFUNCTION(BlueprintCallable, Category = "TGCOPlayerState")
 	TArray<AStockable*> GetInventoryListItems();
@@ -63,5 +64,5 @@ protected:
 	AProps* PropsAffectedByTime;
 
 	/** Mod Used on this prop */
-	FString ModUsedOnProp;
+	EShootMode::Type ModUsedOnProp;
 };

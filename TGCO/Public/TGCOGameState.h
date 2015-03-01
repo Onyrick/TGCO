@@ -6,6 +6,7 @@
 #include <ctime>
 
 #include "GameFramework/GameState.h"
+#include "ShootMode.h"
 #include "TGCOGameState.generated.h"
 
 /**
@@ -34,7 +35,7 @@ private:
 
 public:
 	/** Get skills unlock by players */
-	const TMap<int, FString>& GetUnlockSkills();
+	const TMap<int, EShootMode::Type>& GetUnlockSkills();
 
 	/** Add an amount of energy to the total Player's energy */
 	UFUNCTION(BlueprintCallable, Category = "Players")
@@ -81,7 +82,7 @@ private:
 	void MulticastAddEnergy(int32 iEnergyAmount);
 	*/
 	/** Array that contains the skill that the Player unlock */
-	TMap<int, FString> MapUnlockSkills;
+	TMap<int, EShootMode::Type> MapUnlockSkills;
 
 };
 
