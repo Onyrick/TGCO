@@ -49,7 +49,7 @@ ATGCOCharacter::ATGCOCharacter(const FObjectInitializer& ObjectInitializer)
 	GetCharacterMovement()->MaxWalkSpeed = 400;
 
 	bShootMode = true;
-	WristMode = "STOP";
+	WristMode = EShootMode::STOP;
 	WristModeIndex = 0;
 
 	PreviousInteractiveElement = nullptr;
@@ -166,40 +166,46 @@ void ATGCOCharacter::OnFire()
 	// if player is in FireMode
 	if (bShootMode == true)
 	{
-		// try and fire a projectile
-		if (ProjectileClass != NULL)
+		ATGCOGameState* gameState = Cast<ATGCOGameState>(GetWorld()->GetGameState());
+		if (gameState && gameState->GetEnergy() > 20)
 		{
-			const FRotator SpawnRotation = GetControlRotation();
-			// MuzzleOffset is in camera space, so transform it to world space before offsetting from the character location to find the final muzzle position
-			const FVector SpawnLocation = GetActorLocation() + SpawnRotation.RotateVector(GunOffset);
+			gameState->DecreaseEnergy(20);
 
-			UWorld* const World = GetWorld();
-			if (World != NULL)
+			// try and fire a projectile
+			if (ProjectileClass != NULL)
 			{
-				// spawn the projectile at the muzzle
-				AProjectile* Projectile = World->SpawnActor<AProjectile>(ProjectileClass, SpawnLocation, SpawnRotation);
-				Projectile->SetSolutionType(SolutionType);
-				Projectile->SetMode(WristMode);
+				const FRotator SpawnRotation = GetControlRotation();
+				// MuzzleOffset is in camera space, so transform it to world space before offsetting from the character location to find the final muzzle position
+				const FVector SpawnLocation = GetActorLocation() + SpawnRotation.RotateVector(GunOffset);
+
+				UWorld* const World = GetWorld();
+				if (World != NULL)
+				{
+					// spawn the projectile at the muzzle
+					AProjectile* Projectile = World->SpawnActor<AProjectile>(ProjectileClass, SpawnLocation, SpawnRotation);
+					Projectile->SetSolutionType(SolutionType);
+					Projectile->SetMode(WristMode);
+				}
 			}
-		}
 
-		// try and play the sound if specified
-		if (FireSound != NULL)
-		{
-			UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
-		}
-
-		// try and play a firing animation if specified
-		if (FireAnimation != NULL)
-		{
-			/*
-			// Get the animation object for the arms mesh
-			UAnimInstance* AnimInstance = Mesh1P->GetAnimInstance();
-			if (AnimInstance != NULL)
+			// try and play the sound if specified
+			if (FireSound != NULL)
 			{
+				UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
+			}
+
+			// try and play a firing animation if specified
+			if (FireAnimation != NULL)
+			{
+				/*
+				// Get the animation object for the arms mesh
+				UAnimInstance* AnimInstance = Mesh1P->GetAnimInstance();
+				if (AnimInstance != NULL)
+				{
 				AnimInstance->Montage_Play(FireAnimation, 1.f);
+				}
+				*/
 			}
-			*/
 		}
 	}
 }
@@ -236,7 +242,7 @@ void ATGCOCharacter::Use()
 void ATGCOCharacter::SetPreviousWristMode()
 {
 	ATGCOGameState * GS = Cast<ATGCOGameState>(GetWorld()->GetGameState());
-	const TMap<int, FString>& UnlockSkills = GS->GetUnlockSkills();
+	const TMap<int, EShootMode::Type>& UnlockSkills = GS->GetUnlockSkills();
 
 	int lengthMap = UnlockSkills.Num();
 
@@ -248,13 +254,13 @@ void ATGCOCharacter::SetPreviousWristMode()
 
 	WristMode = UnlockSkills[WristModeIndex];
 
-	UE_LOG(LogDebug, Warning, TEXT("Previous : %s"), *WristMode);
+	UE_LOG(LogDebug, Warning, TEXT("Previous : %s"), *GetNameOfTheMode(WristMode));
 }
 
 void ATGCOCharacter::SetNextWristMode()
 {
 	ATGCOGameState * GS = Cast<ATGCOGameState>(GetWorld()->GetGameState());
-	const TMap<int, FString>& UnlockSkills = GS->GetUnlockSkills();
+	const TMap<int, EShootMode::Type>& UnlockSkills = GS->GetUnlockSkills();
 
 	int lengthMap = UnlockSkills.Num();
 
@@ -262,13 +268,14 @@ void ATGCOCharacter::SetNextWristMode()
 
 	WristMode = UnlockSkills[WristModeIndex];
 
-	UE_LOG(LogDebug, Warning, TEXT("Next : %s"), *WristMode);
+	UE_LOG(LogDebug, Warning, TEXT("Next : %s"), *GetNameOfTheMode(WristMode));
 }
 
 void ATGCOCharacter::CancelActionTime()
 {
 	ATGCOPlayerState* PS = Cast<ATGCOPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
 	PS->SetPropsAffected(NULL);
+	PS->SetModUsed(EShootMode::NONE);
 
 	UE_LOG(LogDebug, Warning, TEXT("Cancel action time"));
 }
@@ -333,16 +340,40 @@ void ATGCOCharacter::Tick(float DeltaSeconds)
 	UWorld* const World = GetWorld();
 	if (World != NULL)
 	{
+		//GameMode is only on the server
 		ATGCOGameMode* GameMode = Cast<ATGCOGameMode>(World->GetAuthGameMode());
 		if (GameMode)
 		{
 			ATGCOGameState* GameState = Cast<ATGCOGameState>(World->GetGameState());
 			if (GameState != NULL)
-			{
+			{	
+				ATGCOPlayerState* PS = Cast<ATGCOPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
+				float gameTime = this->GetWorld()->GetTimeSeconds();
+
+				if (PS->GetModUsed() != EShootMode::NONE && gameTime - fLastRegenTime >= 1.f)
+				{
+					fLastRegenTime = gameTime;
+					
+					if (GameState->GetEnergy() == 1)
+					{
+						PS->SetPropsAffected(NULL);
+						PS->SetModUsed(EShootMode::NONE);
+					}
+					else
+					{
+						GameState->DecreaseEnergy(GetEnergyConsuming(PS->GetModUsed()));
+					}
+				}
+				else
+				{
+					GameState->UpdateEnergy();
+				}
+				
+				
 				if (GameState->CheckRemainingEnergy() == false)
 				{
 					GameMode->ServerKillPlayersThenRespawn();
-				}
+				}				
 			}
 		}
 	}
@@ -465,21 +496,14 @@ void ATGCOCharacter::SetInventoryUMG(UInventoryUMG* _widget)
 
 void ATGCOCharacter::PickStockableItem(AStockable* _item)
 {
-	
-
 	InventoryUMG->AddNewItem(_item);
-	TArray<APlayerState*> MyPlayerArray = GetWorld()->GetGameState()->PlayerArray;
-	for (int i = 0; i < MyPlayerArray.Num(); ++i)
+	UWorld* World = GetWorld();
+	if (World)
 	{
-		ATGCOPlayerState* PlayerState = Cast<ATGCOPlayerState>(MyPlayerArray[i]);
-
-		//UE_LOG(LogTest, Warning, TEXT("State %d Current %d "), PlayerState->GetUniqueID(), this->GetUniqueID());
-		if (PlayerState->GetUniqueID() == this->GetUniqueID())
-		{
-			PlayerState->AddNewInventoryItem(_item);
-			break;
-		}
+		ATGCOPlayerState* PlayerState = Cast<ATGCOPlayerState>(World->GetFirstPlayerController()->PlayerState);
+		PlayerState->AddNewInventoryItem(_item);
 	}
+
 }
 
 void ATGCOCharacter::ToggleInventory()

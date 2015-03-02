@@ -21,9 +21,6 @@ public:
 	/** When the Player enters the area where he can use an object, this interactive element receives OnComponentBeginOverlap. */
 	virtual void OnOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
 
-	/** When the Player leaves the area where he can use an object, this interactive element receives OnComponentEndOverlap. */
-	virtual void OnOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
-
 	/** Getter */
 	UFUNCTION(BlueprintCallable, Category = "Stockable")
 	virtual FString GetDescription();

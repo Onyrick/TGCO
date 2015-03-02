@@ -33,11 +33,11 @@ void AEnergyCell::OnOverlapEnd(class AActor* OtherActor, class UPrimitiveCompone
 
 void AEnergyCell::Consumed()
 {
-	ATGCOGameState* gameState = Cast<ATGCOGameState>(GetWorld()->GetGameState());
-	if (gameState)
-	{
-		gameState->AddEnergy(iAmountOfEnergy);
-	}
+ 	ATGCOGameState* gameState = Cast<ATGCOGameState>(GetWorld()->GetGameState());
+ 	if (gameState)
+ 	{
+ 		gameState->IncreaseEnergyMax(iAmountOfEnergy);
+ 	}
 
 	if (Destroy(true, false))
 	{
