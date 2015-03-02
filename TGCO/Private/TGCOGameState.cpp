@@ -32,7 +32,6 @@ void ATGCOGameState::UpdateEnergy()
 	{
 		iPlayersEnergy = FMath::Min(iMaxPlayersEnergy, iPlayersEnergy + iPlayersEnergyIncrement);
 		fLastRegenTime = gameTime;
-		UE_LOG(LogTest, Warning, TEXT("Energy : %d"), iPlayersEnergy);
 	}
 	
 }
@@ -96,7 +95,7 @@ void ATGCOGameState::DecreaseEnergy(int32 iEnergyAmount, bool monsterHit)
 
 		iPlayersEnergy = FMath::Max(0, iPlayersEnergy - iEnergyAmount);
 
-		if (iPlayersEnergy == 0 && monsterHit == false)
+		if (iPlayersEnergy <= 0 && monsterHit == false)
 		{
 			iPlayersEnergy = 1;
 		}
