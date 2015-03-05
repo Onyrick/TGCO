@@ -40,6 +40,12 @@ public:
 	UFUNCTION(Server, WithValidation, Reliable)
 	void ServerUpdateSpeedValueOnProps(class AProps* Props, float fValue);
 	
+	/**
+	* Function that change the activate state on a specific LightningBarrier
+	* Call on server by client
+	*
+	* @param	LightningBarrier	LightningBarrier for updating State
+	*/
 	UFUNCTION(Server, WithValidation, Reliable)
 	void ServerChangeActiveStateOnBarrier(class ALightningBarrier* LightningBarrier, bool bValue);
 
