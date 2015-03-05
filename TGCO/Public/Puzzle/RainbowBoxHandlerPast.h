@@ -7,9 +7,7 @@
 #include "RainbowBox.h"
 #include "RainbowBoxHandlerPast.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class TGCO_API ARainbowBoxHandlerPast : public AActor
 {
@@ -28,7 +26,7 @@ public:
 	/** Hide all rainbow box of the color of the passed box color except those passed*/
 	void HideAllExcepted(ARainbowBox* StayRainbowBox);
 
-	/** Content all the rainbow box */
+	/** Contain all the rainbow box */
 	TArray< ARainbowBox* > Squares;
 	TSubclassOf<class ARainbowBox> RainbowBoxBP;
 
