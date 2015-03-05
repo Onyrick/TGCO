@@ -35,7 +35,7 @@ void AProjectile::InitVelocity(const FVector& ShootDirection)
 {
 	if (ProjectileMovement)
 	{
-		// set the projectile's velocity to the desired direction
+		// Set the projectile's velocity to the desired direction
 		ProjectileMovement->Velocity = ShootDirection * ProjectileMovement->InitialSpeed;
 	}
 }

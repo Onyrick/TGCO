@@ -6,15 +6,15 @@
 #include "GameFramework/Actor.h"
 #include "RainbowBox.h"
 #include "RainbowBoxColor.h"
-#include "RainbowBoxHandlerFutur.generated.h"
+#include "RainbowBoxHandlerFuture.generated.h"
 
 UCLASS()
-class TGCO_API ARainbowBoxHandlerFutur : public AActor
+class TGCO_API ARainbowBoxHandlerFuture : public AActor
 {
 	GENERATED_BODY()
 	
 public:
-	ARainbowBoxHandlerFutur(const FObjectInitializer& ObjectInitializer);
+	ARainbowBoxHandlerFuture(const FObjectInitializer& ObjectInitializer);
 
 	/** Create the RainbowBoxHandler */
 	UFUNCTION(BlueprintCallable, Category = "Rainbow")

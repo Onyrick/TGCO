@@ -8,18 +8,22 @@
 #include "TGCOPlayerState.generated.h"
 
 /**
- * 
+ * A PlayerState is created for every player on a server (or in a standalone game). 
+ * PlayerStates are replicated to all clients, and contain network game relevant information about the player, such as playername, score, etc.
  */
 UCLASS()
 class TGCO_API ATGCOPlayerState : public APlayerState
 {
 	GENERATED_BODY()
 public:
+	/** Constructors */
 	ATGCOPlayerState(const FObjectInitializer& ObjectInitializer);
 
-	/** Return PlayerNumber 
-	* @return PlayerNumber number of the player
-	*/
+	/** 
+	 * Return PlayerNumber 
+	 *
+	 * @return PlayerNumber number of the player
+	 */
 	UFUNCTION(BlueprintCallable, Category = "Online")
 	int32 GetPlayerNumber();
 
@@ -27,34 +31,34 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Online")
 	void SetPlayerNumber(int32 NewPlayerNumber);
 
-	/** Set PlayerNumber from server */
+	/** Set PlayerNumber from client on server */
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable, Category = "Online")
 	void ServerSetPlayerNumber(int32 NewPlayerNumber);
 
 	/** Copy properties which need to be saved in inactive PlayerState */
 	virtual void CopyProperties(APlayerState* PlayerState) override;
 
-	/** Add and Remove Item*/
+	/** Add and Remove Item to inventory */
 	void AddNewInventoryItem(AStockable* _item);
 	void RemoveInventoryItem(AStockable* _item);
 
 	/** Set the Props affected by time */
 	void SetPropsAffected(AProps* PropsAffected);
 
-	/** Test wether a prop is affected */
+	/** Test whether a Props is affected */
 	bool IsPropsAffected();
 
-	/** get the mod used on the props */
+	/** Get the mod used on the Props */
 	EShootMode::Type GetModUsed();
 
-	/** get the mod used on the props */
+	/** Set the mod used on the Props */
 	void SetModUsed(EShootMode::Type _mod);
 
 	UFUNCTION(BlueprintCallable, Category = "TGCOPlayerState")
 	TArray<AStockable*> GetInventoryListItems();
 
 protected:
-	/** Player number (0 = Maximilien = futur / 1 = Samantha = past */
+	/** Player number (0 = Maximilien = future / 1 = Samantha = past */
 	UPROPERTY(Replicated)
 	int32 PlayerNumber;
 	

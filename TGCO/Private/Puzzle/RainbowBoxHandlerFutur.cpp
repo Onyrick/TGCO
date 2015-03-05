@@ -2,9 +2,9 @@
 #include "TGCO.h"
 #include "TGCOGameState.h"
 #include "Net/UnrealNetwork.h"
-#include "RainbowBoxHandlerFutur.h"
+#include "RainbowBoxHandlerFuture.h"
 
-ARainbowBoxHandlerFutur::ARainbowBoxHandlerFutur(const FObjectInitializer& ObjectInitializer)
+ARainbowBoxHandlerFuture::ARainbowBoxHandlerFuture(const FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer)
 {
 	static ConstructorHelpers::FClassFinder<ARainbowBox> ItemBlueprint(TEXT("/Game/Blueprints/RainbowBox_BP"));
@@ -17,7 +17,7 @@ ARainbowBoxHandlerFutur::ARainbowBoxHandlerFutur(const FObjectInitializer& Objec
 	bReplicates = true;
 }
 
-void ARainbowBoxHandlerFutur::CreateRainbowBoxHandler()
+void ARainbowBoxHandlerFuture::CreateRainbowBoxHandler()
 {
 	if (Role < ROLE_Authority)
 	{
@@ -26,7 +26,7 @@ void ARainbowBoxHandlerFutur::CreateRainbowBoxHandler()
 	}
 	else
 	{
-		UE_LOG(LogTest, Warning, TEXT("In futur"));
+		UE_LOG(LogTest, Warning, TEXT("In future"));
 		UWorld* const World = GetWorld();
 		if (World != NULL)
 		{
@@ -77,22 +77,22 @@ void ARainbowBoxHandlerFutur::CreateRainbowBoxHandler()
 	}
 }
 
-bool ARainbowBoxHandlerFutur::ServerCreateRainbowBoxHandler_Validate()
+bool ARainbowBoxHandlerFuture::ServerCreateRainbowBoxHandler_Validate()
 {
 	return true;
 }
 
-void ARainbowBoxHandlerFutur::ServerCreateRainbowBoxHandler_Implementation()
+void ARainbowBoxHandlerFuture::ServerCreateRainbowBoxHandler_Implementation()
 {
 	CreateRainbowBoxHandler();
 }
 
-void ARainbowBoxHandlerFutur::DeleteRainbow()
+void ARainbowBoxHandlerFuture::DeleteRainbow()
 {
 	Squares.Empty();
 }
 
-void ARainbowBoxHandlerFutur::HideAllOfThisColor(ERainbowBoxColor::Color HideColor)
+void ARainbowBoxHandlerFuture::HideAllOfThisColor(ERainbowBoxColor::Color HideColor)
 {
 	for (int i = 0; i < Squares.Num(); ++i)
 	{
@@ -133,7 +133,7 @@ void ARainbowBoxHandlerFutur::HideAllOfThisColor(ERainbowBoxColor::Color HideCol
 	}
 }
 
-void ARainbowBoxHandlerFutur::HideAllExcepted(ARainbowBox* StayRainbowBox)
+void ARainbowBoxHandlerFuture::HideAllExcepted(ARainbowBox* StayRainbowBox)
 {
 	MustStayRainbowBox = StayRainbowBox;
 	for (int i = 0; i < Squares.Num(); ++i)

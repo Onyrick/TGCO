@@ -5,6 +5,7 @@
 #include "Stockable.h"
 #include "InventoryUMG.h"
 #include "ShootMode.h"
+#include "SolutionType.h"
 #include "TGCOCharacter.generated.h"
 
 /**
@@ -132,9 +133,6 @@ public:
 	void IncreaseNumberOfCloseInteractiveElement();
 	/** Decrease the iNumberOfCloseInteractiveElement */
 	void DecreaseNumberOfCloseInteractiveElement();
-
-	bool IsInsideElevator();
-	void SetInsideElevator();
 
 private:
 	/** Activates the protection of the Character. When active the Character can't die but loose some energy.

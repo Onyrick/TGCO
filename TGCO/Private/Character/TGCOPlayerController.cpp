@@ -80,7 +80,7 @@ void ATGCOPlayerController::ServerUpdateSpeedValueOnProps_Implementation(class A
 	}
 }
 
-void ATGCOPlayerController::ClientAffectSpeedOnFuturFan_Implementation(class AFan* Fan, float _fSpeed)
+void ATGCOPlayerController::ClientAffectSpeedOnFutureFan_Implementation(class AFan* Fan, float _fSpeed)
 {
 	Fan->RotatingMovement->RotationRate = FRotator(0.f, 0.f, _fSpeed);
 	if (Fan->RadialForce)
