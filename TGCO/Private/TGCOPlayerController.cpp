@@ -80,6 +80,19 @@ void ATGCOPlayerController::ServerUpdateSpeedValueOnProps_Implementation(class A
 	}
 }
 
+bool ATGCOPlayerController::ServerUpdateVisibilityOnMesh_Validate(class UStaticMeshComponent* Mesh)
+{
+	return true;
+}
+
+void ATGCOPlayerController::ServerUpdateVisibilityOnMesh_Implementation(class UStaticMeshComponent* Mesh)
+{
+	if (Mesh)
+	{
+		Mesh->SetVisibility(!(Mesh->IsVisible()));
+	}
+}
+
 void ATGCOPlayerController::ClientAffectSpeedOnFuturFan_Implementation(class AFan* Fan, float _fSpeed)
 {
 	Fan->RotatingMovement->RotationRate = FRotator(0.f, 0.f, _fSpeed);

@@ -37,6 +37,10 @@ public:
 
 	/** Set the visibility of the flag */
 	UFUNCTION(BlueprintCallable, Category = "MineBox")
+	void SetIsMarked();
+
+	/** Set the visibility of the flag */
+	UFUNCTION(BlueprintCallable, Category = "MineBox")
 	void SetVisibilityOfFlag();
 
 	/** The Text Render representing the number of Neighbours which are undermined */
@@ -52,6 +56,9 @@ protected:
 	UPROPERTY(Transient, Replicated)
 	bool bIsUndermined;
 
+	UPROPERTY(Transient, ReplicatedUsing = OnRep_Flag)
+	bool bIsMarked;
+
 	/** The number of neighbourgs which are undermined. */
 	UPROPERTY(Transient, ReplicatedUsing = OnRep_TextRender)
 	int32 iNeighboursUndermined;
@@ -64,4 +71,7 @@ protected:
 
 	UFUNCTION()
 	void OnRep_TextRender();
+
+	UFUNCTION()
+	void OnRep_Flag();
 };

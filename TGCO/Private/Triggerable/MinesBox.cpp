@@ -3,6 +3,7 @@
 #include "TGCO.h"
 #include "Net/UnrealNetwork.h"
 #include "TGCOGameState.h"
+#include "TGCOPlayerController.h"
 #include "TGCOCharacter.h"
 #include "Minesweeper.h"
 #include "MinesBox.h"
@@ -103,10 +104,34 @@ unsigned int AMinesBox::GetNeighboursUndermined()
 	return iNeighboursUndermined;
 }
 
+void AMinesBox::SetIsMarked()
+{
+	bIsMarked = !bIsMarked;
+	if (!(Role < ROLE_Authority))
+	{
+		SetVisibilityOfFlag();
+	}
+}
+
 void AMinesBox::SetVisibilityOfFlag()
 {
-	MineFlag->SetVisibility(!(MineFlag->IsVisible()));
+	/*if (Role < ROLE_Authority)
+	{
+		UE_LOG(LogDebug, Warning, TEXT("No authority : call ServerSetFlagVisibility"));
+		ATGCOPlayerController * PC;
+		for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
+		{
+			PC = Cast<ATGCOPlayerController>(Iterator->Get());
+			PC->ServerUpdateVisibilityOnMesh(MineFlag);
+		}
+	}
+	else
+	{*/
+		UE_LOG(LogDebug, Warning, TEXT("Authority : Set the visibility of flag"));
+		MineFlag->SetVisibility(!(MineFlag->IsVisible()));
+	//}
 }
+
 
 
 void AMinesBox::OnRep_TextRender()
@@ -116,6 +141,15 @@ void AMinesBox::OnRep_TextRender()
 		Number->SetText(FString::Printf(TEXT("%d"), iNeighboursUndermined));
 	}
 	
+}
+
+void AMinesBox::OnRep_Flag()
+{
+	UE_LOG(LogDebug, Warning, TEXT("i'm on OnRep_Flag"));
+	if (MineFlag != NULL)
+	{
+		MineFlag->SetVisibility(!(MineFlag->IsVisible()));
+	}
 }
 
 void AMinesBox::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> & OutLifetimeProps) const

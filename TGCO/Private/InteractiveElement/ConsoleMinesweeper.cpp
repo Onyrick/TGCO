@@ -1,8 +1,7 @@
 
 
 #include "TGCO.h"
-#include "Runtime/UMG/Public/UMG.h"
-#include "SlateBasics.h"
+#include "TGCOPlayerController.h"
 #include "ConsoleMinesweeper.h"
 
 
@@ -12,48 +11,41 @@ AConsoleMinesweeper::AConsoleMinesweeper(const class FObjectInitializer& ObjectI
 	bReplicates = true;
 }
 
-bool AConsoleMinesweeper::ServerCreateConsoleMinesweeper_Validate()
-{
-	return true;
-}
-
-void AConsoleMinesweeper::ServerCreateConsoleMinesweeper_Implementation()
-{
-	UE_LOG(LogTest, Warning, TEXT("Je suis dans ServerCreateConsoleMinesweeper"));
-	CreateConsoleMinesweeper();
-}
 
 void AConsoleMinesweeper::CreateConsoleMinesweeper()
 {
-	if (Role < ROLE_Authority)
+	for (TActorIterator<AActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+	{
+		if (ActorItr->GetName().Contains("Minesweeper_Futur") && ActorItr->GetActorClass()->GetDescription() == FString(TEXT("Minesweeper BP")))
+		{
+			AMinesweeper* _Minesweeper = Cast<AMinesweeper>(*ActorItr);
+			Minesweeper = _Minesweeper;
+		}
+	}
+
+	/*if (Role < ROLE_Authority)
 	{
 		UE_LOG(LogTest, Warning, TEXT("Pas autorité, appel de ServerCreateConsoleMinesweeper"));
-		ServerCreateConsoleMinesweeper();
-		UE_LOG(LogTest, Warning, TEXT("Post appel de ServerCreateConsoleMinesweeper"));	
+		ATGCOPlayerController * PC;
+		for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
+		{
+			PC = Cast<ATGCOPlayerController>(Iterator->Get());
+			Console = PC->ServerCreateConsoleMinesweeper();
+		}
+		
 	}
 	else
 	{
 		UE_LOG(LogTest, Warning, TEXT("autorité, Create Console Minesweeper"));
-		for (TActorIterator<AActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
-		{
-			if (ActorItr->GetName().Contains("Minesweeper_Futur") && ActorItr->GetActorClass()->GetDescription() == FString(TEXT("Minesweeper BP")))
-			{
-				AMinesweeper* _Minesweeper = Cast<AMinesweeper>(*ActorItr);
-				Minesweeper = _Minesweeper->GetClass();
-			}
-		}
-		UE_LOG(LogTest, Warning, TEXT("Hello !!!"));
-
+		
 		/*for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
 		{
 			UE_LOG(LogTest, Warning, TEXT("Create Console Minesweeper Widget"));
 			APlayerController* player = Cast<APlayerController>(*Iterator);
 			Console = CreateWidget<UConsoleMinesweeperUMG>(player, Console->GetClass());
 			break;
-		}*/
-		
-		
-	}
+		}		
+	}*/
 }
 
 bool AConsoleMinesweeper::OnInteract()
@@ -64,6 +56,21 @@ bool AConsoleMinesweeper::OnInteract()
 
 void AConsoleMinesweeper::ResetMinesweeper_Implementation()
 {
+	UE_LOG(LogTest, Warning, TEXT("Je suis dans ResetMinesweeper"));
+	for (TActorIterator<AActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+	{
+		if (ActorItr->GetName().Contains("Minesweeper_Futur") && ActorItr->GetActorClass()->GetDescription() == FString(TEXT("Minesweeper BP")))
+		{
+			AMinesweeper* _Minesweeper = Cast<AMinesweeper>(*ActorItr);
+			Minesweeper = _Minesweeper;
+		}
+	}
+}
+
+void AConsoleMinesweeper::OnRep_Minesweeper()
+{
+	UE_LOG(LogTest, Warning, TEXT("Je suis dans OnRep_Minesweeper"));
+	Minesweeper->GetMineBoxAt(0)->SetVisibilityOfFlag();
 }
 
 void AConsoleMinesweeper::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> & OutLifetimeProps) const

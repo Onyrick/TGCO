@@ -24,18 +24,18 @@ public:
 	virtual bool OnInteract() override;
 
 	/** The minesweeper the console will manage */
-	UPROPERTY(EditAnywhere, Transient, Replicated, Category = "ConsoleMinesweeper")
-		TSubclassOf<class AMinesweeper> Minesweeper;
+	UPROPERTY(EditAnywhere, Transient, ReplicatedUsing = OnRep_Minesweeper, Category = "ConsoleMinesweeper")
+	AMinesweeper* Minesweeper;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "ConsoleMinesweeper")
-		UConsoleMinesweeperUMG* Console;
+	/*UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "ConsoleMinesweeper")
+		UConsoleMinesweeperUMG* Console;*/
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "ConsoleMinesweeper")
 		void ResetMinesweeper();
 
-private:
-	UFUNCTION(Server, WithValidation, Reliable)
-		void ServerCreateConsoleMinesweeper();
+protected:
+	UFUNCTION()
+	void OnRep_Minesweeper();
 
 	
 };
