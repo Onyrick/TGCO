@@ -91,7 +91,7 @@ void AProps::OnRep_Speed()
 
 void AProps::UpdateSpeed()
 {
-	unimplemented();
+	//unimplemented();
 }
 
 void AProps::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> & OutLifetimeProps) const
