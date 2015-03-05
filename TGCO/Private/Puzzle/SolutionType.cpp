@@ -16,10 +16,33 @@ FString GetNameOfTheSolution(const ESolutionType::Type SolutionType)
 		case ESolutionType::INFLAMMABLE_PRODUCT:	return TEXT("Inflammable product");
 		case ESolutionType::FROZEN_PRODUCT:			return TEXT("Frozen product");
 		case ESolutionType::NITROGLYCERINE:			return TEXT("Nitroglycerine");
-		case ESolutionType::RIGIDIFY:			return TEXT("Rigidify");
+		case ESolutionType::RIGIDIFY:				return TEXT("Rigidify");
 		default:									return TEXT("Unknown");
 	}
 
+}
+
+ESolutionType::Type GetSolutionFromInt(int iNumber)
+{
+	switch (iNumber)
+	{
+		case 0:									return ESolutionType::ACID;
+		case 1: 								return ESolutionType::CAUSTIC_SODA;
+		case 2: 								return ESolutionType::SALTED_WATER;
+		case 3: 								return ESolutionType::ETHANOL;
+		case 4: 								return ESolutionType::MERCURY;
+		case 5: 								return ESolutionType::WEEDKILLING;
+		case 6: 								return ESolutionType::INFLAMMABLE_PRODUCT;
+		case 7: 								return ESolutionType::FROZEN_PRODUCT;
+		case 8: 								return ESolutionType::NITROGLYCERINE;
+		case 9: 								return ESolutionType::RIGIDIFY;
+		default:								return ESolutionType::ACID;
+	}
+}
+
+int GetNumberOfSolution()
+{
+	return 10;
 }
 
 FColor GetColorOfTheSolution(const ESolutionType::Type SolutionType)

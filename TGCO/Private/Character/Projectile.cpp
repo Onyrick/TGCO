@@ -35,7 +35,7 @@ void AProjectile::InitVelocity(const FVector& ShootDirection)
 {
 	if (ProjectileMovement)
 	{
-		// set the projectile's velocity to the desired direction
+		// Set the projectile's velocity to the desired direction
 		ProjectileMovement->Velocity = ShootDirection * ProjectileMovement->InitialSpeed;
 	}
 }
@@ -76,12 +76,12 @@ void AProjectile::SetSolutionType(ESolutionType::Type _solution)
 	SolutionType = _solution;
 }
 
-void AProjectile::SetMode(FString _Mode)
+void AProjectile::SetMode(EShootMode::Type _Mode)
 {
 	ProjectileMode = _Mode;
 }
 
-FString AProjectile::GetProjectileMode()
+EShootMode::Type AProjectile::GetProjectileMode()
 {
 	return ProjectileMode;
 }

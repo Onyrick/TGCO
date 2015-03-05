@@ -3,18 +3,22 @@
 #pragma once
 
 #include "GameFramework/Actor.h"
+#include "SolutionType.h"
 #include "Projectile.generated.h"
 
 #define COLLISION_PROJECTILE    ECC_GameTraceChannel1
 
 /**
- * Define the Projectile launch by the Player 
+ * Define the Projectile launch by the Player.
+ * Projectile is spawn with an initial speed and have a ProjectileMode
  */
 UCLASS()
+
 class TGCO_API AProjectile : public AActor
 {
 	GENERATED_BODY()
 
+public:
 	/** Sphere collision component */
 	UPROPERTY(VisibleDefaultsOnly, Category = Projectile)
 	class USphereComponent* CollisionComp;
@@ -24,12 +28,13 @@ class TGCO_API AProjectile : public AActor
 	class UProjectileMovementComponent* ProjectileMovement;
 
 public:
+	/** Constructors */
 	AProjectile(const FObjectInitializer& ObjectInitializer);
 
-	/** Inits velocity of the projectile in the shoot direction */
+	/** Initialize velocity of the projectile in the shoot direction */
 	void InitVelocity(const FVector& ShootDirection);
 
-	/** called when projectile hits something */
+	/** Function called when projectile hits something */
 	UFUNCTION()
 	void OnHit(AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
@@ -38,14 +43,21 @@ public:
 	/** Returns ProjectileMovement subobject **/
 	FORCEINLINE class UProjectileMovementComponent* GetProjectileMovement() const { return ProjectileMovement; }
 
-	void SetMode(FString _Mode);
-	FString GetProjectileMode();
+	/** Set Projectile's mode (speed, stop, slow) */
+	void SetMode(EShootMode::Type _Mode);
+	/** Get Projectile's mode (speed, stop, slow) */
+	EShootMode::Type GetProjectileMode();
 
-	ESolutionType::Type GetSolutionType();
+	/** Set Projectile's solution type */
 	void SetSolutionType(ESolutionType::Type _solution);
+	/** Get Projectile's solution type */
+	ESolutionType::Type GetSolutionType();
 
 protected:
+	/** Projectile Mode (speed, stop, slow) */
+	EShootMode::Type ProjectileMode;
+	
+	/** Projectile SolutionType that affect Monster */
 	TEnumAsByte<ESolutionType::Type> SolutionType;
-	FString ProjectileMode;
 
 };

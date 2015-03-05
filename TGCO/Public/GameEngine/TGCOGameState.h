@@ -6,10 +6,13 @@
 #include <ctime>
 
 #include "GameFramework/GameState.h"
+#include "ShootMode.h"
 #include "TGCOGameState.generated.h"
 
 /**
- * TODO
+ * State of the game
+ * Take care of energy for Players
+ * GameState exists on the server and all clients
  */
 UCLASS()
 class TGCO_API ATGCOGameState : public AGameState
@@ -17,20 +20,15 @@ class TGCO_API ATGCOGameState : public AGameState
 	GENERATED_BODY()
 
 public:
+	/** Constructors */
 	ATGCOGameState(const FObjectInitializer& ObjectInitializer);
 
-protected:
-	/** Amount of energy remaining for both Players */
-	UPROPERTY(SaveGame, Replicated)
-	int32 iPlayersEnergy;
-
-private:
-	/** Maximum amount of energy Players can have */
-	int32 iMaxPlayersEnergy;
-
-public:
 	/** Get skills unlock by players */
-	const TMap<int, FString>& GetUnlockSkills();
+	const TMap<int, EShootMode::Type>& GetUnlockSkills();
+
+	/** Add an amount of energy to the total Player's energy */
+	UFUNCTION(BlueprintCallable, Category = "Players")
+	void UpdateEnergy();
 
 	/** Add an amount of energy to the total Player's energy */
 	UFUNCTION(BlueprintCallable, Category = "Players")
@@ -38,9 +36,13 @@ public:
 
 	/** Remove an amount of energy to the total Player's energy*/
 	UFUNCTION(BlueprintCallable, Category = "Players")
-	void DecreaseEnergy(int32 iEnergyAmount);
+	void DecreaseEnergy(int32 iEnergyAmount, bool monsterHit = false);
 
-	/** Get the Player's energy*/
+	/** Increase the maximum amount of Players energy */
+	UFUNCTION(BlueprintCallable, Category = "Players")
+	void IncreaseEnergyMax(int32 iEnergyAmount);
+
+	/** Get the Player's current energy*/
 	UFUNCTION(BlueprintCallable, Category = "Players")
 	int32 GetEnergy();
 
@@ -48,6 +50,7 @@ public:
 	UFUNCTION(Netmulticast, reliable)
 	void MulticastRemoveAllWidgets();
 
+	/** TODO */
 	UFUNCTION(Netmulticast, reliable)
 	void MulticastGoToPlayingState();
 
@@ -60,14 +63,31 @@ private:
 	void ServerAddEnergy(int32 iEnergyAmount);
 
 	UFUNCTION(Server, WithValidation, reliable)
-	void ServerDecreaseEnergy(int32 iEnergyAmount);
+	void ServerDecreaseEnergy(int32 iEnergyAmount, bool monsterHit = false);
 
+	UFUNCTION(Server, WithValidation, reliable)
+	void ServerIncreaseEnergyMax(int32 iEnergyAmount);
+
+private:
 	/*
 	UFUNCTION(NetMulticast)
 	void MulticastAddEnergy(int32 iEnergyAmount);
 	*/
 	/** Array that contains the skill that the Player unlock */
-	TMap<int, FString> MapUnlockSkills;
+	TMap<int, EShootMode::Type> MapUnlockSkills;
+
+protected:
+	/** Amount of energy remaining for both Players */
+	UPROPERTY(SaveGame, Replicated)
+	int32 iPlayersEnergy;
+	int32 iPlayersEnergyIncrement;
+	float fLastRegenTime;
+	float fRegenTime;
+	float fResumeRegenAfterDecrease;
+
+private:
+	/** Maximum amount of energy Players can have */
+	int32 iMaxPlayersEnergy;
 
 };
 
