@@ -5,6 +5,7 @@
 #include "TGCOGameInstance.h"
 #include "GameFramework/PlayerInput.h"
 #include "Props.h"
+#include "LightningBarrier.h"
 #include "Fan.h"
 
 ATGCOPlayerController::ATGCOPlayerController(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -77,6 +78,20 @@ void ATGCOPlayerController::ServerUpdateSpeedValueOnProps_Implementation(class A
 	if (Props)
 	{
 		Props->UpdateSpeedValue(fValue);
+	}
+}
+
+
+bool ATGCOPlayerController::ServerChangeActiveStateOnBarrier_Validate(class ALightningBarrier* LightningBarrier, bool bValue)
+{
+	return true;
+}
+
+void ATGCOPlayerController::ServerChangeActiveStateOnBarrier_Implementation(class ALightningBarrier* LightningBarrier, bool bValue)
+{
+	if (LightningBarrier)
+	{
+		LightningBarrier->ChangeActiveStateFromServer(bValue);
 	}
 }
 

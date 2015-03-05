@@ -7,7 +7,7 @@
 
 class AProps;
 class AFan;
-
+class ALightningBarrier;
 /**
  * 
  */
@@ -25,7 +25,10 @@ public:
 	void ServerUpdateSpeedOnProps(class AProps* Props);
 
 	UFUNCTION(Server, WithValidation, Reliable)
-	void ServerUpdateSpeedValueOnProps(class AProps* Props, float fValue);
+		void ServerUpdateSpeedValueOnProps(class AProps* Props, float fValue);
+	
+	UFUNCTION(Server, WithValidation, Reliable)
+		void ServerChangeActiveStateOnBarrier(class ALightningBarrier* LightningBarrier, bool bValue);
 
 	UFUNCTION(Client, Reliable)
 	void ClientAffectSpeedOnFuturFan(class AFan* Fan, float _fSpeed);
