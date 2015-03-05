@@ -101,13 +101,15 @@ void AMastermindPuzzleConsole::CreatePuzzle()
 	srand(time(NULL));
 
 	// Init the solution
-	TArray<int> RandomNumber = Utils::InitWhithoutDuplication(NbSolution);
+	TArray<int> RandomNumber = Utils::CreateRandomArrayOfSolution(4);
 	UE_LOG(LogTest, Warning, TEXT("Create Puzzle"));
 	UE_LOG(LogTest, Warning, TEXT("Size RandomNumber : %i"), RandomNumber.Num());
-	Utils::Blend(RandomNumber);
+	//Utils::Blend(RandomNumber);
+
 	for (int i = 0; i < 4; ++i)
 	{
 		Solution[i] = GetSolutionFromInt(RandomNumber[i]);
+		UE_LOG(LogTest, Warning, TEXT("Solution %i : %s"), i, *GetNameOfTheSolution(Solution[i]));
 	}
 	SwitchDiodeOff();
 }
