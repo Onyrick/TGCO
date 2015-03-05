@@ -33,6 +33,9 @@ public:
 	UFUNCTION(Client, Reliable)
 	void ClientAffectSpeedOnFuturFan(class AFan* Fan, float _fSpeed);
 	
+	UFUNCTION(Server, WithValidation, Reliable)
+	void ServerActivateFan(class AFan* Fan, bool bActive);
+	
 protected:
 	virtual void BeginPlay() override;
 	virtual void TickActor(float DeltaTime, enum ELevelTick TickType, FActorTickFunction& ThisTickFunction) override;

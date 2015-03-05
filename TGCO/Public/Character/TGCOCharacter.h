@@ -4,6 +4,7 @@
 #include "InteractiveElement.h"
 #include "Stockable.h"
 #include "InventoryUMG.h"
+#include "ShootMode.h"
 #include "TGCOCharacter.generated.h"
 
 /**
@@ -171,8 +172,9 @@ private:
 	/** Character Pawn */
 	ATGCOCharacter* PlayerPawn;
 	/** Wrist Mode for Shoot */
-	FString WristMode;
+	EShootMode::Type WristMode;
 	int WristModeIndex;
+	int EnergyToDecrease;
 
 public:
 	/** Function to add a stockable item in the inventory*/
@@ -198,5 +200,7 @@ protected:
 	/** The UMG Inventory */
 	UInventoryUMG* InventoryUMG;
 	TEnumAsByte<ESolutionType::Type> SolutionType;
+
+	float fLastRegenTime;
 };
 

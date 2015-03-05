@@ -29,6 +29,8 @@ AFan::AFan(const FObjectInitializer& ObjectInitializer)
 
 void AFan::UpdateSpeed()
 {
+	UE_LOG(LogDebug, Warning, TEXT("Je suis dans update speed : %f"), fSpeed);
+
 	RotatingMovement->RotationRate = FRotator(0.f, 0.f, fSpeed);
 	if (RadialForce)
 	{
@@ -66,21 +68,40 @@ void AFan::ReinitSpeed()
 
 void AFan::Activate(bool bActive)
 {
-	bIsActive = bActive;
-	RotatingMovement->SetActive(bIsActive);
-	if (!bIsActive)
+	UE_LOG(LogDebug, Warning, TEXT("Début de la fonction activate"))
+	if (Role < ROLE_Authority)
 	{
-		UpdateSpeedValue(0);
+		UE_LOG(LogDebug, Warning, TEXT("Role < ROLAUTHORITY "))
+		ATGCOPlayerController * PC;
+		for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
+		{
+			PC = Cast<ATGCOPlayerController>(Iterator->Get());
+			PC->ServerActivateFan(this, bActive);
+		}
 	}
 	else
 	{
-		ReinitSpeed();
+		UE_LOG(LogDebug, Warning, TEXT("Role >= ROLAUTHORITY "))
+		bIsActive = bActive;
+		RotatingMovement->SetActive(bIsActive);
+		/* if (!bIsActive)	{ UpdateSpeedValue(0); }
+		else { ReinitSpeed(); } */
+		if (FuturFan)
+		{
+			FuturFan->bIsActive = bActive;
+			FuturFan->RotatingMovement->SetActive(bIsActive);
+		}
 	}
+}
 
-	if (FuturFan)
-	{
-		FuturFan->Activate(bActive);
-	}
+void AFan::OnRep_Activate()
+{
+	if (bIsActive){ UE_LOG(LogDebug, Warning, TEXT("Je passe dans rep activate true")); }
+	else{ UE_LOG(LogDebug, Warning, TEXT("Je passe dans rep activate false")); }
+
+	RotatingMovement->SetActive(bIsActive);
+	/* if (!bIsActive)	{ UpdateSpeedValue(0); }
+	else { ReinitSpeed(); } */
 }
 
 void AFan::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> & OutLifetimeProps) const
@@ -89,4 +110,5 @@ void AFan::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> & OutLifetimePro
 	// Replicate to everyone
 	DOREPLIFETIME(AFan, RotatingMovement);
 	DOREPLIFETIME(AFan, RadialForce);
+	DOREPLIFETIME(AFan, bIsActive);
 }

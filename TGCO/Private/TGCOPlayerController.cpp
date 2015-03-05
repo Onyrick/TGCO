@@ -104,3 +104,16 @@ void ATGCOPlayerController::ClientAffectSpeedOnFuturFan_Implementation(class AFa
 		Fan->RadialForce->ImpulseStrength = _fSpeed * 0;
 	}
 }
+
+bool ATGCOPlayerController::ServerActivateFan_Validate(class AFan* Fan, bool bActivate)
+{
+	return true;
+}
+
+void ATGCOPlayerController::ServerActivateFan_Implementation(class AFan* Fan, bool bActivate)
+{
+	if (Fan)
+	{
+		Fan->Activate(bActivate);
+	}
+}

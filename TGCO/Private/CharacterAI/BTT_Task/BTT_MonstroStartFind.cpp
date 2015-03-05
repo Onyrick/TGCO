@@ -59,7 +59,7 @@ EBTNodeResult::Type UBTT_MonstroStartFind::ExecuteTask(UBehaviorTreeComponent* O
 			{
 				UE_LOG(LogDebug, Warning, TEXT("Take that, bitch"));
 				ATGCOGameState* gameState = Cast<ATGCOGameState>(GetWorld()->GameState);
-				gameState->DecreaseEnergy(MonstroCharacter->fPower);
+				gameState->DecreaseEnergy(MonstroCharacter->fPower, true);
 				fLastHitTime = gameTime;
 
 				TArray<ABotTargetPoint*> ArrayTargetBot;

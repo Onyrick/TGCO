@@ -3,6 +3,7 @@
 #pragma once
 
 #include "GameFramework/Actor.h"
+#include "ShootMode.h"
 #include "Projectile.generated.h"
 
 #define COLLISION_PROJECTILE    ECC_GameTraceChannel1
@@ -38,14 +39,14 @@ public:
 	/** Returns ProjectileMovement subobject **/
 	FORCEINLINE class UProjectileMovementComponent* GetProjectileMovement() const { return ProjectileMovement; }
 
-	void SetMode(FString _Mode);
-	FString GetProjectileMode();
+	void SetMode(EShootMode::Type _Mode);
+	EShootMode::Type GetProjectileMode();
 
 	ESolutionType::Type GetSolutionType();
 	void SetSolutionType(ESolutionType::Type _solution);
 
 protected:
 	TEnumAsByte<ESolutionType::Type> SolutionType;
-	FString ProjectileMode;
+	EShootMode::Type ProjectileMode;
 
 };

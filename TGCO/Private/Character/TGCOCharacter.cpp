@@ -49,7 +49,7 @@ ATGCOCharacter::ATGCOCharacter(const FObjectInitializer& ObjectInitializer)
 	GetCharacterMovement()->MaxWalkSpeed = 400;
 
 	bShootMode = true;
-	WristMode = "STOP";
+	WristMode = EShootMode::STOP;
 	WristModeIndex = 0;
 
 	PreviousInteractiveElement = nullptr;
@@ -242,7 +242,7 @@ void ATGCOCharacter::Use()
 void ATGCOCharacter::SetPreviousWristMode()
 {
 	ATGCOGameState * GS = Cast<ATGCOGameState>(GetWorld()->GetGameState());
-	const TMap<int, FString>& UnlockSkills = GS->GetUnlockSkills();
+	const TMap<int, EShootMode::Type>& UnlockSkills = GS->GetUnlockSkills();
 
 	int lengthMap = UnlockSkills.Num();
 
@@ -254,13 +254,13 @@ void ATGCOCharacter::SetPreviousWristMode()
 
 	WristMode = UnlockSkills[WristModeIndex];
 
-	UE_LOG(LogDebug, Warning, TEXT("Previous : %s"), *WristMode);
+	UE_LOG(LogDebug, Warning, TEXT("Previous : %s"), *GetNameOfTheMode(WristMode));
 }
 
 void ATGCOCharacter::SetNextWristMode()
 {
 	ATGCOGameState * GS = Cast<ATGCOGameState>(GetWorld()->GetGameState());
-	const TMap<int, FString>& UnlockSkills = GS->GetUnlockSkills();
+	const TMap<int, EShootMode::Type>& UnlockSkills = GS->GetUnlockSkills();
 
 	int lengthMap = UnlockSkills.Num();
 
@@ -268,13 +268,14 @@ void ATGCOCharacter::SetNextWristMode()
 
 	WristMode = UnlockSkills[WristModeIndex];
 
-	UE_LOG(LogDebug, Warning, TEXT("Next : %s"), *WristMode);
+	UE_LOG(LogDebug, Warning, TEXT("Next : %s"), *GetNameOfTheMode(WristMode));
 }
 
 void ATGCOCharacter::CancelActionTime()
 {
 	ATGCOPlayerState* PS = Cast<ATGCOPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
 	PS->SetPropsAffected(NULL);
+	PS->SetModUsed(EShootMode::NONE);
 
 	UE_LOG(LogDebug, Warning, TEXT("Cancel action time"));
 }
@@ -345,12 +346,34 @@ void ATGCOCharacter::Tick(float DeltaSeconds)
 		{
 			ATGCOGameState* GameState = Cast<ATGCOGameState>(World->GetGameState());
 			if (GameState != NULL)
-			{			
-				GameState->UpdateEnergy();
+			{	
+				ATGCOPlayerState* PS = Cast<ATGCOPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
+				float gameTime = this->GetWorld()->GetTimeSeconds();
+
+				if (PS->GetModUsed() != EShootMode::NONE && gameTime - fLastRegenTime >= 1.f)
+				{
+					fLastRegenTime = gameTime;
+					
+					if (GameState->GetEnergy() == 1)
+					{
+						PS->SetPropsAffected(NULL);
+						PS->SetModUsed(EShootMode::NONE);
+					}
+					else
+					{
+						GameState->DecreaseEnergy(GetEnergyConsuming(PS->GetModUsed()));
+					}
+				}
+				else
+				{
+					GameState->UpdateEnergy();
+				}
+				
+				
 				if (GameState->CheckRemainingEnergy() == false)
 				{
 					GameMode->ServerKillPlayersThenRespawn();
-				}
+				}				
 			}
 		}
 	}

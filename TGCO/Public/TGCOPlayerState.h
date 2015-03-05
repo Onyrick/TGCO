@@ -4,6 +4,7 @@
 
 #include "GameFramework/PlayerState.h"
 #include "Stockable.h"
+#include "ShootMode.h"
 #include "TGCOPlayerState.generated.h"
 
 /**
@@ -40,6 +41,15 @@ public:
 	/** Set the Props affected by time */
 	void SetPropsAffected(AProps* PropsAffected);
 
+	/** Test wether a prop is affected */
+	bool IsPropsAffected();
+
+	/** get the mod used on the props */
+	EShootMode::Type GetModUsed();
+
+	/** get the mod used on the props */
+	void SetModUsed(EShootMode::Type _mod);
+
 	UFUNCTION(BlueprintCallable, Category = "TGCOPlayerState")
 	TArray<AStockable*> GetInventoryListItems();
 
@@ -52,4 +62,7 @@ protected:
 
 	/** Pointer to the Props who is affected by time */
 	AProps* PropsAffectedByTime;
+
+	/** Mod Used on this prop */
+	EShootMode::Type ModUsedOnProp;
 };

@@ -16,7 +16,7 @@ FString GetNameOfTheSolution(const ESolutionType::Type SolutionType)
 		case ESolutionType::INFLAMMABLE_PRODUCT:	return TEXT("Inflammable product");
 		case ESolutionType::FROZEN_PRODUCT:			return TEXT("Frozen product");
 		case ESolutionType::NITROGLYCERINE:			return TEXT("Nitroglycerine");
-		case ESolutionType::RIGIDIFY:			return TEXT("Rigidify");
+		case ESolutionType::RIGIDIFY:				return TEXT("Rigidify");
 		default:									return TEXT("Unknown");
 	}
 

@@ -15,12 +15,12 @@ ATGCOGameState::ATGCOGameState(const FObjectInitializer& ObjectInitializer)
 	fLastRegenTime = 0.f;
 	fRegenTime = 0.1f;
 	fResumeRegenAfterDecrease = 2.5f;
-	MapUnlockSkills.Add(0, "STOP");
-	MapUnlockSkills.Add(1, "SLOW");
-	MapUnlockSkills.Add(2, "SPEED");
+	MapUnlockSkills.Add(0, EShootMode::STOP);
+	MapUnlockSkills.Add(1, EShootMode::SLOW);
+	MapUnlockSkills.Add(2, EShootMode::SPEED);
 }
 
-const TMap<int, FString>& ATGCOGameState::GetUnlockSkills()
+const TMap<int, EShootMode::Type>& ATGCOGameState::GetUnlockSkills()
 {
 	return MapUnlockSkills;
 }
@@ -80,7 +80,7 @@ void ATGCOGameState::ServerIncreaseEnergyMax_Implementation(int32 iEnergyAmount)
 	IncreaseEnergyMax(iEnergyAmount);
 }
 
-void ATGCOGameState::DecreaseEnergy(int32 iEnergyAmount)
+void ATGCOGameState::DecreaseEnergy(int32 iEnergyAmount, bool monsterHit)
 {
 	if (Role < ROLE_Authority)
 	{
@@ -95,19 +95,24 @@ void ATGCOGameState::DecreaseEnergy(int32 iEnergyAmount)
 
 		iPlayersEnergy = FMath::Max(0, iPlayersEnergy - iEnergyAmount);
 
+		if (iPlayersEnergy <= 0 && monsterHit == false)
+		{
+			iPlayersEnergy = 1;
+		}
+
 		UE_LOG(LogTest, Warning, TEXT("Next Energy : %d"), iPlayersEnergy);
 		fLastRegenTime = this->GetWorld()->GetTimeSeconds() + fResumeRegenAfterDecrease;
 	}
 }
 
-bool ATGCOGameState::ServerDecreaseEnergy_Validate(int32 iEnergyAmount)
+bool ATGCOGameState::ServerDecreaseEnergy_Validate(int32 iEnergyAmount, bool monsterHit)
 {
 	return true;
 }
 
-void ATGCOGameState::ServerDecreaseEnergy_Implementation(int32 iEnergyAmount)
+void ATGCOGameState::ServerDecreaseEnergy_Implementation(int32 iEnergyAmount, bool monsterHit)
 {
-	DecreaseEnergy(iEnergyAmount);
+	DecreaseEnergy(iEnergyAmount, monsterHit);
 }
 
 bool ATGCOGameState::CheckRemainingEnergy()
