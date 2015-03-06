@@ -98,7 +98,7 @@ void AMastermindPuzzleConsole::CreatePuzzle()
 {
 	int32 NbSolution = GetNumberOfSolution();
 
-	srand(time(NULL));
+	srand(time(nullptr));
 
 	// Init the solution
 	TArray<int> RandomNumber = Utils::InitWhithoutDuplication(NbSolution);

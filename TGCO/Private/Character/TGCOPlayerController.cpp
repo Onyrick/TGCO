@@ -31,7 +31,7 @@ void ATGCOPlayerController::TickActor(float DeltaTime, enum ELevelTick TickType,
 	Super::TickActor(DeltaTime, TickType, ThisTickFunction);
 	if (IsPaused())
 	{
-		if (PlayerInput != NULL)
+		if (PlayerInput != nullptr)
 		{
 			//Tick the Input handler
 			PlayerInput->Tick(DeltaTime);

@@ -8,7 +8,7 @@ ARainbowBoxHandlerFuture::ARainbowBoxHandlerFuture(const FObjectInitializer& Obj
 : Super(ObjectInitializer)
 {
 	static ConstructorHelpers::FClassFinder<ARainbowBox> ItemBlueprint(TEXT("/Game/Blueprints/RainbowBox_BP"));
-	if (ItemBlueprint.Class != NULL)
+	if (ItemBlueprint.Class != nullptr)
 	{
 		RainbowBoxBP = (UClass*)ItemBlueprint.Class;
 	}
@@ -28,12 +28,12 @@ void ARainbowBoxHandlerFuture::CreateRainbowBoxHandler()
 	{
 		UE_LOG(LogTest, Warning, TEXT("In future"));
 		UWorld* const World = GetWorld();
-		if (World != NULL)
+		if (World != nullptr)
 		{
 			ATGCOGameState* GameState = Cast<ATGCOGameState>(World->GetGameState());
 			if (GameState)
 			{
-				srand(time(NULL));
+				srand(time(nullptr));
 
 				//Create all the RainbowBox and set a random color between red, blue and green
 				for (int i = 0; i < SIZE; ++i)

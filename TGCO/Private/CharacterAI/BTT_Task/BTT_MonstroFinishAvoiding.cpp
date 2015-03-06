@@ -15,8 +15,8 @@ EBTNodeResult::Type UBTT_MonstroFinishAvoiding::ExecuteTask(UBehaviorTreeCompone
 	Super::ExecuteTask(OwnerComp, NodeMemory);
 
 	UBehaviorTreeComponent* MyComp = OwnerComp;
-	AControllerAI* MyController = MyComp ? Cast<AControllerAI>(MyComp->GetOwner()) : NULL;
-	if (MyController == NULL)
+	AControllerAI* MyController = MyComp ? Cast<AControllerAI>(MyComp->GetOwner()) : nullptr;
+	if (MyController == nullptr)
 	{
 		return EBTNodeResult::Failed;
 	}
@@ -29,7 +29,7 @@ EBTNodeResult::Type UBTT_MonstroFinishAvoiding::ExecuteTask(UBehaviorTreeCompone
 			MyBlackboard->SetValueAsBool("Avoiding", false);
 			ATargetPoint *oldTargetPoint = Cast<ATargetPoint>(MyBlackboard->GetValueAsObject("PlayerToChase"));
 
-			if (oldTargetPoint != NULL)
+			if (oldTargetPoint != nullptr)
 			{
 				oldTargetPoint->Destroy();
 			}

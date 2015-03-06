@@ -58,7 +58,7 @@ void ALightningBarrier::UpdateActiveState()
 
 void ALightningBarrier::PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent)
 {
-	FName PropertyName = (PropertyChangedEvent.Property != NULL) ? PropertyChangedEvent.Property->GetFName() : NAME_None;
+	FName PropertyName = (PropertyChangedEvent.Property != nullptr) ? PropertyChangedEvent.Property->GetFName() : NAME_None;
 
 	if ((PropertyName == GET_MEMBER_NAME_CHECKED(ALightningBarrier, bIsLightningActive)) && pBarrier != nullptr)
 	{

@@ -8,7 +8,7 @@ ASolutionGenerator::ASolutionGenerator(const class FObjectInitializer& ObjectIni
 : Super(ObjectInitializer)
 {
 	//SolutionType = ESolutionType::NONE;
-	Player = NULL;
+	Player = nullptr;
 
 	PointLight = ObjectInitializer.CreateDefaultSubobject<UPointLightComponent>(this, "PointLight");
 	PointLight->Intensity = 1000.f;
@@ -26,7 +26,7 @@ bool ASolutionGenerator::OnInteract()
 {
 	//TODO
 	
-	if (Player != NULL)
+	if (Player != nullptr)
 	{
 		Player->SetSolutionType(SolutionType);
 	}
@@ -50,7 +50,7 @@ void ASolutionGenerator::OnOverlapBegin(class AActor* OtherActor, class UPrimiti
 void ASolutionGenerator::OnOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	Super::OnOverlapEnd(OtherActor, OtherComp, OtherBodyIndex);
-	Player = NULL;
+	Player = nullptr;
 	
 }
 

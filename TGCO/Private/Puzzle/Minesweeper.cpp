@@ -10,7 +10,7 @@ AMinesweeper::AMinesweeper(const class FObjectInitializer& ObjectInitializer)
 	//static ConstructorHelpers::FObjectFinder<UBlueprint> ItemBlueprint(TEXT("Blueprint'/Game/Blueprints/MinesBox_BP'"));
 	//if (ItemBlueprint.Object){
 	static ConstructorHelpers::FClassFinder<AMinesBox> ItemBlueprint(TEXT("/Game/Blueprints/MineBox_BP"));
-	if (ItemBlueprint.Class != NULL)
+	if (ItemBlueprint.Class != nullptr)
 	{
 		MineBoxBP = (UClass*)ItemBlueprint.Class;
 	}
@@ -22,7 +22,7 @@ void AMinesweeper::CreateMinesweeper()
 	for (int i = 0; i < SIZE; ++i)
 	{
 		UWorld* const World = GetWorld();
-		if (World != NULL)
+		if (World != nullptr)
 		{
 			unsigned int x = i / NB_COL;
 			unsigned int y = i % NB_COL;
@@ -66,7 +66,7 @@ void AMinesweeper::ResetMinesweeper()
 void AMinesweeper::PutMinesRandomly()
 {
 	int iSecret;
-	srand(time(NULL));
+	srand(time(nullptr));
 	for (int cpt = 0; cpt < NB_MINES; ++cpt)
 	{
 		iSecret = rand() % SIZE;
@@ -114,7 +114,7 @@ void AMinesweeper::CalculateNeighboursUndermined()
 			
 		}
 		
-		if (Squares[i]->Number != NULL)
+		if (Squares[i]->Number != nullptr)
 		{
 			Squares[i]->Number->SetText(FString::Printf(TEXT("%d"), Squares[i]->GetNeighboursUndermined()));
 		}
@@ -129,7 +129,7 @@ int32 AMinesweeper::GetMinesweeperSize()
 
 AMinesBox* AMinesweeper::GetMineBoxAt(int32 index)
 {
-	if (index > SIZE) return NULL;
+	if (index > SIZE) return nullptr;
 
 	return Squares[index];
 }

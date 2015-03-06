@@ -10,7 +10,7 @@ UBTT_FixBotStartFind::UBTT_FixBotStartFind(const FObjectInitializer& ObjectIniti
 : Super(ObjectInitializer)
 , BeginToRun(true)
 {
-	BotTargetPoint = NULL;
+	BotTargetPoint = nullptr;
 }
 
 EBTNodeResult::Type UBTT_FixBotStartFind::ExecuteTask(UBehaviorTreeComponent* OwnerComp, uint8* NodeMemory)
@@ -18,8 +18,8 @@ EBTNodeResult::Type UBTT_FixBotStartFind::ExecuteTask(UBehaviorTreeComponent* Ow
 	Super::ExecuteTask(OwnerComp, NodeMemory);
 
 	UBehaviorTreeComponent* MyComp = OwnerComp;
-	AControllerAI* MyController = MyComp ? Cast<AControllerAI>(MyComp->GetOwner()) : NULL;
-	if (MyController == NULL)
+	AControllerAI* MyController = MyComp ? Cast<AControllerAI>(MyComp->GetOwner()) : nullptr;
+	if (MyController == nullptr)
 	{
 		return EBTNodeResult::Failed;
 	}
@@ -50,7 +50,7 @@ EBTNodeResult::Type UBTT_FixBotStartFind::ExecuteTask(UBehaviorTreeComponent* Ow
 			TargetID = rand() % FixBotCharacter->MaxRoutes;
 		} while (TargetID == StartID);
 
-		if (FixBotCharacter == NULL)
+		if (FixBotCharacter == nullptr)
 		{
 			return EBTNodeResult::Failed;
 		}

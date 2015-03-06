@@ -8,8 +8,11 @@
 class AProps;
 class AFan;
 class ALightningBarrier;
+
 /**
- * 
+ * Interface between TGCOCharacter and the human player controlling it. 
+ * ATGCOPlayerController essentially represents the human player's will.
+ * The ATGCOPlayerController persists throughout the game
  */
 UCLASS()
 class TGCO_API ATGCOPlayerController : public APlayerController

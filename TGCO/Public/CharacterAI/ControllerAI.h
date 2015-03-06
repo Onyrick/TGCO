@@ -30,7 +30,7 @@ protected:
 public:
 
 	// Begin AController interface
-	virtual void GameHasEnded(class AActor* EndGameFocus = NULL, bool bIsWinner = false) override;
+	virtual void GameHasEnded(class AActor* EndGameFocus = nullptr, bool bIsWinner = false) override;
 	virtual void Possess(class APawn* InPawn) override;
 	virtual void BeginInactiveState() override;
 	// End APlayerController interface

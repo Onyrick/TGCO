@@ -18,7 +18,7 @@ AMonstroPlante::AMonstroPlante(const class FObjectInitializer& ObjectInitializer
 	AddNewResistenceSolution(ESolutionType::NONE);
 	AddNewResistenceSolution(ESolutionType::NONE);
 
-	SpawnPoint = NULL;
+	SpawnPoint = nullptr;
 
 	GetCharacterMovement()->MaxWalkSpeed = 250.f;
 
@@ -89,7 +89,7 @@ float AMonstroPlante::TakeDamage(float DamageAmount, struct FDamageEvent const &
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	AProjectile* Projectile = Cast<AProjectile>(DamageCauser);
 
-	if (Projectile == NULL)
+	if (Projectile == nullptr)
 		return -1.f;
 
 	if (SolutionResistence.Contains(Projectile->GetSolutionType()) == false && Projectile->GetSolutionType() != ESolutionType::NONE)
@@ -98,7 +98,7 @@ float AMonstroPlante::TakeDamage(float DamageAmount, struct FDamageEvent const &
 		m_iIdToReplace = (m_iIdToReplace + 1) % 3;
 
 		Destroyed();
-		if (GetAIController() != NULL)
+		if (GetAIController() != nullptr)
 		{
 			AEnergyCell* energyCell = GetWorld()->SpawnActor<AEnergyCell>(AEnergyCell::StaticClass(), GetActorLocation(), FRotator::ZeroRotator);
 		}
@@ -135,7 +135,7 @@ void AMonstroPlante::RespawnAI()
 {
 	Super::RespawnAI();
 	GetWorld()->GetAuthGameMode()->RestartPlayer(GetAIController());
-	if (SpawnPoint != NULL)
+	if (SpawnPoint != nullptr)
 	{
 		SetActorLocation(SpawnPoint->GetActorLocation());
 	}
@@ -186,7 +186,7 @@ void AMonstroPlante::OnOverlapBegin(class AActor* OtherActor, class UPrimitiveCo
 {
 	AProjectile *projectile = Cast<AProjectile>(OtherActor);
 
-	if (projectile != NULL)
+	if (projectile != nullptr)
 	{
 		m_bNeedToAvoid = true;
 	}
