@@ -20,9 +20,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Mastermind")
 	virtual bool OnInteract() override;
 
-	UFUNCTION(BlueprintCallable, Category = "Mastermind")
-	void CreatePuzzle();
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Diode")
 	class UStaticMeshComponent* Diode1;
 

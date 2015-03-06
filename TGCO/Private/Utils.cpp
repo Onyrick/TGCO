@@ -40,9 +40,9 @@ TArray<int32> Utils::CreateRandomArrayOfSolution(int32 iSize)
 
 	for (int i = 0; i < iSize; ++i)
 	{
-		bAlreadyExist = false;
 		while (bRetry)
 		{
+			bAlreadyExist = false;
 			iRandomNumber = rand() % (iSize+1);
 			for (int j = 0; j < Result.Num(); ++j)
 			{

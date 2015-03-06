@@ -49,7 +49,22 @@ bInGame(true)
 	AddOwnedComponent(Diode3);
 	AddOwnedComponent(Diode4);
 
-	UpdateDiode();
+
+	// TEST
+	int32 NbSolution = GetNumberOfSolution();
+	
+	// Init the solution
+	TArray<int> RandomNumber = Utils::CreateRandomArrayOfSolution(4);
+	UE_LOG(LogTest, Warning, TEXT("Create the solution"));
+	UE_LOG(LogTest, Warning, TEXT("Size RandomNumber : %i"), RandomNumber.Num());
+	//Utils::Blend(RandomNumber);
+
+	for (int i = 0; i < 4; ++i)
+	{
+		Solution[i] = GetSolutionFromInt(RandomNumber[i]);
+		UE_LOG(LogTest, Warning, TEXT("Solution %i : %s"), i, *GetNameOfTheSolution(Solution[i]));
+	}
+	SwitchDiodeOff();
 }
 
 void AMastermindPuzzleConsole::UpdateDiode()
@@ -92,26 +107,6 @@ void AMastermindPuzzleConsole::SwitchDiodeOff()
 	Diode3->SetMaterial(0, MaterialInstance3);
 	Diode4->SetMaterial(0, MaterialInstance4);
 
-}
-
-void AMastermindPuzzleConsole::CreatePuzzle()
-{
-	int32 NbSolution = GetNumberOfSolution();
-
-	srand(time(NULL));
-
-	// Init the solution
-	TArray<int> RandomNumber = Utils::CreateRandomArrayOfSolution(4);
-	UE_LOG(LogTest, Warning, TEXT("Create Puzzle"));
-	UE_LOG(LogTest, Warning, TEXT("Size RandomNumber : %i"), RandomNumber.Num());
-	//Utils::Blend(RandomNumber);
-
-	for (int i = 0; i < 4; ++i)
-	{
-		Solution[i] = GetSolutionFromInt(RandomNumber[i]);
-		UE_LOG(LogTest, Warning, TEXT("Solution %i : %s"), i, *GetNameOfTheSolution(Solution[i]));
-	}
-	SwitchDiodeOff();
 }
 
 bool AMastermindPuzzleConsole::OnInteract()
