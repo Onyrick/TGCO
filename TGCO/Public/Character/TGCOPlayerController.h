@@ -68,7 +68,28 @@ public:
 	*/
 	UFUNCTION(Server, WithValidation, Reliable)
 	void ServerActivateFan(class AFan* Fan, bool bActive);
-	
+
+	/**
+	* Function that decrease energy for players
+	* Call on server by client
+	*
+	* @param	ATGCOGameState	GameState for decrease
+	*			iEnergyAmount	The amount to decrease
+	*			monsterHit		If decrease is due to monster
+	*/
+	UFUNCTION(Server, WithValidation, reliable)
+	void ServerDecreaseEnergy(class ATGCOGameState* GameState, int32 iEnergyAmount, bool monsterHit = false);
+
+	/**
+	* Function that add energy for players
+	* Call on server by client
+	*
+	* @param	ATGCOGameState	GameState for add
+	*			iEnergyAmount	The amount to add
+	*/
+	UFUNCTION(Server, WithValidation, reliable)
+	void ServerAddEnergy(class ATGCOGameState* GameState, int32 iEnergyAmount);
+
 protected:
 	/** Function call when the game start */
 	virtual void BeginPlay() override;

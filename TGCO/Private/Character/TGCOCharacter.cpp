@@ -16,6 +16,7 @@
 
 ATGCOCharacter::ATGCOCharacter(const FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer)
+, fLastRegenTime(0.f)
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -340,50 +341,33 @@ void ATGCOCharacter::Tick(float DeltaSeconds)
 	UWorld* const World = GetWorld();
 	if (World != NULL)
 	{
-		//GameMode is only on the server
-		ATGCOGameMode* GameMode = Cast<ATGCOGameMode>(World->GetAuthGameMode());
-		if (GameMode)
-		{
-			ATGCOGameState* GameState = Cast<ATGCOGameState>(World->GetGameState());
-			if (GameState != NULL)
-			{	
-				ATGCOPlayerState* PS = Cast<ATGCOPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
-				float gameTime = this->GetWorld()->GetTimeSeconds();
-
-				if (PS->GetModUsed() != EShootMode::NONE && gameTime - fLastRegenTime >= 1.f)
-				{
-					fLastRegenTime = gameTime;
-					
-					if (GameState->GetEnergy() == 1)
-					{
-						PS->SetPropsAffected(NULL);
-						PS->SetModUsed(EShootMode::NONE);
-					}
-					else
-					{
-						GameState->DecreaseEnergy(GetEnergyConsuming(PS->GetModUsed()));
-					}
-				}
-				else
-				{
-					GameState->UpdateEnergy();
-				}
+		ATGCOGameState* GameState = Cast<ATGCOGameState>(World->GetGameState());
+		if (GameState != NULL)
+		{	
+			float fGameTime = World->GetTimeSeconds();
+			if (fGameTime - fLastRegenTime >= 1.f)
+			{
+				fLastRegenTime = fGameTime;
+				GameState->ManagePlayersEnergy();
+			}
 				
-				
-				if (GameState->CheckRemainingEnergy() == false)
+			// Need to test also if player has taken damages
+			if (GameState->CheckRemainingEnergy() == false)
+			{
+				//GameMode is only on the server
+				ATGCOGameMode* GameMode = Cast<ATGCOGameMode>(World->GetAuthGameMode());
+				if (GameMode)
 				{
 					GameMode->ServerKillPlayersThenRespawn();
-				}				
-			}
+				}
+			}				
 		}
 	}
 
-	if (iNumberOfCloseInteractiveElement <= 0)
+	if (iNumberOfCloseInteractiveElement > 0)
 	{
-		return;
+		HightlightCloseInteractiveElement();
 	}
-	
-	HightlightCloseInteractiveElement();
 }
 
 void ATGCOCharacter::IncreaseNumberOfCloseInteractiveElement()
