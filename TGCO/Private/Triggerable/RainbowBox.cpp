@@ -28,6 +28,7 @@ void ARainbowBox::OnOverlapBegin(class AActor* OtherActor, class UPrimitiveCompo
 	ARainbowBoxHandlerFuture* RainbowBoxHandlerFuture = nullptr;
 	ARainbowBoxHandlerPast* RainbowBoxHandlerPast = nullptr;
 
+	// Get RainbowBoxHandler of the future and of the past
 	for (TActorIterator<AActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
 	{
 		if (ActorItr->GetName().Contains("RainbowBoxHandlerFuture_BP"))
@@ -40,6 +41,7 @@ void ARainbowBox::OnOverlapBegin(class AActor* OtherActor, class UPrimitiveCompo
 		}
 	}
 
+	// If the rainbowBox have to notify RainbowBoxHandler of the future
 	if (bShouldNotify)
 	{
 		if (RainbowBoxHandlerFuture != nullptr)

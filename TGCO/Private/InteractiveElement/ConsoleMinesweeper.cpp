@@ -14,12 +14,16 @@ AConsoleMinesweeper::AConsoleMinesweeper(const class FObjectInitializer& ObjectI
 
 void AConsoleMinesweeper::CreateConsoleMinesweeper()
 {
-	for (TActorIterator<AActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+	static ConstructorHelpers::FClassFinder<AMinesweeper> ItemBlueprint(TEXT("/Game/Blueprints/Minesweeper_BP"));
+	if (ItemBlueprint.Class != nullptr)
 	{
-		if (ActorItr->GetName().Contains("Minesweeper_Futur") && ActorItr->GetActorClass()->GetDescription() == FString(TEXT("Minesweeper BP")))
+		for (TActorIterator<AActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
 		{
-			AMinesweeper* _Minesweeper = Cast<AMinesweeper>(*ActorItr);
-			Minesweeper = _Minesweeper;
+			if (ActorItr->GetName().Contains("Minesweeper_Futur") && ActorItr->GetActorClass()->GetDescription() == FString(TEXT("Minesweeper BP")))
+			{
+				AMinesweeper* _Minesweeper = Cast<AMinesweeper>(*ActorItr);
+				Minesweeper = _Minesweeper;
+			}
 		}
 	}
 

@@ -6,11 +6,11 @@
 
 ATGCOPlayerState::ATGCOPlayerState(const FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer)
+, PlayerNumber(0)
+, PropsAffectedByTime(nullptr)
+, ModUsedOnProp(EShootMode::NONE)
 {
-	PlayerNumber = 0;
 	bReplicates = true;
-	PropsAffectedByTime = NULL;
-	ModUsedOnProp = EShootMode::NONE;
 }
 
 int32 ATGCOPlayerState::GetPlayerNumber()
@@ -82,7 +82,7 @@ void ATGCOPlayerState::SetPropsAffected(AProps* PropsAffected)
 
 bool ATGCOPlayerState::IsPropsAffected()
 {
-	return PropsAffectedByTime != NULL;
+	return PropsAffectedByTime != nullptr;
 }
 
 EShootMode::Type ATGCOPlayerState::GetModUsed()

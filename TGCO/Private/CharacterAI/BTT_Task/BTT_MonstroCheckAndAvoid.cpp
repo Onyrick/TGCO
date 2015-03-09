@@ -17,8 +17,8 @@ EBTNodeResult::Type UBTT_MonstroCheckAndAvoid::ExecuteTask(UBehaviorTreeComponen
 	Super::ExecuteTask(OwnerComp, NodeMemory);
 
 	UBehaviorTreeComponent* MyComp = OwnerComp;
-	AControllerAI* MyController = MyComp ? Cast<AControllerAI>(MyComp->GetOwner()) : NULL;
-	if (MyController == NULL)
+	AControllerAI* MyController = MyComp ? Cast<AControllerAI>(MyComp->GetOwner()) : nullptr;
+	if (MyController == nullptr)
 	{
 		return EBTNodeResult::Failed;
 	}
@@ -27,13 +27,13 @@ EBTNodeResult::Type UBTT_MonstroCheckAndAvoid::ExecuteTask(UBehaviorTreeComponen
 		UBlackboardComponent* MyBlackboard = OwnerComp->GetBlackboardComponent();
 		AMonstroPlante * MonstroCharacter = Cast<AMonstroPlante>(MyController->GetPawn());
 
-		if ( MonstroCharacter == NULL )
+		if ( MonstroCharacter == nullptr )
 			return EBTNodeResult::Failed;
 
 		ATGCOCharacter* Player = Cast<ATGCOCharacter>(MyBlackboard->GetValueAsObject("PlayerToChase"));
 
 		// In pursuit of player
-		if (MonstroCharacter->m_bNeedToAvoid && Player != NULL && MyBlackboard->GetValueAsBool("Avoiding") == false && MonstroCharacter->IsStun() == false)
+		if (MonstroCharacter->m_bNeedToAvoid && Player != nullptr && MyBlackboard->GetValueAsBool("Avoiding") == false && MonstroCharacter->IsStun() == false)
 		{
 			MonstroCharacter->m_bNeedToAvoid = false;
 
@@ -54,7 +54,7 @@ EBTNodeResult::Type UBTT_MonstroCheckAndAvoid::ExecuteTask(UBehaviorTreeComponen
 			
 			TargetPoint->AddActorLocalOffset(FVector((Player->GetActorLocation() - MonstroCharacter->GetActorLocation()) / 5));
 
-			if (MonstroCharacter->GetAIController() != NULL)
+			if (MonstroCharacter->GetAIController() != nullptr)
 			{
 				MonstroCharacter->GetAIController()->StopMovement();
 				MyBlackboard->SetValueAsObject("PlayerToChase", TargetPoint);
@@ -67,7 +67,7 @@ EBTNodeResult::Type UBTT_MonstroCheckAndAvoid::ExecuteTask(UBehaviorTreeComponen
 		//Running away after hitting the player
 		ABotTargetPoint* BotTargetPoint = Cast<ABotTargetPoint>(MyBlackboard->GetValueAsObject("PlayerToChase"));
 
-		if (MonstroCharacter->m_bNeedToAvoid && BotTargetPoint != NULL && MyBlackboard->GetValueAsBool("Avoiding") == false && MonstroCharacter->IsStun() == false)
+		if (MonstroCharacter->m_bNeedToAvoid && BotTargetPoint != nullptr && MyBlackboard->GetValueAsBool("Avoiding") == false && MonstroCharacter->IsStun() == false)
 		{
 			MonstroCharacter->m_bNeedToAvoid = false;
 
@@ -88,7 +88,7 @@ EBTNodeResult::Type UBTT_MonstroCheckAndAvoid::ExecuteTask(UBehaviorTreeComponen
 
 			TargetPoint->AddActorLocalOffset(FVector((BotTargetPoint->GetActorLocation() - MonstroCharacter->GetActorLocation()) / 5));
 
-			if (MonstroCharacter->GetAIController() != NULL)
+			if (MonstroCharacter->GetAIController() != nullptr)
 			{
 				MonstroCharacter->GetAIController()->StopMovement();
 				MyBlackboard->SetValueAsObject("PlayerToChase", TargetPoint);
@@ -97,10 +97,10 @@ EBTNodeResult::Type UBTT_MonstroCheckAndAvoid::ExecuteTask(UBehaviorTreeComponen
 			MonstroCharacter->SpeedUp();
 		}
 
-		if ((BotTargetPoint != NULL && MyController->GetPawn()->GetDistanceTo(BotTargetPoint) < 250.f))
+		if ((BotTargetPoint != nullptr && MyController->GetPawn()->GetDistanceTo(BotTargetPoint) < 250.f))
 		{
 			MonstroCharacter->GetAIController()->StopMovement();
-			MyBlackboard->SetValueAsObject("PlayerToChase", NULL);
+			MyBlackboard->SetValueAsObject("PlayerToChase", nullptr);
 		}
 		
 

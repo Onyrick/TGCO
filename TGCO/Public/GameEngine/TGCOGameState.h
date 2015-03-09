@@ -26,6 +26,9 @@ public:
 	/** Get skills unlock by players */
 	const TMap<int, EShootMode::Type>& GetUnlockSkills();
 
+	/** Manage the Players Energy */
+	void ManagePlayersEnergy();
+
 	/** Add an amount of energy to the total Player's energy */
 	UFUNCTION(BlueprintCallable, Category = "Players")
 	void UpdateEnergy();
@@ -58,12 +61,6 @@ public:
 	bool CheckRemainingEnergy();
 
 private:
-
-	UFUNCTION(Server, WithValidation, reliable)
-	void ServerAddEnergy(int32 iEnergyAmount);
-
-	UFUNCTION(Server, WithValidation, reliable)
-	void ServerDecreaseEnergy(int32 iEnergyAmount, bool monsterHit = false);
 
 	UFUNCTION(Server, WithValidation, reliable)
 	void ServerIncreaseEnergyMax(int32 iEnergyAmount);

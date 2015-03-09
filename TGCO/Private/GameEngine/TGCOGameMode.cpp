@@ -16,7 +16,7 @@ ATGCOGameMode::ATGCOGameMode(const FObjectInitializer& ObjectInitializer)
 {
 	// set default pawn class to our Blueprinted character
 	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/Blueprints/MyCharacter"));
-	if (PlayerPawnBPClass.Class != NULL)
+	if (PlayerPawnBPClass.Class != nullptr)
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
@@ -41,12 +41,12 @@ TSubclassOf<AGameSession> ATGCOGameMode::GetGameSessionClass() const
 
 AActor* ATGCOGameMode::ChoosePlayerStart(AController* Player)
 {
-	APlayerStart* BestStart = NULL;
+	APlayerStart* BestStart = nullptr;
 	for (int32 i = 0; i < PlayerStarts.Num(); i++)
 	{
 		APlayerStart* TestSpawn = PlayerStarts[i];
 		UE_LOG(LogOnline, Log, TEXT("Player start name : %s"), *TestSpawn->GetName());
-		if (TestSpawn != NULL)
+		if (TestSpawn != nullptr)
 		{
 			if (TestSpawn->GetName().Equals("PlayerStartPast"))
 			{
@@ -93,10 +93,10 @@ void ATGCOGameMode::KillPlayersThenRespawn()
 	UE_LOG(LogDebug, Warning, TEXT("Kill Players and respawn"));
 
 	UWorld* const World = GetWorld();
-	if (World != NULL)
+	if (World != nullptr)
 	{
 		ATGCOGameState* GameState = Cast<ATGCOGameState>(World->GetGameState());
-		if (GameState != NULL)
+		if (GameState != nullptr)
 		{	
 			for (FConstPlayerControllerIterator Iterator = World->GetPlayerControllerIterator(); Iterator; ++Iterator)
 			{

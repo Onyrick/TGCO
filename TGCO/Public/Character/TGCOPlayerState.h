@@ -54,6 +54,7 @@ public:
 	/** Set the mod used on the Props */
 	void SetModUsed(EShootMode::Type _mod);
 
+	/** Get items in Player inventory list */
 	UFUNCTION(BlueprintCallable, Category = "TGCOPlayerState")
 	TArray<AStockable*> GetInventoryListItems();
 
@@ -62,6 +63,7 @@ protected:
 	UPROPERTY(Replicated)
 	int32 PlayerNumber;
 	
+	/** Array of stockable element to manage an inventory list */
 	TArray<AStockable*> InventoryListItems;
 
 	/** Pointer to the Props who is affected by time */

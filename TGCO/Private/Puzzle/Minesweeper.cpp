@@ -10,7 +10,7 @@ AMinesweeper::AMinesweeper(const class FObjectInitializer& ObjectInitializer)
 	//static ConstructorHelpers::FObjectFinder<UBlueprint> ItemBlueprint(TEXT("Blueprint'/Game/Blueprints/MinesBox_BP'"));
 	//if (ItemBlueprint.Object){
 	static ConstructorHelpers::FClassFinder<AMinesBox> ItemBlueprint(TEXT("/Game/Blueprints/MineBox_BP"));
-	if (ItemBlueprint.Class != NULL)
+	if (ItemBlueprint.Class != nullptr)
 	{
 		MineBoxBP = (UClass*)ItemBlueprint.Class;
 	}
@@ -24,7 +24,7 @@ void AMinesweeper::CreateMinesweeper()
 	for (int i = 0; i < SIZE; ++i)
 	{
 		UWorld* const World = GetWorld();
-		if (World != NULL)
+		if (World != nullptr)
 		{
 			unsigned int x = i / NB_COL;
 			unsigned int y = i % NB_COL;
@@ -93,7 +93,7 @@ void AMinesweeper::PutMinesRandomly()
 {
 	//UE_LOG(LogTest, Warning, TEXT("Je suis dans la fonction PutMinesRandomly"));
 	int iSecret;
-	srand(time(NULL));
+	srand(time(nullptr));
 	for (int cpt = 0; cpt < NB_MINES; ++cpt)
 	{
 		//UE_LOG(LogTest, Warning, TEXT("Passe dans la boucle du nombre de mine : %d"), cpt);
@@ -141,9 +141,7 @@ void AMinesweeper::CalculateNeighboursUndermined()
 			{
 				Squares[i]->SetNeighboursUndermined();
 			}
-			
 		}
-		
 	}
 }
 
@@ -154,7 +152,7 @@ int32 AMinesweeper::GetMinesweeperSize()
 
 AMinesBox* AMinesweeper::GetMineBoxAt(int32 index)
 {
-	if (index > SIZE) return NULL;
+	if (index > SIZE) return nullptr;
 
 	return Squares[index];
 }

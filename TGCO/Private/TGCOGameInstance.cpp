@@ -550,7 +550,7 @@ void UTGCOGameInstance::CleanupSessionOnReturnToMenu()
 
 	// end online game and then destroy it
 	IOnlineSubsystem * OnlineSub = IOnlineSubsystem::Get();
-	IOnlineSessionPtr Sessions = (OnlineSub != NULL) ? OnlineSub->GetSessionInterface() : NULL;
+	IOnlineSessionPtr Sessions = (OnlineSub != nullptr) ? OnlineSub->GetSessionInterface() : nullptr;
 
 	if (Sessions.IsValid())
 	{

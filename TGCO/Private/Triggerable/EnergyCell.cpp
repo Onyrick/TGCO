@@ -20,7 +20,7 @@ AEnergyCell::AEnergyCell(const class FObjectInitializer& ObjectInitializer)
 void AEnergyCell::OnOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
 	ATGCOCharacter *Player = Cast<ATGCOCharacter>(OtherActor);
-	if (Player != NULL)
+	if (Player != nullptr)
 	{
 		UE_LOG(LogDebug, Warning, TEXT("Begin Overlap Energy"));
 		Consumed();

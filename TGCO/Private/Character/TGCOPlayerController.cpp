@@ -31,7 +31,7 @@ void ATGCOPlayerController::TickActor(float DeltaTime, enum ELevelTick TickType,
 	Super::TickActor(DeltaTime, TickType, ThisTickFunction);
 	if (IsPaused())
 	{
-		if (PlayerInput != NULL)
+		if (PlayerInput != nullptr)
 		{
 			//Tick the Input handler
 			PlayerInput->Tick(DeltaTime);
@@ -128,4 +128,24 @@ void ATGCOPlayerController::ServerActivateFan_Implementation(class AFan* Fan, bo
 	{
 		Fan->Activate(bActivate);
 	}
+}
+
+bool ATGCOPlayerController::ServerAddEnergy_Validate(class ATGCOGameState* GameState, int32 iEnergyAmount)
+{
+	return true;
+}
+
+void ATGCOPlayerController::ServerAddEnergy_Implementation(class ATGCOGameState* GameState, int32 iEnergyAmount)
+{
+	GameState->AddEnergy(iEnergyAmount);
+}
+
+bool ATGCOPlayerController::ServerDecreaseEnergy_Validate(class ATGCOGameState* GameState, int32 iEnergyAmount, bool monsterHit)
+{
+	return true;
+}
+
+void ATGCOPlayerController::ServerDecreaseEnergy_Implementation(class ATGCOGameState* GameState, int32 iEnergyAmount, bool monsterHit)
+{
+	GameState->DecreaseEnergy(iEnergyAmount, monsterHit);
 }

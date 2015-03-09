@@ -15,7 +15,7 @@ void AStockable::OnOverlapBegin(class AActor* OtherActor, class UPrimitiveCompon
 	UE_LOG(LogDebug, Warning, TEXT("Begin Overlap Stockable"));
 	ATGCOCharacter* PlayerCharacter = Cast<ATGCOCharacter>(OtherActor);
 
-	if (PlayerCharacter != NULL)
+	if (PlayerCharacter != nullptr)
 	{
 		PlayerCharacter->PickStockableItem(this);
 		StaticMesh->DestroyComponent();

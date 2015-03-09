@@ -34,7 +34,7 @@ void AMultiLightningBarrier::ReceiveDestroyed()
 
 void AMultiLightningBarrier::PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent)
 {
-	FName PropertyName = (PropertyChangedEvent.Property != NULL) ? PropertyChangedEvent.Property->GetFName() : NAME_None;
+	FName PropertyName = (PropertyChangedEvent.Property != nullptr) ? PropertyChangedEvent.Property->GetFName() : NAME_None;
 	/* Check if the property change event is applied to the array*/
 	if ((PropertyName == GET_MEMBER_NAME_CHECKED(AMultiLightningBarrier, aBarriers)))
 	{

@@ -21,7 +21,7 @@ float AMonster::TakeDamage(float DamageAmount, struct FDamageEvent const & Damag
 void AMonster::Destroyed()
 {
 	Super::Destroyed();
-	if (GetAIController() != NULL)
+	if (GetAIController() != nullptr)
 	{
 		GetAIController()->StopMovement();
 	}
@@ -38,7 +38,7 @@ void AMonster::Stun()
 	bIsStun = true;
 	GetWorldTimerManager().SetTimer(this, &AMonster::UnStun, fStunTime, false);
 
-	if (GetAIController() != NULL)
+	if (GetAIController() != nullptr)
 	{
 		GetAIController()->StopMovement();
 	}

@@ -12,33 +12,42 @@ bInGame(true)
 {
 	Solution = new ESolutionType::Type[4]();
 
+	/** Create static mesh for diode */
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> StaticMesh(TEXT("StaticMesh'/Game/StarterContent/Shapes/Shape_Sphere'"));
+	/** Create material for diode*/
 	static ConstructorHelpers::FObjectFinder<UMaterial> Material(TEXT("MaterialInstanceConstant'/Game/Blueprints/AI/MonstroPlante/Mat_Emissive'"));
+
+	/** Create material instance for all diodes */
 	MaterialInstance1 = UMaterialInstanceDynamic::Create(Material.Object, this);
 	MaterialInstance2 = UMaterialInstanceDynamic::Create(Material.Object, this);
 	MaterialInstance3 = UMaterialInstanceDynamic::Create(Material.Object, this);
 	MaterialInstance4 = UMaterialInstanceDynamic::Create(Material.Object, this);
 
+	/** Create mesh component for each diode */
 	Diode1 = ObjectInitializer.CreateAbstractDefaultSubobject<UStaticMeshComponent>(this, TEXT("Diode1"));
 	Diode2 = ObjectInitializer.CreateAbstractDefaultSubobject<UStaticMeshComponent>(this, TEXT("Diode2"));
 	Diode3 = ObjectInitializer.CreateAbstractDefaultSubobject<UStaticMeshComponent>(this, TEXT("Diode3"));
 	Diode4 = ObjectInitializer.CreateAbstractDefaultSubobject<UStaticMeshComponent>(this, TEXT("Diode4"));
 
+	/** Attach mesh component to each diode */
 	Diode1->SetStaticMesh(StaticMesh.Object);
 	Diode2->SetStaticMesh(StaticMesh.Object);
 	Diode3->SetStaticMesh(StaticMesh.Object);
 	Diode4->SetStaticMesh(StaticMesh.Object);
 
+	/** Attach material to each diode */
 	Diode1->SetMaterial(0, MaterialInstance1);
 	Diode2->SetMaterial(0, MaterialInstance2);
 	Diode3->SetMaterial(0, MaterialInstance3);
 	Diode4->SetMaterial(0, MaterialInstance4);
 
+	/** Register each Diode component */
 	Diode1->RegisterComponentWithWorld(GetWorld());
 	Diode2->RegisterComponentWithWorld(GetWorld());
 	Diode3->RegisterComponentWithWorld(GetWorld());
 	Diode4->RegisterComponentWithWorld(GetWorld());
 
+	/** Attach each diode to root element */
 	Diode1->AttachTo(RootComponent);
 	Diode2->AttachTo(RootComponent);
 	Diode3->AttachTo(RootComponent);
@@ -49,11 +58,13 @@ bInGame(true)
 	AddOwnedComponent(Diode3);
 	AddOwnedComponent(Diode4);
 
-	UpdateDiode();
+	/** Switch off diodes */
+	SwitchDiodeOff();
 }
 
 void AMastermindPuzzleConsole::UpdateDiode()
 {
+	// TO DO
 	MaterialInstance1->SetVectorParameterValue(FName(TEXT("Color")), FColor(255, 255, 255));
 	MaterialInstance2->SetVectorParameterValue(FName(TEXT("Color")), FColor(255, 255, 255));
 	MaterialInstance3->SetVectorParameterValue(FName(TEXT("Color")), FColor(255, 255, 255));
@@ -68,6 +79,7 @@ void AMastermindPuzzleConsole::UpdateDiode()
 
 void AMastermindPuzzleConsole::SwitchDiodeOn()
 {
+	// Change color to white
 	MaterialInstance1->SetVectorParameterValue(FName(TEXT("Color")), FColor(255, 255, 255));
 	MaterialInstance2->SetVectorParameterValue(FName(TEXT("Color")), FColor(255, 255, 255));
 	MaterialInstance3->SetVectorParameterValue(FName(TEXT("Color")), FColor(255, 255, 255));
@@ -82,6 +94,7 @@ void AMastermindPuzzleConsole::SwitchDiodeOn()
 
 void AMastermindPuzzleConsole::SwitchDiodeOff()
 {
+	// Change color to black
 	MaterialInstance1->SetVectorParameterValue(FName(TEXT("Color")), FColor(0, 0, 0));
 	MaterialInstance2->SetVectorParameterValue(FName(TEXT("Color")), FColor(0, 0, 0));
 	MaterialInstance3->SetVectorParameterValue(FName(TEXT("Color")), FColor(0, 0, 0));
@@ -98,7 +111,7 @@ void AMastermindPuzzleConsole::CreatePuzzle()
 {
 	int32 NbSolution = GetNumberOfSolution();
 
-	srand(time(NULL));
+	srand(time(nullptr));
 
 	// Init the solution
 	TArray<int> RandomNumber = Utils::InitWhithoutDuplication(NbSolution);
@@ -123,6 +136,7 @@ bool AMastermindPuzzleConsole::OnInteract()
 		{
 			if (bInGame)
 			{
+				// Move to the camera puzzle
 				PlayerController->SetViewTargetWithBlend(CameraPuzzle, 1.5, EViewTargetBlendFunction::VTBlend_EaseInOut, 1.0, true);
 				EnableInput(PlayerController);
 				PlayerController->SetIgnoreMoveInput(true);
@@ -136,6 +150,7 @@ bool AMastermindPuzzleConsole::OnInteract()
 			}
 			else
 			{
+				// Move to the camera of the player
 				ACharacter* PlayerCharacter = PlayerController->GetCharacter();
 				PlayerController->SetViewTargetWithBlend(PlayerCharacter, 1.5, EViewTargetBlendFunction::VTBlend_EaseInOut, 1.0, true);
 				DisableInput(PlayerController);
