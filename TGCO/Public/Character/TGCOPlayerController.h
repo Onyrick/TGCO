@@ -50,6 +50,15 @@ public:
 	void ServerChangeActiveStateOnBarrier(class ALightningBarrier* LightningBarrier, bool bValue);
 
 	/**
+	* Function that change the visibility of a mesh
+	* Call on server by client
+	*
+	* @param	Mesh	Static Mesh for updating Visibility
+	*/
+	UFUNCTION(Server, WithValidation, Reliable)
+	void ServerUpdateVisibilityOnMesh(class UStaticMeshComponent* Mesh);
+
+	/**
 	* Function that update the speed characteristic on a specific Fan
 	* Call on client by server
 	*
