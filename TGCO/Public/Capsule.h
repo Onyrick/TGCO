@@ -15,6 +15,9 @@ class TGCO_API ACapsule : public AStockable
 public:
 	ACapsule(const FObjectInitializer& ObjectInitializer);
 
-	UPROPERTY(EditAnywhere, Category = "Stockable")
+	UPROPERTY(EditAnywhere, Category = "Capsule")
 	TEnumAsByte<ESolutionType::Type> SolutionType;
+
+	UFUNCTION(BlueprintCallable, Category = "Capsule")
+	TEnumAsByte<ESolutionType::Type> GetSolutionType();
 };

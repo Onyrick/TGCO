@@ -8,5 +8,9 @@ ACapsule::ACapsule(const FObjectInitializer& ObjectInitializer)
 {
 
 }
+TEnumAsByte<ESolutionType::Type> ACapsule::GetSolutionType()
+{
+	return SolutionType;
+}
 
 

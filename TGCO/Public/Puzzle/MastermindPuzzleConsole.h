@@ -14,7 +14,11 @@ class TGCO_API AMastermindPuzzleConsole : public AInteractiveElement
 	
 public:
 	AMastermindPuzzleConsole(const FObjectInitializer& ObjectInitializer);
-	int* SubmitAnswer(ESolutionType::Type* Answer);
+
+	virtual void BeginPlay() override;
+
+	UFUNCTION(BlueprintCallable, Category = "Mastermind")
+	void SubmitAnswer();
 
 	/** Called when the Player uses the object */
 	UFUNCTION(BlueprintCallable, Category = "Mastermind")
@@ -35,9 +39,19 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MastermindCamera")
 	ACameraActor* CameraPuzzle;
 
+	UFUNCTION(BlueprintCallable, Category = "Mastermind")
+	void SetProposalAt(ESolutionType::Type NewProposal, int32 Index);
+
+	UFUNCTION(BlueprintCallable, Category = "Mastermind")
+	void RemoveProposalAt(int32 Index);
+
+	UFUNCTION(BlueprintCallable, Category = "Mastermind")
+	ESolutionType::Type GetProposalAt(int32 Index);
+
 private:
 	ESolutionType::Type* Solution;
-	void UpdateDiode();
+	ESolutionType::Type* Proposal;
+	void UpdateDiode(int* Difference);
 	void SwitchDiodeOn();
 	void SwitchDiodeOff();
 
