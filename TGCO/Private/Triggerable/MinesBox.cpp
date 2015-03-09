@@ -54,7 +54,6 @@ void AMinesBox::OnOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent
 
 void AMinesBox::SetIsUndermined()
 {
-	//UE_LOG(LogTest, Warning, TEXT("Je suis dans la fonction SetIsUndermined de MineBox"));
 	bIsUndermined = !(bIsUndermined);
 }
 
@@ -115,24 +114,23 @@ void AMinesBox::SetIsMarked()
 
 void AMinesBox::SetVisibilityOfFlag()
 {
-	/*if (Role < ROLE_Authority)
+	if (Role < ROLE_Authority)
 	{
-		UE_LOG(LogDebug, Warning, TEXT("No authority : call ServerSetFlagVisibility"));
+		UE_LOG(LogDebug, Warning, TEXT("No authority : call ServerUpdateVisibilityOnMesh"));
 		ATGCOPlayerController * PC;
 		for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
 		{
 			PC = Cast<ATGCOPlayerController>(Iterator->Get());
-			PC->ServerUpdateVisibilityOnMesh(MineFlag);
+			PC->ServerUpdateVisibilityOnMesh(this);
 		}
 	}
 	else
-	{*/
+	{
 		UE_LOG(LogDebug, Warning, TEXT("Authority : Set the visibility of flag"));
+		bIsMarked = !bIsMarked;
 		MineFlag->SetVisibility(!(MineFlag->IsVisible()));
-	//}
+	}
 }
-
-
 
 void AMinesBox::OnRep_TextRender()
 {
@@ -160,4 +158,5 @@ void AMinesBox::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> & OutLifeti
 	DOREPLIFETIME(AMinesBox, Number);
 	DOREPLIFETIME(AMinesBox, bIsUndermined);
 	DOREPLIFETIME(AMinesBox, MineFlag);
+	DOREPLIFETIME(AMinesBox, bIsMarked);
 }

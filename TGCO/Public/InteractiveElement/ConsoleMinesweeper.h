@@ -16,26 +16,14 @@ class TGCO_API AConsoleMinesweeper : public AInteractiveElement
 	GENERATED_UCLASS_BODY()
 
 public:
-	UFUNCTION(BlueprintCallable, Category = "ConsoleMinesweeper")
-		void CreateConsoleMinesweeper();
-
 	/** Called when the Player uses the object */
 	UFUNCTION(BlueprintCallable, Category = "InteractiveElement")
 	virtual bool OnInteract() override;
 
-	/** The minesweeper the console will manage */
-	UPROPERTY(EditAnywhere, Transient, ReplicatedUsing = OnRep_Minesweeper, Category = "ConsoleMinesweeper")
-	AMinesweeper* Minesweeper;
-
-	/*UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "ConsoleMinesweeper")
-		UConsoleMinesweeperUMG* Console;*/
-
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "ConsoleMinesweeper")
 		void ResetMinesweeper();
 
-protected:
-	UFUNCTION()
-	void OnRep_Minesweeper();
-
-	
+private:
+	UFUNCTION(Server, WithValidation, Reliable)
+	void ServerActivateConsoleMinesweeper();
 };

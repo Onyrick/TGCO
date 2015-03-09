@@ -56,6 +56,7 @@ protected:
 	UPROPERTY(Transient, Replicated)
 	bool bIsUndermined;
 
+	/** Know if there is something to draw on the AMinesweeperBox : true : flag, flase : no flag */
 	UPROPERTY(Transient, ReplicatedUsing = OnRep_Flag)
 	bool bIsMarked;
 
@@ -65,9 +66,6 @@ protected:
 
 	/** Whether the number is displayed */
 	bool bIsDisplayed;
-	
-	/** Know if there is something to draw on the AMinesweeperBox : true : flag, flase : no flag */
-	bool bInfoPast;
 
 	UFUNCTION()
 	void OnRep_TextRender();
