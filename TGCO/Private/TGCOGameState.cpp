@@ -32,6 +32,7 @@ void ATGCOGameState::UpdateEnergy()
 	{
 		iPlayersEnergy = FMath::Min(iMaxPlayersEnergy, iPlayersEnergy + iPlayersEnergyIncrement);
 		fLastRegenTime = gameTime;
+		UE_LOG(LogTest, Warning, TEXT("Energy : %d"), iPlayersEnergy);
 	}
 	
 }
