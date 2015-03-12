@@ -16,12 +16,4 @@ class TGCO_API UConsoleMinesweeperUMG : public UUserWidget
 public:
 	/** Constructors */
 	UConsoleMinesweeperUMG(const FObjectInitializer& ObjectInitializer);
-
-	/** Create Console Minesweeper UMG with authority */
-	UFUNCTION(BlueprintCallable, Category = "ConsoleMinesweeperUMG")
-	void CreateConsoleMinesweeperUMG();
-
-private:
-	UFUNCTION(Server, WithValidation, Reliable)
-		void ServerCreateConsoleMinesweeperUMG();
 };

@@ -23,7 +23,9 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "ConsoleMinesweeper")
 		void ResetMinesweeper();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ConsoleMinesweeper")
+		ACameraActor* CameraConsole;
+
 private:
-	UFUNCTION(Server, WithValidation, Reliable)
-	void ServerActivateConsoleMinesweeper();
+	bool bInGame;
 };
