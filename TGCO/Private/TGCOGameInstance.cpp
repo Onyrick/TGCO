@@ -491,7 +491,7 @@ void UTGCOGameInstance::BeginPlayingState()
 		GameState->MulticastGoToPlayingState();
 	}
 
-	GetWorld()->ServerTravel(FString("/Game/Maps/TestMap/GymFan?listen"));
+	GetWorld()->ServerTravel(FString("/Game/Maps/TestMap/MapTestLucie?listen"));
 }
 
 void UTGCOGameInstance::EndPlayingState()
