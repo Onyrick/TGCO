@@ -3,25 +3,26 @@
 #include <Props/LightningBarrier.h>
 #include "MultiLightningBarrier.h"
 #include <string>
+#include "Net/UnrealNetwork.h"
 
 
 AMultiLightningBarrier::AMultiLightningBarrier(const FObjectInitializer& ObjectInitializer)
 	:Super(ObjectInitializer),
 	iNbBarriers(1)
 {
-	m_vBarriers.Push(this);
+	aBarriers.Push(this);
 }
 
 void AMultiLightningBarrier::ReceiveDestroyed()
 {
-	while (m_vBarriers.Num() > 1)
+	while (aBarriers.Num() > 1)
 	{
 		/**
 		 *	Remove all elements of the array and delete them
 		 * (normal destructor just empty the array leaving all elements
 		 * the world)
 		 */
-		auto barrier = m_vBarriers.Pop(true);
+		auto barrier = aBarriers.Pop(true);
 		if (barrier != nullptr)
 		{
 			barrier->Destroy();
@@ -33,16 +34,16 @@ void AMultiLightningBarrier::ReceiveDestroyed()
 
 void AMultiLightningBarrier::PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent)
 {
-	FName PropertyName = (PropertyChangedEvent.Property != NULL) ? PropertyChangedEvent.Property->GetFName() : NAME_None;
+	FName PropertyName = (PropertyChangedEvent.Property != nullptr) ? PropertyChangedEvent.Property->GetFName() : NAME_None;
 	/* Check if the property change event is applied to the array*/
-	if ((PropertyName == GET_MEMBER_NAME_CHECKED(AMultiLightningBarrier, m_vBarriers)))
+	if ((PropertyName == GET_MEMBER_NAME_CHECKED(AMultiLightningBarrier, aBarriers)))
 	{
 		/*if the array is emptied push back this as the first element*/
 		if (PropertyChangedEvent.ChangeType == EPropertyChangeType::ValueSet)
 		{
-			if (m_vBarriers.Num() == 0)
+			if (aBarriers.Num() == 0)
 			{
-				m_vBarriers.Push(this);
+				aBarriers.Push(this);
 				iNbBarriers = 1;
 			}
 		}
@@ -50,7 +51,7 @@ void AMultiLightningBarrier::PostEditChangeProperty(struct FPropertyChangedEvent
 	/* Check if the property change event is applied to the number of barrier */
 	if ((PropertyName == GET_MEMBER_NAME_CHECKED(AMultiLightningBarrier, iNbBarriers)))
 	{
-		int num = m_vBarriers.Num();
+		int num = aBarriers.Num();
 		if (iNbBarriers < 1)
 		{
 			iNbBarriers = 1;
@@ -67,7 +68,7 @@ void AMultiLightningBarrier::PostEditChangeProperty(struct FPropertyChangedEvent
 				for (int i = 0; i < iNbBarriers - num; i++)
 				{
 					AActor * prevBar = nullptr;
-					prevBar = m_vBarriers.Last();
+					prevBar = aBarriers.Last();
 					if (prevBar == nullptr)
 					{
 						prevBar = (ALightningBarrier*)this;
@@ -77,7 +78,7 @@ void AMultiLightningBarrier::PostEditChangeProperty(struct FPropertyChangedEvent
 					prevBar->GetActorBounds(false, Origin, BoxExtent);
 					SpawnLocation.Z = Origin.Z + BoxExtent.Z - loc.Z;
 					auto barrier = World->SpawnActor<ALightningBarrier>(ALightningBarrier::StaticClass(), SpawnLocation, SpawnRotation);
-					if (m_vBarriers.Num() == 1)
+					if (aBarriers.Num() == 1)
 					{
 						barrier->GetActorBounds(false, Origin, BoxExtent);
 						barrier->SetActorRelativeTransform(FTransform(FRotator::ZeroRotator, FVector(0.f, 0.f, Origin.Z + BoxExtent.Z), FVector(1.0)));
@@ -85,7 +86,7 @@ void AMultiLightningBarrier::PostEditChangeProperty(struct FPropertyChangedEvent
 					barrier->getStaticMesh()->SetMobility(EComponentMobility::Stationary);
 					barrier->getStaticMesh()->AttachTo(StaticMeshProps);
 					barrier->GetRootComponent()->SetAbsolute(false, false, true);
-					m_vBarriers.Push(barrier);
+					aBarriers.Push(barrier);
 				}
 			}
 		}
@@ -94,7 +95,7 @@ void AMultiLightningBarrier::PostEditChangeProperty(struct FPropertyChangedEvent
 		{
 			for (int i = 0; i < num - iNbBarriers; i++)
 			{
-				auto barrier = m_vBarriers.Pop(true);
+				auto barrier = aBarriers.Pop(true);
 				barrier->Destroy();
 			}
 		}
@@ -102,3 +103,12 @@ void AMultiLightningBarrier::PostEditChangeProperty(struct FPropertyChangedEvent
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 }
 
+
+void AMultiLightningBarrier::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> & OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	// Replicate to everyone
+	DOREPLIFETIME(AMultiLightningBarrier, aBarriers);
+	DOREPLIFETIME(AMultiLightningBarrier, iNbBarriers);
+	
+}

@@ -6,6 +6,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "TGCOCharacter.h"
 #include "TGCOGameState.h"
+#include <limits>
 #include "BTT_MonstroStartFind.h"
 
 UBTT_MonstroStartFind::UBTT_MonstroStartFind(const class FObjectInitializer& PCIP) : Super(PCIP)
@@ -18,8 +19,8 @@ EBTNodeResult::Type UBTT_MonstroStartFind::ExecuteTask(UBehaviorTreeComponent* O
 	Super::ExecuteTask(OwnerComp, NodeMemory);
 
 	UBehaviorTreeComponent* MyComp = OwnerComp;
-	AControllerAI* MyController = MyComp ? Cast<AControllerAI>(MyComp->GetOwner()) : NULL;
-	if (MyController == NULL)
+	AControllerAI* MyController = MyComp ? Cast<AControllerAI>(MyComp->GetOwner()) : nullptr;
+	if (MyController == nullptr)
 	{
 		return EBTNodeResult::Failed;
 	}
@@ -28,10 +29,10 @@ EBTNodeResult::Type UBTT_MonstroStartFind::ExecuteTask(UBehaviorTreeComponent* O
 		UBlackboardComponent* MyBlackboard = OwnerComp->GetBlackboardComponent();
 		AMonstroPlante * MonstroCharacter = Cast<AMonstroPlante>(MyController->GetPawn());
 
-		if ( MonstroCharacter == NULL )
+		if ( MonstroCharacter == nullptr )
 			return EBTNodeResult::Failed;
 		
-		if (MonstroCharacter->IsDead() || MonstroCharacter->IsStun())
+		if (MonstroCharacter->IsDead() || MonstroCharacter->IsStun() || MonstroCharacter->isReadyToMove() == false)
 			return EBTNodeResult::Failed;
 
 		ATGCOCharacter *Player = Cast<ATGCOCharacter>(MyBlackboard->GetValueAsObject("PlayerToChase"));
@@ -39,17 +40,20 @@ EBTNodeResult::Type UBTT_MonstroStartFind::ExecuteTask(UBehaviorTreeComponent* O
 		MonstroCharacter->GetAIController()->StopMovement();
 		MonstroCharacter->SpeedDefault();		
 
-		if (Player == NULL)
+		if (Player == nullptr)
 		{
+			float distanceMin = std::numeric_limits<float>::max();
 			for (TActorIterator<ATGCOCharacter> It(GetWorld()); It; ++It)
 			{
-				if (It->GetController()->IsLocalPlayerController())
+				float distance = MyController->GetPawn()->GetDistanceTo(*It);
+				if (distance < distanceMin)
 				{
-					MyBlackboard->SetValueAsObject("PlayerToChase", *It);
-					MyBlackboard->SetValueAsBool("RunningAway", false);
-					break;
+					distanceMin = distance;
+					Player = *It;
 				}
 			}
+			MyBlackboard->SetValueAsObject("PlayerToChase", Player);
+			MyBlackboard->SetValueAsBool("RunningAway", false);
 		}
 		else if (MyController->GetPawn()->GetDistanceTo(Player) < 250.f)
 		{
@@ -69,7 +73,7 @@ EBTNodeResult::Type UBTT_MonstroStartFind::ExecuteTask(UBehaviorTreeComponent* O
 				}
 
 				int idtargetpoint = rand() % ArrayTargetBot.Num();
-				if (ArrayTargetBot[idtargetpoint] != NULL)
+				if (ArrayTargetBot[idtargetpoint] != nullptr)
 				{
 					MyBlackboard->SetValueAsObject("PlayerToChase", ArrayTargetBot[idtargetpoint]);
 					MyBlackboard->SetValueAsBool("RunningAway", true);

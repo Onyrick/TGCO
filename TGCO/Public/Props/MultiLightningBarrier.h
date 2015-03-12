@@ -30,12 +30,12 @@ public:
 	virtual void ReceiveDestroyed() override;
 
 	/** Number of barrier that the multi barrier must hold */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "MultiLightningBarrier")
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "MultiLightningBarrier")
 		int32 iNbBarriers;
 
 	/** Array containing all the @ref ALigthningBarrier composing the instance */
-	UPROPERTY(EditAnywhere, Category = "MultiLightningBarrier")
-		TArray<ALightningBarrier * > m_vBarriers;
+	UPROPERTY(Replicated, EditAnywhere, Category = "MultiLightningBarrier")
+		TArray<ALightningBarrier * > aBarriers;
 
 
 

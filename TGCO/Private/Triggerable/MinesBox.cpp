@@ -33,7 +33,7 @@ void AMinesBox::OnOverlapBegin(class AActor* OtherActor, class UPrimitiveCompone
 	}
 	else
 	{
-		if (Number != NULL)
+		if (Number != nullptr)
 		{
 			Number->SetVisibility(true);
 		}	
@@ -42,7 +42,7 @@ void AMinesBox::OnOverlapBegin(class AActor* OtherActor, class UPrimitiveCompone
 
 void AMinesBox::OnOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	if (Number != NULL)
+	if (Number != nullptr)
 	{
 		Number->SetVisibility(false);
 	}

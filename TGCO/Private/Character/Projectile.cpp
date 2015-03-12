@@ -9,6 +9,8 @@
 
 AProjectile::AProjectile(const FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer)
+, ProjectileMode(EShootMode::NONE)
+, SolutionType(ESolutionType::NONE)
 {
 	// Use a sphere as a simple collision representation
 	CollisionComp = ObjectInitializer.CreateDefaultSubobject<USphereComponent>(this, TEXT("SphereComp"));
@@ -35,7 +37,7 @@ void AProjectile::InitVelocity(const FVector& ShootDirection)
 {
 	if (ProjectileMovement)
 	{
-		// set the projectile's velocity to the desired direction
+		// Set the projectile's velocity to the desired direction
 		ProjectileMovement->Velocity = ShootDirection * ProjectileMovement->InitialSpeed;
 	}
 }
@@ -43,24 +45,24 @@ void AProjectile::InitVelocity(const FVector& ShootDirection)
 void AProjectile::OnHit(AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 	// Only add impulse and destroy projectile if we hit a physics
-	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && OtherComp->IsSimulatingPhysics())
+	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr) && OtherComp->IsSimulatingPhysics())
 	{
 		OtherComp->AddImpulseAtLocation(GetVelocity() * 100.0f, GetActorLocation());
 	}
 
 	//Stun the monster hit
 	AMonster* Monster = Cast<AMonster>(OtherActor);
-	if (Monster != NULL)
+	if (Monster != nullptr)
 	{
 		FDamageEvent damage;
 		Monster->TakeDamage(0.f, damage, Monster->GetController(), this);
 	}
 
 	AProps* Props = Cast<AProps>(OtherActor);
-	if (Props != NULL)
+	if (Props != nullptr)
 	{
 		FDamageEvent damage;
-		Props->TakeDamage(0.f, damage, NULL, this);
+		Props->TakeDamage(0.f, damage, nullptr, this);
 	}
 
 	Destroy();

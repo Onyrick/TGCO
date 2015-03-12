@@ -6,9 +6,16 @@
 
 AFan::AFan(const FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer)
+, FutureFan(nullptr)
+, bIsActive(true)
 {
+	bReplicates = true;
+
+	// Initialize speed
 	fInitialSpeed = 600; 
-	fSpeed = 600;
+	fCurrentSpeed = 600;
+
+	// Initialize component according to fInitialSpeed, can be edit in BP
 	RotatingMovement = ObjectInitializer.CreateDefaultSubobject<URotatingMovementComponent>(this, TEXT("RotatingMovement"));
 	RotatingMovement->RotationRate = FRotator(0, 0, fInitialSpeed);
 	RotatingMovement->PivotTranslation = FVector(0, 0, 0);
@@ -21,28 +28,24 @@ AFan::AFan(const FObjectInitializer& ObjectInitializer)
 	RadialForce->Falloff = RIF_Linear;
 	RadialForce->bImpulseVelChange = true;
 	RadialForce->AttachParent = StaticMeshProps;
-
-	bIsActive = true;
-
-	FuturFan = NULL;
 }
 
 void AFan::UpdateSpeed()
 {
-	RotatingMovement->RotationRate = FRotator(0.f, 0.f, fSpeed);
+	RotatingMovement->RotationRate = FRotator(0.f, 0.f, fCurrentSpeed);
 	if (RadialForce)
 	{
-		RadialForce->ForceStrength = fSpeed * 1000;
-		RadialForce->ImpulseStrength = fSpeed * 0;
+		RadialForce->ForceStrength = fCurrentSpeed * 1000;
+		RadialForce->ImpulseStrength = fCurrentSpeed * 0;
 	}
 
-	if (FuturFan)
+	if (FutureFan)
 	{
-		FuturFan->Affect(fSpeed);
+		FutureFan->AffectBySpeed(fCurrentSpeed);
 	}
 }
 
-void AFan::Affect(float _fSpeed)
+void AFan::AffectBySpeed(float _fSpeed)
 {
 	RotatingMovement->RotationRate = FRotator(0.f, 0.f, _fSpeed);
 	if (RadialForce)
@@ -55,7 +58,7 @@ void AFan::Affect(float _fSpeed)
 	for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
 	{
 		PC = Cast<ATGCOPlayerController>(Iterator->Get());
-		PC->ClientAffectSpeedOnFuturFan(this, _fSpeed);
+		PC->ClientAffectSpeedOnFutureFan(this, _fSpeed);
 	}
 }
 
@@ -66,21 +69,31 @@ void AFan::ReinitSpeed()
 
 void AFan::Activate(bool bActive)
 {
-	bIsActive = bActive;
-	RotatingMovement->SetActive(bIsActive);
-	if (!bIsActive)
+	if (Role < ROLE_Authority)
 	{
-		UpdateSpeedValue(0);
+		ATGCOPlayerController * PC;
+		for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
+		{
+			PC = Cast<ATGCOPlayerController>(Iterator->Get());
+			PC->ServerActivateFan(this, bActive);
+		}
 	}
 	else
 	{
-		ReinitSpeed();
-	}
+		bIsActive = bActive;
+		RotatingMovement->SetActive(bIsActive);
 
-	if (FuturFan)
-	{
-		FuturFan->Activate(bActive);
+		if (FutureFan)
+		{
+			FutureFan->bIsActive = bActive;
+			FutureFan->RotatingMovement->SetActive(bIsActive);
+		}
 	}
+}
+
+void AFan::OnRep_Activate()
+{
+	RotatingMovement->SetActive(bIsActive);
 }
 
 void AFan::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> & OutLifetimeProps) const
@@ -89,4 +102,5 @@ void AFan::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> & OutLifetimePro
 	// Replicate to everyone
 	DOREPLIFETIME(AFan, RotatingMovement);
 	DOREPLIFETIME(AFan, RadialForce);
+	DOREPLIFETIME(AFan, bIsActive);
 }

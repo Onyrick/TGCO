@@ -56,6 +56,12 @@ public:
 
 	virtual void RespawnAI();
 
+	UFUNCTION(BlueprintCallable, Category = "Monster")
+	void SetReadyToMove(bool _ready);
+
+	UFUNCTION(BlueprintCallable, Category = "Monster")
+	bool isReadyToMove();
+
 protected:
 	/** Whether the Monster is stunned or not */
 	bool bIsStun;
@@ -65,4 +71,7 @@ protected:
 	float fRespawnTime;
 	/** Whether the Monster is dead or not */
 	bool bIsDead;
+	/** Whether the Monster has to move */
+	UPROPERTY(Transient, Replicated)
+	bool bReadyToMove;
 };

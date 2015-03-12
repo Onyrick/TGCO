@@ -16,13 +16,19 @@
 
 ATGCOCharacter::ATGCOCharacter(const FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer)
+, BaseTurnRate(45.f)
+, BaseLookUpRate(45.f)
+, PreviousInteractiveElement(nullptr)
+, iNumberOfCloseInteractiveElement(0)
+, LastSpawn(nullptr)
+, PlayerPawn(nullptr)
+, WristMode(EShootMode::STOP)
+, WristModeIndex(0)
+, SolutionType(ESolutionType::NONE)
+, fLastRegenTime(0.f)
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
-
-	// set our turn rates for input
-	BaseTurnRate = 45.f;
-	BaseLookUpRate = 45.f;
 
 	// Create a CameraComponent	
 	FirstPersonCameraComponent = ObjectInitializer.CreateDefaultSubobject<UCameraComponent>(this, TEXT("FirstPersonCamera"));
@@ -47,18 +53,6 @@ ATGCOCharacter::ATGCOCharacter(const FObjectInitializer& ObjectInitializer)
 	GetCharacterMovement()->JumpZVelocity = 600.f;
 	GetCharacterMovement()->AirControl = 0.2f;
 	GetCharacterMovement()->MaxWalkSpeed = 400;
-
-	bShootMode = true;
-	WristMode = EShootMode::STOP;
-	WristModeIndex = 0;
-
-	PreviousInteractiveElement = nullptr;
-	iNumberOfCloseInteractiveElement = 0;
-
-	PlayerPawn = nullptr;
-	LastSpawn = nullptr;
-
-	SolutionType = ESolutionType::NONE;
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
@@ -102,7 +96,6 @@ void ATGCOCharacter::SetupPlayerInputComponent(class UInputComponent* InputCompo
 	InputComponent->BindTouch(IE_Pressed, this, &ATGCOCharacter::TouchStarted);
 	InputComponent->BindTouch(IE_Released, this, &ATGCOCharacter::TouchStopped);
 }
-
 
 void ATGCOCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVector Location)
 {
@@ -163,49 +156,45 @@ void ATGCOCharacter::MoveRight(float Value)
 
 void ATGCOCharacter::OnFire()
 {
-	// if player is in FireMode
-	if (bShootMode == true)
+	ATGCOGameState* gameState = Cast<ATGCOGameState>(GetWorld()->GetGameState());
+	if (gameState && gameState->GetEnergy() > 20)
 	{
-		ATGCOGameState* gameState = Cast<ATGCOGameState>(GetWorld()->GetGameState());
-		if (gameState && gameState->GetEnergy() > 20)
+		gameState->DecreaseEnergy(20);
+
+		// try and fire a projectile
+		if (ProjectileClass != nullptr)
 		{
-			gameState->DecreaseEnergy(20);
+			const FRotator SpawnRotation = GetControlRotation();
+			// MuzzleOffset is in camera space, so transform it to world space before offsetting from the character location to find the final muzzle position
+			const FVector SpawnLocation = GetActorLocation() + SpawnRotation.RotateVector(GunOffset);
 
-			// try and fire a projectile
-			if (ProjectileClass != NULL)
+			UWorld* const World = GetWorld();
+			if (World != nullptr)
 			{
-				const FRotator SpawnRotation = GetControlRotation();
-				// MuzzleOffset is in camera space, so transform it to world space before offsetting from the character location to find the final muzzle position
-				const FVector SpawnLocation = GetActorLocation() + SpawnRotation.RotateVector(GunOffset);
-
-				UWorld* const World = GetWorld();
-				if (World != NULL)
-				{
-					// spawn the projectile at the muzzle
-					AProjectile* Projectile = World->SpawnActor<AProjectile>(ProjectileClass, SpawnLocation, SpawnRotation);
-					Projectile->SetSolutionType(SolutionType);
-					Projectile->SetMode(WristMode);
-				}
+				// spawn the projectile at the muzzle
+				AProjectile* Projectile = World->SpawnActor<AProjectile>(ProjectileClass, SpawnLocation, SpawnRotation);
+				Projectile->SetSolutionType(SolutionType);
+				Projectile->SetMode(WristMode);
 			}
+		}
 
-			// try and play the sound if specified
-			if (FireSound != NULL)
+		// try and play the sound if specified
+		if (FireSound != nullptr)
+		{
+			UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
+		}
+
+		// try and play a firing animation if specified
+		if (FireAnimation != nullptr)
+		{
+			/*
+			// Get the animation object for the arms mesh
+			UAnimInstance* AnimInstance = Mesh1P->GetAnimInstance();
+			if (AnimInstance != nullptr)
 			{
-				UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
+			AnimInstance->Montage_Play(FireAnimation, 1.f);
 			}
-
-			// try and play a firing animation if specified
-			if (FireAnimation != NULL)
-			{
-				/*
-				// Get the animation object for the arms mesh
-				UAnimInstance* AnimInstance = Mesh1P->GetAnimInstance();
-				if (AnimInstance != NULL)
-				{
-				AnimInstance->Montage_Play(FireAnimation, 1.f);
-				}
-				*/
-			}
+			*/
 		}
 	}
 }
@@ -223,7 +212,7 @@ void ATGCOCharacter::Use()
 		// Get the hitting element as an InteractiveElement
 		AInteractiveElement* ElementHit = Cast<AInteractiveElement>(OutHitResult.GetActor());
 		
-		if (ElementHit != NULL)
+		if (ElementHit != nullptr)
 		{
 			// If element is active
 			if (ElementHit->IsInteractive())
@@ -274,7 +263,7 @@ void ATGCOCharacter::SetNextWristMode()
 void ATGCOCharacter::CancelActionTime()
 {
 	ATGCOPlayerState* PS = Cast<ATGCOPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
-	PS->SetPropsAffected(NULL);
+	PS->SetPropsAffected(nullptr);
 	PS->SetModUsed(EShootMode::NONE);
 
 	UE_LOG(LogDebug, Warning, TEXT("Cancel action time"));
@@ -338,52 +327,35 @@ void ATGCOCharacter::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 
 	UWorld* const World = GetWorld();
-	if (World != NULL)
+	if (World != nullptr)
 	{
-		//GameMode is only on the server
-		ATGCOGameMode* GameMode = Cast<ATGCOGameMode>(World->GetAuthGameMode());
-		if (GameMode)
-		{
-			ATGCOGameState* GameState = Cast<ATGCOGameState>(World->GetGameState());
-			if (GameState != NULL)
-			{	
-				ATGCOPlayerState* PS = Cast<ATGCOPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
-				float gameTime = this->GetWorld()->GetTimeSeconds();
-
-				if (PS->GetModUsed() != EShootMode::NONE && gameTime - fLastRegenTime >= 1.f)
-				{
-					fLastRegenTime = gameTime;
-					
-					if (GameState->GetEnergy() == 1)
-					{
-						PS->SetPropsAffected(NULL);
-						PS->SetModUsed(EShootMode::NONE);
-					}
-					else
-					{
-						GameState->DecreaseEnergy(GetEnergyConsuming(PS->GetModUsed()));
-					}
-				}
-				else
-				{
-					GameState->UpdateEnergy();
-				}
+		ATGCOGameState* GameState = Cast<ATGCOGameState>(World->GetGameState());
+		if (GameState != nullptr)
+		{	
+			float fGameTime = World->GetTimeSeconds();
+			if (fGameTime - fLastRegenTime >= 1.f)
+			{
+				fLastRegenTime = fGameTime;
+				GameState->ManagePlayersEnergy();
+			}
 				
-				
-				if (GameState->CheckRemainingEnergy() == false)
+			// Need to test also if player has taken damages
+			if (GameState->CheckRemainingEnergy() == false)
+			{
+				//GameMode is only on the server
+				ATGCOGameMode* GameMode = Cast<ATGCOGameMode>(World->GetAuthGameMode());
+				if (GameMode)
 				{
 					GameMode->ServerKillPlayersThenRespawn();
-				}				
-			}
+				}
+			}				
 		}
 	}
 
-	if (iNumberOfCloseInteractiveElement <= 0)
+	if (iNumberOfCloseInteractiveElement > 0)
 	{
-		return;
+		HightlightCloseInteractiveElement();
 	}
-	
-	HightlightCloseInteractiveElement();
 }
 
 void ATGCOCharacter::IncreaseNumberOfCloseInteractiveElement()
@@ -406,12 +378,12 @@ void ATGCOCharacter::HightlightCloseInteractiveElement()
 	if (hasHit)
 	{
 		AInteractiveElement* ElementHit = Cast<AInteractiveElement>(OutHitResult.GetActor());
-		if (PreviousInteractiveElement != NULL && PreviousInteractiveElement != ElementHit)
+		if (PreviousInteractiveElement != nullptr && PreviousInteractiveElement != ElementHit)
 		{
 			PreviousInteractiveElement->Highlight(false);
-			PreviousInteractiveElement = NULL;
+			PreviousInteractiveElement = nullptr;
 		}
-		if (ElementHit != NULL)
+		if (ElementHit != nullptr)
 		{
 			if (ElementHit->IsInteractive())
 			{
@@ -426,10 +398,10 @@ void ATGCOCharacter::HightlightCloseInteractiveElement()
 	}
 	else
 	{
-		if (PreviousInteractiveElement != NULL)
+		if (PreviousInteractiveElement != nullptr)
 		{
 			PreviousInteractiveElement->Highlight(false);
-			PreviousInteractiveElement = NULL;
+			PreviousInteractiveElement = nullptr;
 		}
 	}
 }
@@ -437,10 +409,10 @@ void ATGCOCharacter::HightlightCloseInteractiveElement()
 float ATGCOCharacter::TakeDamage(float fDamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser)
 {
 	UWorld* const World = GetWorld();
-	if (World != NULL)
+	if (World != nullptr)
 	{
 		ATGCOGameState* GameState = Cast<ATGCOGameState>(World->GetGameState());
-		if (GameState != NULL)
+		if (GameState != nullptr)
 		{
 			UE_LOG(LogDebug, Warning, TEXT("Player take damage"));
 			// Active shield

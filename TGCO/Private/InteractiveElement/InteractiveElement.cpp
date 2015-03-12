@@ -60,7 +60,7 @@ void AInteractiveElement::OnOverlapBegin(class AActor* OtherActor, class UPrimit
 {
 	ATGCOCharacter* PlayerCharacter = Cast<ATGCOCharacter>(OtherActor);
 
-	if (PlayerCharacter != NULL)
+	if (PlayerCharacter != nullptr)
 	{
 		PlayerCharacter->IncreaseNumberOfCloseInteractiveElement();
 		bCloseEnough = true;
@@ -71,7 +71,7 @@ void AInteractiveElement::OnOverlapEnd(class AActor* OtherActor, class UPrimitiv
 {
 	ATGCOCharacter* PlayerCharacter = Cast<ATGCOCharacter>(OtherActor);
 
-	if (PlayerCharacter != NULL)
+	if (PlayerCharacter != nullptr)
 	{
 		PlayerCharacter->DecreaseNumberOfCloseInteractiveElement();
 		bCloseEnough = false;

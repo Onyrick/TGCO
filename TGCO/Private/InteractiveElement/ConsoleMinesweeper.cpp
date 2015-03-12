@@ -8,7 +8,7 @@ AConsoleMinesweeper::AConsoleMinesweeper(const class FObjectInitializer& ObjectI
 : Super(ObjectInitializer)
 {
 	static ConstructorHelpers::FClassFinder<AMinesweeper> ItemBlueprint(TEXT("/Game/Blueprints/Minesweeper_BP"));
-	if (ItemBlueprint.Class != NULL)
+	if (ItemBlueprint.Class != nullptr)
 	{
 		Minesweeper = (UClass*)ItemBlueprint.Class;
 	}

@@ -62,6 +62,7 @@ public:
 
 protected:	
 	TArray<ESolutionType::Type> SolutionResistence;
+
 	UMaterialInstanceDynamic *MaterialInstance1;
 	UMaterialInstanceDynamic *MaterialInstance2;
 	UMaterialInstanceDynamic *MaterialInstance3;
@@ -70,4 +71,5 @@ protected:
 
 	int m_iIdToReplace;
 
+	bool InitializedMaterials;
 };

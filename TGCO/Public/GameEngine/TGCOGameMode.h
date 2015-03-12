@@ -26,6 +26,6 @@ protected:
 	virtual TSubclassOf<AGameSession> GetGameSessionClass() const override;
 
 private:
-	/** select best spawn point for player */
+	/** Select best spawn point for player */
 	virtual AActor* ChoosePlayerStart(AController* Player) override;
 };
