@@ -212,6 +212,9 @@ bool AMastermindPuzzleConsole::OnInteract()
 
 				SwitchDiodeOn();
 				bInGame = false;
+
+				FInputModeGameAndUI Mode;
+				PlayerController->SetInputMode(Mode);
 			}
 			else
 			{
@@ -229,6 +232,8 @@ bool AMastermindPuzzleConsole::OnInteract()
 				bInGame = true;
 				QuitMastermindPuzzleConsole();
 
+				FInputModeGameOnly GameMode;
+				PlayerController->SetInputMode(GameMode);
 			}
 		}
 	}
