@@ -4,6 +4,7 @@
 
 #include "InteractiveElement.h"
 #include "Minesweeper.h"
+#include "ConsoleMinesweeperUMG.h"
 #include "ConsoleMinesweeper.generated.h"
 
 /**
@@ -19,11 +20,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "InteractiveElement")
 	virtual bool OnInteract() override;
 
-	/** The minesweeper the console will manage */
-	UPROPERTY(EditAnywhere, Category = "ConsoleMinesweeper")
-		TSubclassOf<class AMinesweeper> Minesweeper;
-
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "ConsoleMinesweeper")
 		void ResetMinesweeper();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ConsoleMinesweeper")
+		ACameraActor* CameraConsole;
+
+private:
+	bool bInGame;
 };

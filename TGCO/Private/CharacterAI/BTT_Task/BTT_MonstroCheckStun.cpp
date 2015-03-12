@@ -16,8 +16,8 @@ EBTNodeResult::Type UBTT_MonstroCheckStun::ExecuteTask(UBehaviorTreeComponent* O
 	Super::ExecuteTask(OwnerComp, NodeMemory);
 
 	UBehaviorTreeComponent* MyComp = OwnerComp;
-	AControllerAI* MyController = MyComp ? Cast<AControllerAI>(MyComp->GetOwner()) : NULL;
-	if (MyController == NULL)
+	AControllerAI* MyController = MyComp ? Cast<AControllerAI>(MyComp->GetOwner()) : nullptr;
+	if (MyController == nullptr)
 	{
 		return EBTNodeResult::Failed;
 	}
@@ -41,12 +41,12 @@ EBTNodeResult::Type UBTT_MonstroCheckStun::ExecuteTask(UBehaviorTreeComponent* O
 			ATargetPoint *oldTargetPoint = Cast<ATargetPoint>(MyBlackboard->GetValueAsObject("PlayerToChase"));
 
 			MyBlackboard->SetValueAsBool("Avoiding", false);
-			if (oldTargetPoint != NULL)
+			if (oldTargetPoint != nullptr)
 			{
 				oldTargetPoint->Destroy();
 			}
 
-			MyBlackboard->SetValueAsObject("PlayerToChase", NULL);
+			MyBlackboard->SetValueAsObject("PlayerToChase", nullptr);
 			for (TActorIterator<ATGCOCharacter> It(GetWorld()); It; ++It)
 			{
 				if (It->GetController()->IsLocalPlayerController())

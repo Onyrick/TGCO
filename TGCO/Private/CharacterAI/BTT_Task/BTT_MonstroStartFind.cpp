@@ -18,8 +18,8 @@ EBTNodeResult::Type UBTT_MonstroStartFind::ExecuteTask(UBehaviorTreeComponent* O
 	Super::ExecuteTask(OwnerComp, NodeMemory);
 
 	UBehaviorTreeComponent* MyComp = OwnerComp;
-	AControllerAI* MyController = MyComp ? Cast<AControllerAI>(MyComp->GetOwner()) : NULL;
-	if (MyController == NULL)
+	AControllerAI* MyController = MyComp ? Cast<AControllerAI>(MyComp->GetOwner()) : nullptr;
+	if (MyController == nullptr)
 	{
 		return EBTNodeResult::Failed;
 	}
@@ -28,7 +28,7 @@ EBTNodeResult::Type UBTT_MonstroStartFind::ExecuteTask(UBehaviorTreeComponent* O
 		UBlackboardComponent* MyBlackboard = OwnerComp->GetBlackboardComponent();
 		AMonstroPlante * MonstroCharacter = Cast<AMonstroPlante>(MyController->GetPawn());
 
-		if ( MonstroCharacter == NULL )
+		if ( MonstroCharacter == nullptr )
 			return EBTNodeResult::Failed;
 		
 		if (MonstroCharacter->IsDead() || MonstroCharacter->IsStun())
@@ -39,7 +39,7 @@ EBTNodeResult::Type UBTT_MonstroStartFind::ExecuteTask(UBehaviorTreeComponent* O
 		MonstroCharacter->GetAIController()->StopMovement();
 		MonstroCharacter->SpeedDefault();		
 
-		if (Player == NULL)
+		if (Player == nullptr)
 		{
 			for (TActorIterator<ATGCOCharacter> It(GetWorld()); It; ++It)
 			{
@@ -69,7 +69,7 @@ EBTNodeResult::Type UBTT_MonstroStartFind::ExecuteTask(UBehaviorTreeComponent* O
 				}
 
 				int idtargetpoint = rand() % ArrayTargetBot.Num();
-				if (ArrayTargetBot[idtargetpoint] != NULL)
+				if (ArrayTargetBot[idtargetpoint] != nullptr)
 				{
 					MyBlackboard->SetValueAsObject("PlayerToChase", ArrayTargetBot[idtargetpoint]);
 					MyBlackboard->SetValueAsBool("RunningAway", true);

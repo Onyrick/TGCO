@@ -19,25 +19,32 @@ class TGCO_API ALightningBarrier : public AProps
 public:
 	/** Constructors */
 	ALightningBarrier(const FObjectInitializer& PCIP);
-
+	
+	/**
+	* public  method : Change the active state (whether or not the lightning
+	* is active)
+	* @method:    ChangeActiveState
+	* @return:   void
+	*/
 	UFUNCTION(BlueprintCallable, Category = "LightningBarrier")
-		/**
-		 * public  method : Change the active state (whether or not the lightning
-		 * is active)
-		 * @method:    ChangeActiveState
-		 * @return:   void
-		 */
-		 void ChangeActiveState();
+	void ChangeActiveState();
+
+	UFUNCTION()
+	void OnRep_LightningState();
+
 
 	/** Boolean describing the active state of the lightning. Can be edited in
 	the unreal editor and have an immediate effect on the instance in the scene */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "LightningBarrier")
-		bool bIsLightningActive;
+	UPROPERTY(Replicated, ReplicatedUsing = OnRep_LightningState, EditAnywhere, BlueprintReadOnly, Category = "LightningBarrier")
+	bool bIsLightningActive;
 
 	/** Mesh representing the barrier itself */
-	UPROPERTY(EditAnywhere, Category = "LightningBarrier")
-		ULightningBarrierSkeletalMeshComp * pBarrier;
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "LightningBarrier")
+	ULightningBarrierSkeletalMeshComp * pBarrier;
 
+	virtual void ChangeActiveStateFromServer(bool bValue);
+
+	virtual void UpdateActiveState();
 
 #if WITH_EDITOR
 	/**
@@ -49,6 +56,7 @@ public:
 	 * @return:   void
 	 */
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+	
 #endif
 
 protected:

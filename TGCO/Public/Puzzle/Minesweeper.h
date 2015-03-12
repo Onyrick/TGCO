@@ -49,6 +49,9 @@ public:
 	TSubclassOf<class AMinesBox> MineBoxBP;
 
 private:
+	UFUNCTION(Server, WithValidation, Reliable)
+		void ServerResetMinesweeper();
+
 	/** The number of columns */
 	const int NB_COL = 5;
 	/** The number of rows */

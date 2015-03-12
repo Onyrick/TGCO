@@ -37,26 +37,39 @@ public:
 
 	/** Set the visibility of the flag */
 	UFUNCTION(BlueprintCallable, Category = "MineBox")
+	void SetIsMarked();
+
+	/** Set the visibility of the flag */
+	UFUNCTION(BlueprintCallable, Category = "MineBox")
 	void SetVisibilityOfFlag();
 
 	/** The Text Render representing the number of Neighbours which are undermined */
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Text)
+	UPROPERTY(VisibleAnywhere, Transient, Replicated, BlueprintReadWrite, Category = Text)
 		UTextRenderComponent* Number;
 
 	/** The Mesh representing a flag. Will be visible thanks to the console */
-	UPROPERTY(EditAnywhere, Category = Meshes)
+	UPROPERTY(EditAnywhere, Transient, Replicated, Category = Meshes)
 		UStaticMeshComponent* MineFlag;
 
 protected:
 	/** Wheteher a mineBox is undermined */
+	UPROPERTY(Transient, Replicated)
 	bool bIsUndermined;
 
-	/** The number of neighbourgs which are undermined. This number will be written on the box */
-	unsigned int iNeighboursUndermined;
+	/** Know if there is something to draw on the AMinesweeperBox : true : flag, flase : no flag */
+	UPROPERTY(Transient, ReplicatedUsing = OnRep_Flag)
+	bool bIsMarked;
+
+	/** The number of neighbourgs which are undermined. */
+	UPROPERTY(Transient, ReplicatedUsing = OnRep_TextRender)
+	int32 iNeighboursUndermined;
 
 	/** Whether the number is displayed */
 	bool bIsDisplayed;
-	
-	/** Know if there is something to draw on the AMinesweeperBox : true : flag, flase : no flag */
-	bool bInfoPast;
+
+	UFUNCTION()
+	void OnRep_TextRender();
+
+	UFUNCTION()
+	void OnRep_Flag();
 };

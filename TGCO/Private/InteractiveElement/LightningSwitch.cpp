@@ -20,7 +20,10 @@ bool ALightningSwitch::OnInteract()
 
 	for (auto Iter(m_vControledTerminals.CreateIterator()); Iter; Iter++)
 	{
-		(*Iter)->ChangeActiveState();
+		if ((*Iter) != nullptr)
+		{
+			(*Iter)->ChangeActiveState();
+		}
 	}
 
 	return true;

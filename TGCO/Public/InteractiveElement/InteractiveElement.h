@@ -70,7 +70,7 @@ public:
 
 	/** TODO */
 	UPROPERTY(EditAnywhere, Category = "InteractiveElementComponents", meta = (EditCondition = "bCanExistsPastFuture"))
-	AActor* FuturElement;
+	AActor* FutureElement;
 
 protected:
 

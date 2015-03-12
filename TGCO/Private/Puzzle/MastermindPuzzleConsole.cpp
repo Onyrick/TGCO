@@ -14,23 +14,28 @@ bInGame(true)
 	Solution = new ESolutionType::Type[4]();
 	Proposal = new ESolutionType::Type[4]();
 
+	/** Create static mesh for diode */
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> StaticMesh(TEXT("StaticMesh'/Game/StarterContent/Shapes/Shape_Sphere'"));
 
+	/** Create mesh component for each diode */
 	Diode1 = ObjectInitializer.CreateAbstractDefaultSubobject<UStaticMeshComponent>(this, TEXT("Diode1"));
 	Diode2 = ObjectInitializer.CreateAbstractDefaultSubobject<UStaticMeshComponent>(this, TEXT("Diode2"));
 	Diode3 = ObjectInitializer.CreateAbstractDefaultSubobject<UStaticMeshComponent>(this, TEXT("Diode3"));
 	Diode4 = ObjectInitializer.CreateAbstractDefaultSubobject<UStaticMeshComponent>(this, TEXT("Diode4"));
 
+	/** Attach mesh component to each diode */
 	Diode1->SetStaticMesh(StaticMesh.Object);
 	Diode2->SetStaticMesh(StaticMesh.Object);
 	Diode3->SetStaticMesh(StaticMesh.Object);
 	Diode4->SetStaticMesh(StaticMesh.Object);
 
+	/** Register each Diode component */
 	Diode1->RegisterComponentWithWorld(GetWorld());
 	Diode2->RegisterComponentWithWorld(GetWorld());
 	Diode3->RegisterComponentWithWorld(GetWorld());
 	Diode4->RegisterComponentWithWorld(GetWorld());
 
+	/** Attach each diode to root element */
 	Diode1->AttachTo(RootComponent);
 	Diode2->AttachTo(RootComponent);
 	Diode3->AttachTo(RootComponent);
@@ -68,7 +73,6 @@ void AMastermindPuzzleConsole::BeginPlay()
 
 void AMastermindPuzzleConsole::UpdateDiode(int* Difference)
 {
-
 	switch (Difference[0]){
 	case -1:
 		// Good for the player, bad for the tree
@@ -146,7 +150,8 @@ void AMastermindPuzzleConsole::UpdateDiode(int* Difference)
 }
 
 void AMastermindPuzzleConsole::SwitchDiodeOn()
-{	
+{
+	// Change color to white
 	MaterialInstance1->SetVectorParameterValue(FName(TEXT("Color")), FColor(255, 255, 255));
 	MaterialInstance1->SetScalarParameterValue(FName(TEXT("Intensity")), 10);
 	Diode1->SetMaterial(0, MaterialInstance1);
@@ -196,6 +201,7 @@ bool AMastermindPuzzleConsole::OnInteract()
 			if (bInGame)
 			{
 				UE_LOG(LogTest, Warning, TEXT("Console activate"));
+				// Move to the camera puzzle
 				PlayerController->SetViewTargetWithBlend(CameraPuzzle, 1.5, EViewTargetBlendFunction::VTBlend_EaseInOut, 1.0, true);
 				EnableInput(PlayerController);
 				PlayerController->SetIgnoreMoveInput(true);
@@ -210,6 +216,7 @@ bool AMastermindPuzzleConsole::OnInteract()
 			else
 			{
 				UE_LOG(LogTest, Warning, TEXT("Console desactivate"));
+				// Move to the camera of the player
 				ACharacter* PlayerCharacter = PlayerController->GetCharacter();
 				PlayerController->SetViewTargetWithBlend(PlayerCharacter, 1.5, EViewTargetBlendFunction::VTBlend_EaseInOut, 1.0, true);
 				DisableInput(PlayerController);

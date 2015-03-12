@@ -29,10 +29,10 @@ bool AFlowerPot::OnInteract()
 	//TODO
 	UE_LOG(LogDebug, Warning, TEXT("Interactible flower pot"));
 
-	AFlowerPot* FuturSelf = Cast<AFlowerPot>(FuturElement);
-	if (FuturSelf != nullptr)
+	AFlowerPot* FutureSelf = Cast<AFlowerPot>(FutureElement);
+	if (FutureSelf != nullptr)
 	{
-		FuturSelf->GrowTree();
+		FutureSelf->GrowTree();
 	}
 
 	return true;

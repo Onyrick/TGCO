@@ -6,7 +6,8 @@
 #include "TGCOHUD.generated.h"
 
 /**
- * TODO
+ * A Simple HUD for Player
+ * Display a crosshair on the screen
  */
 UCLASS()
 class TGCO_API ATGCOHUD : public AHUD
@@ -14,10 +15,15 @@ class TGCO_API ATGCOHUD : public AHUD
 	GENERATED_BODY()
 	
 public:
+	/** Constructors */
 	ATGCOHUD(const FObjectInitializer& ObjectInitializer);
 
 	/** Primary draw call for the HUD */
 	virtual void DrawHUD() override;
+	
+	/** Variable for storing the font */
+	UPROPERTY()
+	class UFont* HUDFont;
 
 private:
 	/** Crosshair asset pointer */
