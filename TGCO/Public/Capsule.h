@@ -22,7 +22,10 @@ public:
 	TEnumAsByte<ESolutionType::Type> GetSolutionType();
 
 	UFUNCTION(BlueprintCallable, Category = "Capsule")
-	void IsCurrentlyUsed(bool bNewIsCurrentlyUsed);
+	void UpdateIsCurrentlyUsed(bool bNewIsCurrentlyUsed);
+
+	UFUNCTION(BlueprintCallable, Category = "Capsule")
+	bool IsCurrentlyUsed();
 	
 	UPROPERTY(EditAnywhere, Category = "Capsule")
 	bool bIsCurrentlyUsed;
