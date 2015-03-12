@@ -414,12 +414,11 @@ float ATGCOCharacter::TakeDamage(float fDamageAmount, struct FDamageEvent const 
 		ATGCOGameState* GameState = Cast<ATGCOGameState>(World->GetGameState());
 		if (GameState != nullptr)
 		{
-			UE_LOG(LogDebug, Warning, TEXT("Player take damage"));
 			// Active shield
 			ActiveShield(true);
 
 			// Decrease energy in the GameState
-			GameState->DecreaseEnergy(fDamageAmount);
+			GameState->DecreaseEnergy(fDamageAmount, true);
 
 			return fDamageAmount;
 		}
@@ -432,7 +431,6 @@ void ATGCOCharacter::ActiveShield(bool bActivate)
 {
 	if (bActivate)
 	{
-		UE_LOG(LogDebug, Warning, TEXT("Active Shield"));
 		// Activate the shield
 		PlayShieldAnimation();
 		PlayShieldSound();
@@ -447,13 +445,11 @@ void ATGCOCharacter::ActiveShield(bool bActivate)
 void ATGCOCharacter::PlayShieldAnimation()
 {
 	// TODO
-	UE_LOG(LogDebug, Warning, TEXT("TO DO : play activate shield animation"));
 }
 
 void ATGCOCharacter::PlayShieldSound()
 {
 	// TODO
-	UE_LOG(LogDebug, Warning, TEXT("TO DO : play activate shield sound"));
 }
 
 UInventoryUMG* ATGCOCharacter::GetInventoryUMG() const
@@ -503,4 +499,9 @@ ESolutionType::Type ATGCOCharacter::GetSolutionType()
 void ATGCOCharacter::SetSolutionType(ESolutionType::Type _solution)
 {
 	SolutionType = _solution;
+}
+
+EShootMode::Type ATGCOCharacter::GetWristMode()
+{
+	return WristMode;
 }

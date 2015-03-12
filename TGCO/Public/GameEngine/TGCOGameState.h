@@ -49,6 +49,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Players")
 	int32 GetEnergy();
 
+	/** Get the Player's max energy*/
+	UFUNCTION(BlueprintCallable, Category = "Players")
+	int32 GetMaxEnergy();
+
 	/** Remove all widgets attached to viewport */
 	UFUNCTION(Netmulticast, reliable)
 	void MulticastRemoveAllWidgets();
@@ -84,8 +88,10 @@ protected:
 
 private:
 	/** Maximum amount of energy Players can have */
+	UPROPERTY(SaveGame, Replicated)
 	int32 iMaxPlayersEnergy;
 
 };
 
-FORCEINLINE int32 ATGCOGameState::GetEnergy(void){ return iPlayersEnergy;  }
+FORCEINLINE int32 ATGCOGameState::GetEnergy(void){ return iPlayersEnergy; }
+FORCEINLINE int32 ATGCOGameState::GetMaxEnergy(void){ return iMaxPlayersEnergy; }

@@ -119,6 +119,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "SolutionType")
 	void SetSolutionType(ESolutionType::Type _solution);
 
+	/** Get the WristMode of Character */
+	EShootMode::Type GetWristMode();
 protected:
 	/** Tick function */
 	virtual void Tick(float DeltaSeconds) override;

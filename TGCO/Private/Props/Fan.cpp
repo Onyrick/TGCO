@@ -69,6 +69,7 @@ void AFan::ReinitSpeed()
 
 void AFan::Activate(bool bActive)
 {
+	UE_LOG(LogDebug, Warning, TEXT("Begin of activate fan"));
 	if (Role < ROLE_Authority)
 	{
 		ATGCOPlayerController * PC;
