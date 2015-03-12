@@ -150,4 +150,5 @@ void ATGCOGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> & OutL
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	// Replicate to everyone
 	DOREPLIFETIME(ATGCOGameState, iPlayersEnergy);
+	DOREPLIFETIME(ATGCOGameState, iMaxPlayersEnergy);
 }

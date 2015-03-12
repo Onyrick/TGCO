@@ -11,6 +11,10 @@
 ATGCOHUD::ATGCOHUD(const FObjectInitializer& ObjectInitializer) 
 : Super(ObjectInitializer)
 {
+	//Use the RobotoDistanceField font from the engine
+	static ConstructorHelpers::FObjectFinder<UFont>HUDFontOb(TEXT("/Game/Character/HUD/HUDFont"));
+	HUDFont = HUDFontOb.Object;
+
 	// Set the crosshair texture
 	static ConstructorHelpers::FObjectFinder<UTexture2D> CrosshiarTexObj(TEXT("/Game/Textures/Crosshair"));
 	CrosshairTex = CrosshiarTexObj.Object;
@@ -18,6 +22,9 @@ ATGCOHUD::ATGCOHUD(const FObjectInitializer& ObjectInitializer)
 
 void ATGCOHUD::DrawHUD()
 {
+	//Get the screen dimensions
+	FVector2D ScreenDimensions = FVector2D(Canvas->SizeX, Canvas->SizeY);
+
 	Super::DrawHUD();
 
 	// Draw very simple crosshair 
@@ -32,4 +39,19 @@ void ATGCOHUD::DrawHUD()
 	FCanvasTileItem TileItem(CrosshairDrawPosition, CrosshairTex->Resource, FLinearColor::White);
 	TileItem.BlendMode = SE_BLEND_Translucent;
 	Canvas->DrawItem(TileItem);
+	/*
+	// Get the GameState and print power level 
+	ATGCOGameState* GameState = Cast<ATGCOGameState>(GetWorld()->GetGameState());
+	if (GameState != nullptr)
+	{
+		FString PowerLevelString = FString::FromInt(GameState->GetEnergy());
+		DrawText(PowerLevelString, FColor::White, 0, 0, HUDFont);
+	}
+	*/
+	ATGCOCharacter* Character = Cast<ATGCOCharacter>(GetWorld()->GetFirstPlayerController()->GetCharacter());
+	if (Character != nullptr)
+	{
+		FString ShootModeString = GetNameOfTheMode(Character->GetWristMode());
+		DrawText(ShootModeString, FColor::White, 0, 50, HUDFont);
+	}
 }
