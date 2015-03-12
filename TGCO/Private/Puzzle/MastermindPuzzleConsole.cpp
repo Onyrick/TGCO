@@ -220,6 +220,7 @@ bool AMastermindPuzzleConsole::OnInteract()
 				PlayerController->bEnableMouseOverEvents = false;
 				SwitchDiodeOff();
 				bInGame = true;
+				QuitMastermindPuzzleConsole();
 
 			}
 		}
@@ -283,4 +284,13 @@ void AMastermindPuzzleConsole::RemoveProposalAt(int32 Index)
 ESolutionType::Type AMastermindPuzzleConsole::GetProposalAt(int32 Index)
 {
 	return Proposal[Index];
+}
+
+
+void AMastermindPuzzleConsole::ClearProposal()
+{
+	for (int i = 0; i < 4; ++i)
+	{
+		Proposal[i] = ESolutionType::NONE;
+	}
 }

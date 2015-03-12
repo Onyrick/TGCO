@@ -13,4 +13,9 @@ TEnumAsByte<ESolutionType::Type> ACapsule::GetSolutionType()
 	return SolutionType;
 }
 
+void ACapsule::IsCurrentlyUsed(bool bNewIsCurrentlyUsed)
+{
+	bIsCurrentlyUsed = bNewIsCurrentlyUsed;
+}
+
 

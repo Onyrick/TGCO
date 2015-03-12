@@ -48,6 +48,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Mastermind")
 	ESolutionType::Type GetProposalAt(int32 Index);
 
+	UFUNCTION(BlueprintCallable, Category = "Mastermind")
+	void ClearProposal();
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Mastermind")
+	void QuitMastermindPuzzleConsole();
+
 private:
 	ESolutionType::Type* Solution;
 	ESolutionType::Type* Proposal;
