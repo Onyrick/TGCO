@@ -37,16 +37,6 @@ void AMinesweeper::CreateMinesweeper()
 
 	PutMinesRandomly();
 	CalculateNeighboursUndermined();
-
-	
-	for (TActorIterator<AActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
-	{
-		if (ActorItr->GetName().Contains("MinesweeperConsole") && ActorItr->GetActorClass()->GetDescription() == FString(TEXT("Minesweeper Console BP")))
-		{
-			AConsoleMinesweeper* ConsoleMinesweeper = Cast<AConsoleMinesweeper>(*ActorItr);
-			ConsoleMinesweeper->ResetMinesweeper();
-		}
-	}
 	
 }
 
@@ -85,6 +75,15 @@ void AMinesweeper::ResetMinesweeper()
 			}
 			Squares.Empty(Squares.Num());
 			CreateMinesweeper();
+		}
+	}
+
+	for (TActorIterator<AActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+	{
+		if (ActorItr->GetName().Contains("MinesweeperConsole") && ActorItr->GetActorClass()->GetDescription() == FString(TEXT("Minesweeper Console BP")))
+		{
+			AConsoleMinesweeper* ConsoleMinesweeper = Cast<AConsoleMinesweeper>(*ActorItr);
+			ConsoleMinesweeper->ResetMinesweeper();
 		}
 	}
 }
