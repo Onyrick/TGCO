@@ -21,10 +21,11 @@ public:
 	virtual bool OnInteract() override;
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "ConsoleMinesweeper")
-		void ResetMinesweeper();
+	void ResetMinesweeper();
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ConsoleMinesweeper")
-		ACameraActor* CameraConsole;
+	ACameraActor* CameraConsole;
 
 private:
 	bool bInGame;
