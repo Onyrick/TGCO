@@ -14,15 +14,15 @@ class TGCO_API AMastermindPuzzleConsole : public AInteractiveElement
 	
 public:
 	AMastermindPuzzleConsole(const FObjectInitializer& ObjectInitializer);
-	int* SubmitAnswer(ESolutionType::Type* Answer);
 
-	/** Called when the Player uses the object */
+	virtual void BeginPlay() override;
+
 	UFUNCTION(BlueprintCallable, Category = "Mastermind")
-	virtual bool OnInteract() override;
+	void SubmitAnswer();
 
 	/** Initialize Mastermind solution */
 	UFUNCTION(BlueprintCallable, Category = "Mastermind")
-	void CreatePuzzle();
+	virtual bool OnInteract() override;
 
 	/** Diode components */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Diode")
@@ -41,9 +41,26 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MastermindCamera")
 	ACameraActor* CameraPuzzle;
 
+	UFUNCTION(BlueprintCallable, Category = "Mastermind")
+	void SetProposalAt(ESolutionType::Type NewProposal, int32 Index);
+
+	UFUNCTION(BlueprintCallable, Category = "Mastermind")
+	void RemoveProposalAt(int32 Index);
+
+	UFUNCTION(BlueprintCallable, Category = "Mastermind")
+	ESolutionType::Type GetProposalAt(int32 Index);
+
+	UFUNCTION(BlueprintCallable, Category = "Mastermind")
+	void ClearProposal();
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Mastermind")
+	void QuitMastermindPuzzleConsole();
+
 private:
 	/** Solution of the mastermind */
 	ESolutionType::Type* Solution;
+	ESolutionType::Type* Proposal;
+	void UpdateDiode(int* Difference);
 
 	/** Update color of the diodes according the proposition of the player
 	* TO DO

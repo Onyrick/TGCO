@@ -8,5 +8,19 @@ ACapsule::ACapsule(const FObjectInitializer& ObjectInitializer)
 {
 
 }
+TEnumAsByte<ESolutionType::Type> ACapsule::GetSolutionType()
+{
+	return SolutionType;
+}
+
+void ACapsule::UpdateIsCurrentlyUsed(bool bNewIsCurrentlyUsed)
+{
+	bIsCurrentlyUsed = bNewIsCurrentlyUsed;
+}
+
+bool ACapsule::IsCurrentlyUsed()
+{
+	return bIsCurrentlyUsed;
+}
 
 

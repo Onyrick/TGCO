@@ -156,47 +156,56 @@ void ATGCOCharacter::MoveRight(float Value)
 
 void ATGCOCharacter::OnFire()
 {
-	ATGCOGameState* gameState = Cast<ATGCOGameState>(GetWorld()->GetGameState());
-	if (gameState && gameState->GetEnergy() > 20)
+	ATGCOPlayerState* PlayerState = Cast<ATGCOPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
+	if (PlayerState)
 	{
-		gameState->DecreaseEnergy(20);
-
-		// try and fire a projectile
-		if (ProjectileClass != nullptr)
+		if (!PlayerState->IsInPuzzle())
 		{
-			const FRotator SpawnRotation = GetControlRotation();
-			// MuzzleOffset is in camera space, so transform it to world space before offsetting from the character location to find the final muzzle position
-			const FVector SpawnLocation = GetActorLocation() + SpawnRotation.RotateVector(GunOffset);
-
-			UWorld* const World = GetWorld();
-			if (World != nullptr)
+			ATGCOGameState* gameState = Cast<ATGCOGameState>(GetWorld()->GetGameState());
+			if (gameState && gameState->GetEnergy() > 20)
 			{
-				// spawn the projectile at the muzzle
-				AProjectile* Projectile = World->SpawnActor<AProjectile>(ProjectileClass, SpawnLocation, SpawnRotation);
-				Projectile->SetSolutionType(SolutionType);
-				Projectile->SetMode(WristMode);
-			}
-		}
+				gameState->DecreaseEnergy(20);
 
-		// try and play the sound if specified
-		if (FireSound != nullptr)
-		{
-			UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
-		}
+				// try and fire a projectile
+				if (ProjectileClass != nullptr)
+				{
+					const FRotator SpawnRotation = GetControlRotation();
+					// MuzzleOffset is in camera space, so transform it to world space before offsetting from the character location to find the final muzzle position
+					const FVector SpawnLocation = GetActorLocation() + SpawnRotation.RotateVector(GunOffset);
 
-		// try and play a firing animation if specified
-		if (FireAnimation != nullptr)
-		{
-			/*
-			// Get the animation object for the arms mesh
-			UAnimInstance* AnimInstance = Mesh1P->GetAnimInstance();
-			if (AnimInstance != nullptr)
-			{
-			AnimInstance->Montage_Play(FireAnimation, 1.f);
+					UWorld* const World = GetWorld();
+					if (World != nullptr)
+					{
+						// spawn the projectile at the muzzle
+						AProjectile* Projectile = World->SpawnActor<AProjectile>(ProjectileClass, SpawnLocation, SpawnRotation);
+						Projectile->SetSolutionType(SolutionType);
+						Projectile->SetMode(WristMode);
+					}
+				}
+
+				// try and play the sound if specified
+				if (FireSound != nullptr)
+				{
+					UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
+				}
+
+				// try and play a firing animation if specified
+				if (FireAnimation != nullptr)
+				{
+					/*
+					// Get the animation object for the arms mesh
+					UAnimInstance* AnimInstance = Mesh1P->GetAnimInstance();
+					if (AnimInstance != nullptr)
+					{
+					AnimInstance->Montage_Play(FireAnimation, 1.f);
+					}
+					*/
+				}
 			}
-			*/
 		}
 	}
+
+	
 }
 
 void ATGCOCharacter::Use()
@@ -230,34 +239,48 @@ void ATGCOCharacter::Use()
 
 void ATGCOCharacter::SetPreviousWristMode()
 {
-	ATGCOGameState * GS = Cast<ATGCOGameState>(GetWorld()->GetGameState());
-	const TMap<int, EShootMode::Type>& UnlockSkills = GS->GetUnlockSkills();
-
-	int lengthMap = UnlockSkills.Num();
-
-	WristModeIndex = WristModeIndex - 1;
-	if (WristModeIndex < 0)
+	ATGCOPlayerState* PlayerState = Cast<ATGCOPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
+	if (PlayerState)
 	{
-		WristModeIndex = lengthMap - 1;
+		if (!PlayerState->IsInPuzzle())
+		{
+			ATGCOGameState * GS = Cast<ATGCOGameState>(GetWorld()->GetGameState());
+			const TMap<int, EShootMode::Type>& UnlockSkills = GS->GetUnlockSkills();
+
+			int lengthMap = UnlockSkills.Num();
+
+			WristModeIndex = WristModeIndex - 1;
+			if (WristModeIndex < 0)
+			{
+				WristModeIndex = lengthMap - 1;
+			}
+
+			WristMode = UnlockSkills[WristModeIndex];
+
+			UE_LOG(LogDebug, Warning, TEXT("Previous : %s"), *GetNameOfTheMode(WristMode));
+		}
 	}
-
-	WristMode = UnlockSkills[WristModeIndex];
-
-	UE_LOG(LogDebug, Warning, TEXT("Previous : %s"), *GetNameOfTheMode(WristMode));
 }
 
 void ATGCOCharacter::SetNextWristMode()
 {
-	ATGCOGameState * GS = Cast<ATGCOGameState>(GetWorld()->GetGameState());
-	const TMap<int, EShootMode::Type>& UnlockSkills = GS->GetUnlockSkills();
+	ATGCOPlayerState* PlayerState = Cast<ATGCOPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
+	if (PlayerState)
+	{
+		if (!PlayerState->IsInPuzzle())
+		{
+			ATGCOGameState * GS = Cast<ATGCOGameState>(GetWorld()->GetGameState());
+			const TMap<int, EShootMode::Type>& UnlockSkills = GS->GetUnlockSkills();
 
-	int lengthMap = UnlockSkills.Num();
+			int lengthMap = UnlockSkills.Num();
 
-	WristModeIndex = (WristModeIndex + 1) % lengthMap;
+			WristModeIndex = (WristModeIndex + 1) % lengthMap;
 
-	WristMode = UnlockSkills[WristModeIndex];
+			WristMode = UnlockSkills[WristModeIndex];
 
-	UE_LOG(LogDebug, Warning, TEXT("Next : %s"), *GetNameOfTheMode(WristMode));
+			UE_LOG(LogDebug, Warning, TEXT("Next : %s"), *GetNameOfTheMode(WristMode));
+		}
+	}
 }
 
 void ATGCOCharacter::CancelActionTime()

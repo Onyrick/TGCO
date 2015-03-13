@@ -58,6 +58,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "TGCOPlayerState")
 	TArray<AStockable*> GetInventoryListItems();
 
+	void EnterInAPuzzle();
+	void LeaveAPuzzle();
+	bool IsInPuzzle();
+
 protected:
 	/** Player number (0 = Maximilien = future / 1 = Samantha = past */
 	UPROPERTY(Replicated)
@@ -71,4 +75,7 @@ protected:
 
 	/** Mod Used on this prop */
 	EShootMode::Type ModUsedOnProp;
+
+	/** To know if the player is in a puzzle (can't shoot / open the inventory / change mode...)*/
+	bool bIsInPuzzle;
 };
