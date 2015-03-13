@@ -41,7 +41,7 @@ void AMinesweeper::CreateMinesweeper()
 	
 	for (TActorIterator<AActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
 	{
-		if (ActorItr->GetName().Contains("ConsoleMinesweeper") && ActorItr->GetActorClass()->GetDescription() == FString(TEXT("Console Minesweeper BP")))
+		if (ActorItr->GetName().Contains("MinesweeperConsole") && ActorItr->GetActorClass()->GetDescription() == FString(TEXT("Minesweeper Console BP")))
 		{
 			AConsoleMinesweeper* ConsoleMinesweeper = Cast<AConsoleMinesweeper>(*ActorItr);
 			ConsoleMinesweeper->ResetMinesweeper();

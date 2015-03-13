@@ -4,7 +4,6 @@
 
 #include "InteractiveElement.h"
 #include "Minesweeper.h"
-#include "ConsoleMinesweeperUMG.h"
 #include "ConsoleMinesweeper.generated.h"
 
 /**

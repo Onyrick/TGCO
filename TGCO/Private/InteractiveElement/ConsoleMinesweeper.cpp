@@ -29,10 +29,10 @@ bool AConsoleMinesweeper::OnInteract()
 				FInputModeGameAndUI  Mode;
 				PlayerController->SetInputMode(Mode);
 				ATGCOPlayerState* PlayerState = Cast<ATGCOPlayerState>(PlayerController->PlayerState);
-				/*if (PlayerState)
+				if (PlayerState)
 				{
 					PlayerState->EnterInAPuzzle();
-				}*/
+				}
 				PlayerController->SetIgnoreMoveInput(true);
 				PlayerController->SetIgnoreLookInput(true);
 				PlayerController->bShowMouseCursor = true;
@@ -48,10 +48,10 @@ bool AConsoleMinesweeper::OnInteract()
 				DisableInput(PlayerController);
 				FInputModeGameOnly GameMode;
 				ATGCOPlayerState* PlayerState = Cast<ATGCOPlayerState>(PlayerController->PlayerState);
-				/*if (PlayerState)
+				if (PlayerState)
 				{
 					PlayerState->LeaveAPuzzle();
-				}*/
+				}
 				PlayerController->SetInputMode(GameMode);
 				PlayerController->SetIgnoreMoveInput(false);
 				PlayerController->SetIgnoreLookInput(false);
