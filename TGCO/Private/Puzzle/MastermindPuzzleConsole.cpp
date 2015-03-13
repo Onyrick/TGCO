@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include "Utils.h"
 #include "MastermindPuzzleConsole.h"
+#include "TGCOPlayerState.h"
 
 AMastermindPuzzleConsole::AMastermindPuzzleConsole(const FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer),
@@ -215,6 +216,11 @@ bool AMastermindPuzzleConsole::OnInteract()
 
 				FInputModeGameAndUI Mode;
 				PlayerController->SetInputMode(Mode);
+				ATGCOPlayerState* PlayerState = Cast<ATGCOPlayerState>(PlayerController->PlayerState);
+				if (PlayerState)
+				{
+					PlayerState->EnterInAPuzzle();
+				}
 			}
 			else
 			{
@@ -234,6 +240,11 @@ bool AMastermindPuzzleConsole::OnInteract()
 
 				FInputModeGameOnly GameMode;
 				PlayerController->SetInputMode(GameMode);
+				ATGCOPlayerState* PlayerState = Cast<ATGCOPlayerState>(PlayerController->PlayerState);
+				if (PlayerState)
+				{
+					PlayerState->LeaveAPuzzle();
+				}
 			}
 		}
 	}
