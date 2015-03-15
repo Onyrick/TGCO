@@ -79,8 +79,9 @@ void AMinesBox::Explode(class AActor* OtherActor)
 	
 	for (TActorIterator<AActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
 	{
-		if (ActorItr->GetName().Contains("Minesweeper_Futur") && ActorItr->GetActorClass()->GetDescription() == FString(TEXT("Minesweeper BP")) )
+		if (ActorItr->GetName().Contains("Minesweeper") && ActorItr->GetActorClass()->GetDescription() == FString(TEXT("Minesweeper BP")) )
 		{
+			UE_LOG(LogTest, Warning, TEXT("Call Reset Minesweeper on Minesweeper"));
 			AMinesweeper* Minesweeper = Cast<AMinesweeper>(*ActorItr);
 			Minesweeper->ResetMinesweeper();
 		}
