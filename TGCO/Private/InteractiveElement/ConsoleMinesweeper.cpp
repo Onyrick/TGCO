@@ -24,6 +24,7 @@ bool AConsoleMinesweeper::OnInteract()
 			if (bInGame)
 			{
 				UE_LOG(LogTest, Warning, TEXT("Console activate"));
+				Cast<ATGCOCharacter>(PlayerController->GetPawn())->GetMesh()->SetVisibility(false);
 				PlayerController->SetViewTargetWithBlend(CameraConsole, 1.5, EViewTargetBlendFunction::VTBlend_EaseInOut, 1.0, true);
 				EnableInput(PlayerController);
 				FInputModeGameAndUI  Mode;
@@ -44,6 +45,7 @@ bool AConsoleMinesweeper::OnInteract()
 			{
 				UE_LOG(LogTest, Warning, TEXT("Console desactivate"));
 				ACharacter* PlayerCharacter = PlayerController->GetCharacter();
+				PlayerCharacter->GetMesh()->SetVisibility(true);
 				PlayerController->SetViewTargetWithBlend(PlayerCharacter, 1.5, EViewTargetBlendFunction::VTBlend_EaseInOut, 1.0, true);
 				DisableInput(PlayerController);
 				FInputModeGameOnly GameMode;
@@ -58,6 +60,7 @@ bool AConsoleMinesweeper::OnInteract()
 				PlayerController->bShowMouseCursor = false;
 				PlayerController->bEnableClickEvents = false;
 				PlayerController->bEnableMouseOverEvents = false;
+
 				bInGame = true;
 			}
 		}

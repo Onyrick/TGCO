@@ -3,6 +3,7 @@
 #include "TGCO.h"
 #include "ConsoleMinesweeper.h"
 #include "Minesweeper.h"
+#include "UnrealMathUtility.h"
 
 AMinesweeper::AMinesweeper(const class FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer)
@@ -98,17 +99,12 @@ void AMinesweeper::PutMinesRandomly()
 	srand(time(nullptr));
 	for (int cpt = 0; cpt < NB_MINES; ++cpt)
 	{
-		//UE_LOG(LogTest, Warning, TEXT("Passe dans la boucle du nombre de mine : %d"), cpt);
-		iSecret = rand() % SIZE;
-		if (Squares[iSecret]->GetIsUndermined() != true && Squares[iSecret + 1]->GetIsUndermined() != true && Squares[iSecret-1]->GetIsUndermined() != true)
-		{
-			//UE_LOG(LogTest, Warning, TEXT("Je met une mine sur la square"));
-			Squares[iSecret]->SetIsUndermined();
-		}
-		else
-		{
-			--cpt;
-		}
+		do
+		{ 
+			iSecret = FMath::RandRange(1, SIZE - 2); 
+		} while (Squares[iSecret]->GetIsUndermined() == true || Squares[iSecret + 1]->GetIsUndermined() == true || Squares[iSecret - 1]->GetIsUndermined() == true);
+		
+		Squares[iSecret]->SetIsUndermined();
 	}
 }
 
@@ -154,7 +150,7 @@ int32 AMinesweeper::GetMinesweeperSize()
 
 AMinesBox* AMinesweeper::GetMineBoxAt(int32 index)
 {
-	if (index > SIZE) return nullptr;
+	if (index >= SIZE) return nullptr;
 
 	return Squares[index];
 }

@@ -62,6 +62,6 @@ private:
 	/** The size of the Minesweeper */
 	const int SIZE = NB_COL * NB_ROW;
 	/** The number of mines presents in minesweeper */
-	const int NB_MINES = 4;
+	const int NB_MINES = 5;
 
 };
