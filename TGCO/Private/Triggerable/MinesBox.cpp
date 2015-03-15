@@ -112,6 +112,11 @@ void AMinesBox::SetIsMarked()
 	}
 }
 
+bool AMinesBox::IsMarked()
+{
+	return bIsMarked;
+}
+
 void AMinesBox::SetVisibilityOfFlag()
 {
 	if (Role < ROLE_Authority)

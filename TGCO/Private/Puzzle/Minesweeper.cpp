@@ -97,7 +97,7 @@ void AMinesweeper::PutMinesRandomly()
 	{
 		//UE_LOG(LogTest, Warning, TEXT("Passe dans la boucle du nombre de mine : %d"), cpt);
 		iSecret = rand() % SIZE;
-		if (Squares[iSecret]->GetIsUndermined() != true)
+		if (Squares[iSecret]->GetIsUndermined() != true && Squares[iSecret + 1]->GetIsUndermined() != true && Squares[iSecret-1]->GetIsUndermined() != true)
 		{
 			//UE_LOG(LogTest, Warning, TEXT("Je met une mine sur la square"));
 			Squares[iSecret]->SetIsUndermined();
@@ -154,6 +154,25 @@ AMinesBox* AMinesweeper::GetMineBoxAt(int32 index)
 	if (index > SIZE) return nullptr;
 
 	return Squares[index];
+}
+
+void AMinesweeper::OnResetConsole()
+{
+	if (Role < ROLE_Authority)
+	{
+		UE_LOG(LogTest, Warning, TEXT("Authority"));
+	}
+	else
+	{
+		UE_LOG(LogTest, Warning, TEXT("No Authority"));
+	}
+	for (int i = 0; i < SIZE; ++i)
+	{
+		if (Squares[i]->IsMarked())
+		{
+			Squares[i]->SetVisibilityOfFlag();
+		}
+	}
 }
 
 

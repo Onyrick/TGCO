@@ -35,9 +35,13 @@ public:
 	/** Reinit the information displayed by the past. Set bInfoPast to false. */
 	void ReinitDisplayInformation();
 
-	/** Set the visibility of the flag */
+	/** Set the value to know if there is something to draw on the AMinesweeperBox : true : flag, flase : no flag  */
 	UFUNCTION(BlueprintCallable, Category = "MineBox")
 	void SetIsMarked();
+
+	/** Get the value to know if the flag is visible in MineBox */
+	UFUNCTION(BlueprintCallable, Category = "MineBox")
+	bool IsMarked();
 
 	/** Set the visibility of the flag */
 	UFUNCTION(BlueprintCallable, Category = "MineBox")

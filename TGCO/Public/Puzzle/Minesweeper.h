@@ -43,6 +43,9 @@ public:
 	/** Calculate the number of neighbours that are undermined */
 	void CalculateNeighboursUndermined();
 
+	UFUNCTION(BlueprintCallable, Category = "Minesweeper")
+	void OnResetConsole();
+
 	/** Content all the mine box */
 	TArray<AMinesBox*> Squares;
 	/** Content the BluePrint of the MineBox */
