@@ -14,12 +14,12 @@ class TGCO_API ARainbowBoxHandlerFuture : public AActor
 	GENERATED_BODY()
 	
 public:
+	/** Constructors */
 	ARainbowBoxHandlerFuture(const FObjectInitializer& ObjectInitializer);
 
 	/** Create the RainbowBoxHandler */
 	UFUNCTION(BlueprintCallable, Category = "Rainbow")
 	void CreateRainbowBoxHandler();
-
 
 	/** Delete the array that contains ARainbowBox */
 	void DeleteRainbow();
@@ -29,8 +29,13 @@ public:
 
 	/** Hide all rainbow box of the color of the passed box color except those passed*/
 	void HideAllExcepted(ARainbowBox* StayRainbowBox);
-	
-	/** Content all the rainbow box */
+
+private:
+	UFUNCTION(Server, WithValidation, Reliable)
+	void ServerCreateRainbowBoxHandler();
+
+public:
+	/** Contain all the rainbow box */
 	TArray< ARainbowBox* > Squares;
 	TSubclassOf<class ARainbowBox> RainbowBoxBP;
 
@@ -40,8 +45,5 @@ private:
 	const int SIZE = NB_COL * NB_ROW;
 
 	ARainbowBox* MustStayRainbowBox;
-
-	UFUNCTION(Server, WithValidation, Reliable)
-	void ServerCreateRainbowBoxHandler();
 
 };

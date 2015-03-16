@@ -8,8 +8,8 @@
 #include "TGCOPlayerState.h"
 
 AMastermindPuzzleConsole::AMastermindPuzzleConsole(const FObjectInitializer& ObjectInitializer)
-: Super(ObjectInitializer),
-bInGame(true)
+: Super(ObjectInitializer)
+, bInGame(true)
 {
 	bReplicates = true;
 	Solution = new ESolutionType::Type[4]();
@@ -74,6 +74,7 @@ void AMastermindPuzzleConsole::BeginPlay()
 
 void AMastermindPuzzleConsole::UpdateDiode(int* Difference)
 {
+	// TODO : Put material instance in array and compress code
 	switch (Difference[0]){
 	case -1:
 		// Good for the player, bad for the tree
@@ -201,6 +202,7 @@ bool AMastermindPuzzleConsole::OnInteract()
 		{
 			if (bInGame)
 			{
+				// TODO : see in ConsoleMinesweeper same functions ! 
 				UE_LOG(LogTest, Warning, TEXT("Console activate"));
 				// Move to the camera puzzle
 				PlayerController->SetViewTargetWithBlend(CameraPuzzle, 1.5, EViewTargetBlendFunction::VTBlend_EaseInOut, 1.0, true);

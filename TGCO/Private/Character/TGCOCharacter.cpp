@@ -437,6 +437,7 @@ float ATGCOCharacter::TakeDamage(float fDamageAmount, struct FDamageEvent const 
 		ATGCOGameState* GameState = Cast<ATGCOGameState>(World->GetGameState());
 		if (GameState != nullptr)
 		{
+			// TODO : If shield is activate, decrease less energy (because we are protected) !
 			// Active shield
 			ActiveShield(true);
 

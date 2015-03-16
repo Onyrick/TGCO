@@ -12,4 +12,3 @@ FString GetNameOfTheRail(const ERailType::Type RailType)
 	}
 
 }
-

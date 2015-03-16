@@ -26,7 +26,7 @@ void AInteractiveElement::Highlight(bool highlight)
 {
 	auto name = this->GetClass()->GetName();
 
-	//TODO
+	//TODO : animation and visual effect
 	if (highlight)
 	{
 		//UE_LOG(LogTest, Warning, TEXT("Highlight on"));

@@ -68,7 +68,7 @@ void AMinesBox::Explode(class AActor* OtherActor)
 	ATGCOGameState* gameState = Cast<ATGCOGameState>(GetWorld()->GetGameState());
 	if (gameState)
 	{
-		gameState->DecreaseEnergy(5);
+		gameState->DecreaseEnergy(50);
 	}
 	
 	ATGCOCharacter* Character = Cast<ATGCOCharacter>(OtherActor);

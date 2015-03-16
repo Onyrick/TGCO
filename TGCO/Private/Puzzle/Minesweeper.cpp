@@ -22,6 +22,7 @@ void AMinesweeper::CreateMinesweeper()
 {
 	//Create all the MinesBox and initialize them without mine
 	//UE_LOG(LogTest, Warning, TEXT("Je suis dans la fonction CreateMinesweeper"));
+	// TODO : Works with non squares datas (NB_COL != NB_ROWS), Make size of minebox a constant int for future changement !
 	for (int i = 0; i < SIZE; ++i)
 	{
 		UWorld* const World = GetWorld();
@@ -102,7 +103,10 @@ void AMinesweeper::PutMinesRandomly()
 		do
 		{ 
 			iSecret = FMath::RandRange(1, SIZE - 2); 
-		} while (Squares[iSecret]->GetIsUndermined() == true || Squares[iSecret + 1]->GetIsUndermined() == true || Squares[iSecret - 1]->GetIsUndermined() == true);
+		} 
+		while	(	Squares[iSecret]->GetIsUndermined() == true || 
+					Squares[iSecret + 1]->GetIsUndermined() == true || 
+					Squares[iSecret - 1]->GetIsUndermined() == true		);
 		
 		Squares[iSecret]->SetIsUndermined();
 	}
@@ -111,10 +115,11 @@ void AMinesweeper::PutMinesRandomly()
 void AMinesweeper::CalculateNeighboursUndermined()
 {
 	//UE_LOG(LogTest, Warning, TEXT("Je suis dans la fonction CalculateNeighboursUndermined"));
+	// TODO : Make it works with NB_COL != NB_ROWS, launch some exceptions ...
 	//For all MineBox
 	for (int i = 0; i < SIZE; ++i)
 	{
-		//Check the neighbours
+		//Check the neighbors
 		for (int j = -1; j <= 1; ++j)
 		{
 			// If the MineBox is at the beginning of a row, don't check the previous one. 
@@ -124,17 +129,17 @@ void AMinesweeper::CalculateNeighboursUndermined()
 			{
 				continue;
 			}
-			// Check the neighbours up
+			// Check the neighbors up
 			if ((i/NB_COL > 0) && (Squares[i - NB_COL + j]->GetIsUndermined() == true))
 			{
 				Squares[i]->SetNeighboursUndermined();
 			}
-			// Check the neighbours on the left and on the right
+			// Check the neighbors on the left and on the right
 			if ((j != 0) && (Squares[i + j]->GetIsUndermined() == true))
 			{
 				Squares[i]->SetNeighboursUndermined();
 			}
-			// Check the neighbours down
+			// Check the neighbors down
 			if ((i / NB_COL < NB_COL-1) && (Squares[i + NB_COL + j]->GetIsUndermined() == true))
 			{
 				Squares[i]->SetNeighboursUndermined();
@@ -150,7 +155,7 @@ int32 AMinesweeper::GetMinesweeperSize()
 
 AMinesBox* AMinesweeper::GetMineBoxAt(int32 index)
 {
-	if (index >= SIZE) return nullptr;
+	if (index >= SIZE) { return nullptr; }
 
 	return Squares[index];
 }

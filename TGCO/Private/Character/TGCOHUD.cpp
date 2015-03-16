@@ -39,15 +39,7 @@ void ATGCOHUD::DrawHUD()
 	FCanvasTileItem TileItem(CrosshairDrawPosition, CrosshairTex->Resource, FLinearColor::White);
 	TileItem.BlendMode = SE_BLEND_Translucent;
 	Canvas->DrawItem(TileItem);
-	/*
-	// Get the GameState and print power level 
-	ATGCOGameState* GameState = Cast<ATGCOGameState>(GetWorld()->GetGameState());
-	if (GameState != nullptr)
-	{
-		FString PowerLevelString = FString::FromInt(GameState->GetEnergy());
-		DrawText(PowerLevelString, FColor::White, 0, 0, HUDFont);
-	}
-	*/
+
 	ATGCOCharacter* Character = Cast<ATGCOCharacter>(GetWorld()->GetFirstPlayerController()->GetCharacter());
 	if (Character != nullptr)
 	{

@@ -82,9 +82,6 @@ protected:
 	/** action bindings array */
 	TArray<FServerEntry> ServerList;
 
-	/** current status text */
-	FString StatusText;
-
 	/** pointer to our owner PC */
 	TWeakObjectPtr<class ULocalPlayer> PlayerOwner;
 	

@@ -6,12 +6,10 @@
 
 UTGCOServerList::UTGCOServerList(const FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer)
-{
-	PlayerOwner = nullptr;
-	bLANMatchSearch = false;
-	bSearchingForServers = false;
-	StatusText = FString();
-}
+, bLANMatchSearch(false)
+, bSearchingForServers(false)
+, PlayerOwner(nullptr)
+{}
 
 void UTGCOServerList::Init(TWeakObjectPtr<class ULocalPlayer> pPlayer)
 {
@@ -38,7 +36,6 @@ void UTGCOServerList::UpdateSearchStatus()
 		switch (SearchState)
 		{
 			case EOnlineAsyncTaskState::InProgress:
-				//StatusText = LOCTEXT("Searching", "SEARCHING...").ToString();
 				bFinishSearch = false;
 			break;
 
@@ -48,14 +45,6 @@ void UTGCOServerList::UpdateSearchStatus()
 					ServerList.Empty();
 					const TArray<FOnlineSessionSearchResult> & SearchResults = Session->GetSearchResults();
 					check(SearchResults.Num() == NumSearchResults);
-					if (NumSearchResults == 0)
-					{
-						//StatusText = LOCTEXT("NoServersFound", "NO SERVERS FOUND, PRESS SPACE TO TRY AGAIN").ToString();
-					}
-					else
-					{
-						//StatusText = LOCTEXT("ServersRefresh", "PRESS SPACE TO REFRESH SERVER LIST").ToString();
-					}
 
 					for (int32 IdxResult = 0; IdxResult < NumSearchResults; ++IdxResult)
 					{
@@ -80,7 +69,6 @@ void UTGCOServerList::UpdateSearchStatus()
 
 			case EOnlineAsyncTaskState::Failed:
 			case EOnlineAsyncTaskState::NotStarted:
-				StatusText = "";
 			default:
 			break;
 		}
@@ -115,7 +103,6 @@ void UTGCOServerList::BeginServerSearch(bool bLANMatch)
 
 void UTGCOServerList::OnServerSearchFinished()
 {
-
 	UE_LOG(LogOnline, Log, TEXT("Set SearchingServer to false"));
 	bSearchingForServers = false;
 	
@@ -130,7 +117,7 @@ void UTGCOServerList::OnServerSearchFinished()
 
 void UTGCOServerList::UpdateServerList()
 {
-	// To do
+	// TODO : auto and not in BP ?
 }
 
 void UTGCOServerList::ConnectToServer(int32 SessionIndex)

@@ -34,13 +34,12 @@ TArray<int32> Utils::CreateRandomArrayOfSolution(int32 iSize)
 {
 	TArray<int32> Result = TArray<int32>();
 	srand(time(NULL));
-	bool bAlreadyExist;
-	bool bRetry = true;
+	bool bAlreadyExist = true;
 	int iRandomNumber;
 
 	for (int i = 0; i < iSize; ++i)
 	{
-		while (bRetry)
+		while (bAlreadyExist)
 		{
 			bAlreadyExist = false;
 			iRandomNumber = rand() % (iSize+1);
@@ -51,17 +50,8 @@ TArray<int32> Utils::CreateRandomArrayOfSolution(int32 iSize)
 					bAlreadyExist = true;
 				}
 			}
-			if (bAlreadyExist)
-			{
-				bRetry = true;
-			}
-			else
-			{
-				bRetry = false;
-			}
 		}
 		Result.Add(iRandomNumber);
-		bRetry = true;
 	}
 	return Result;
 }

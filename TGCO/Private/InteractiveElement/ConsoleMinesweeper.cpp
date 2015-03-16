@@ -21,10 +21,13 @@ bool AConsoleMinesweeper::OnInteract()
 		APlayerController* PlayerController = World->GetFirstPlayerController();
 		if (PlayerController)
 		{
+			// TODO : check with PlayerState variable ? bInGame is a wrong choice of naming !
 			if (bInGame)
 			{
-				UE_LOG(LogTest, Warning, TEXT("Console activate"));
+				// The player should not see its own character after camera movement
 				Cast<ATGCOCharacter>(PlayerController->GetPawn())->GetMesh()->SetVisibility(false);
+
+				// TODO : Move all this things in a function, duplicates with MastermindConsole
 				PlayerController->SetViewTargetWithBlend(CameraConsole, 1.5, EViewTargetBlendFunction::VTBlend_EaseInOut, 1.0, true);
 				EnableInput(PlayerController);
 				FInputModeGameAndUI  Mode;
@@ -43,9 +46,11 @@ bool AConsoleMinesweeper::OnInteract()
 			}
 			else
 			{
-				UE_LOG(LogTest, Warning, TEXT("Console desactivate"));
+				// The player should see its own character after camera movement
 				ACharacter* PlayerCharacter = PlayerController->GetCharacter();
 				PlayerCharacter->GetMesh()->SetVisibility(true);
+
+				// TODO : see above
 				PlayerController->SetViewTargetWithBlend(PlayerCharacter, 1.5, EViewTargetBlendFunction::VTBlend_EaseInOut, 1.0, true);
 				DisableInput(PlayerController);
 				FInputModeGameOnly GameMode;
@@ -71,5 +76,6 @@ bool AConsoleMinesweeper::OnInteract()
 
 void AConsoleMinesweeper::ResetMinesweeper_Implementation()
 {
+	// TODO : utility ? remove it ?
 	UE_LOG(LogTest, Warning, TEXT("Je suis dans ResetMinesweeper"));
 }

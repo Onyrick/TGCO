@@ -220,13 +220,6 @@ void ATGCOGameMode::RestartPlayer(AController* NewPlayer)
 		// initialize and start it up
 		InitStartSpot(StartSpot, NewPlayer);
 
-		// @todo: this was related to speedhack code, which is disabled.
-		/*
-		if ( NewPlayer->GetAPlayerController() )
-		{
-		NewPlayer->GetAPlayerController()->TimeMargin = -0.1f;
-		}
-		*/
 		NewPlayer->Possess(NewPlayer->GetPawn());
 
 		// If the Pawn is destroyed as part of possession we have to abort

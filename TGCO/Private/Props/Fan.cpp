@@ -15,7 +15,7 @@ AFan::AFan(const FObjectInitializer& ObjectInitializer)
 	fInitialSpeed = 600; 
 	fCurrentSpeed = 600;
 
-	// Initialize component according to fInitialSpeed, can be edit in BP
+	// Initialize component according to fInitialSpeed, can be override in BP
 	RotatingMovement = ObjectInitializer.CreateDefaultSubobject<URotatingMovementComponent>(this, TEXT("RotatingMovement"));
 	RotatingMovement->RotationRate = FRotator(0, 0, fInitialSpeed);
 	RotatingMovement->PivotTranslation = FVector(0, 0, 0);
@@ -69,7 +69,6 @@ void AFan::ReinitSpeed()
 
 void AFan::Activate(bool bActive)
 {
-	UE_LOG(LogDebug, Warning, TEXT("Begin of activate fan"));
 	if (Role < ROLE_Authority)
 	{
 		ATGCOPlayerController * PC;
