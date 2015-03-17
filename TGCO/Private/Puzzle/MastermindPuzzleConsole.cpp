@@ -1,5 +1,4 @@
 
-
 #include "TGCO.h"
 #include <ctime>
 #include <cstdlib>
@@ -48,7 +47,7 @@ AMastermindPuzzleConsole::AMastermindPuzzleConsole(const FObjectInitializer& Obj
 	AddOwnedComponent(Diode4);
 
 	// Init the solution
-	TArray<int> RandomNumber = Utils::CreateRandomArrayOfSolution(4);
+	TArray<int> RandomNumber = CreateRandomArrayOfSolution(4);
 
 	for (int i = 0; i < 4; ++i)
 	{
@@ -70,6 +69,34 @@ void AMastermindPuzzleConsole::BeginPlay()
 	MaterialInstance4 = UMaterialInstanceDynamic::Create(MeshMat, this);
 
 	SwitchDiodeOff();
+}
+
+TArray<int32> AMastermindPuzzleConsole::CreateRandomArrayOfSolution(int32 iSize)
+{
+	TArray<int32> Result = TArray<int32>();
+	srand(time(NULL));
+	bool bAlreadyExist;
+	bool bRetry = true;
+	int iRandomNumber;
+
+	for (int i = 0; i < iSize; ++i)
+	{
+		do
+		{
+			bAlreadyExist = false;
+			iRandomNumber = rand() % (iSize + 1);
+			for (int j = 0; j < Result.Num(); ++j)
+			{
+				if (Result[j] == iRandomNumber)
+				{
+					bAlreadyExist = true;
+				}
+			}
+		} while (bAlreadyExist);
+
+		Result.Add(iRandomNumber);
+	}
+	return Result;
 }
 
 void AMastermindPuzzleConsole::UpdateDiode(int* Difference)
@@ -296,19 +323,19 @@ void AMastermindPuzzleConsole::SubmitAnswer()
 	//return Difference;
 }
 
-void AMastermindPuzzleConsole::SetProposalAt(ESolutionType::Type NewProposal, int32 Index)
+void AMastermindPuzzleConsole::SetProposalAt(ESolutionType::Type NewProposal, int32 iIndex)
 {
-	Proposal[Index] = NewProposal;
+	Proposal[iIndex] = NewProposal;
 }
 
-void AMastermindPuzzleConsole::RemoveProposalAt(int32 Index)
+void AMastermindPuzzleConsole::RemoveProposalAt(int32 iIndex)
 {
-	Proposal[Index] = ESolutionType::NONE ;
+	Proposal[iIndex] = ESolutionType::NONE ;
 }
 
-ESolutionType::Type AMastermindPuzzleConsole::GetProposalAt(int32 Index)
+ESolutionType::Type AMastermindPuzzleConsole::GetProposalAt(int32 iIndex)
 {
-	return Proposal[Index];
+	return Proposal[iIndex];
 }
 
 
