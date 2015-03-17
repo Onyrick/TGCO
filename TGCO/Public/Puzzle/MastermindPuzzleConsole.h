@@ -80,6 +80,9 @@ public:
 	void QuitMastermindPuzzleConsole();
 
 private: 
+	/**
+	* @brief	Create the solution of the mastermind.
+	*/
 	TArray<int32> CreateRandomArrayOfSolution(int32 iSize);
 
 	void UpdateDiode();
