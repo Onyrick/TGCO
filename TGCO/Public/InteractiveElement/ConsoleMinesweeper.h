@@ -19,11 +19,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "InteractiveElement")
 	virtual bool OnInteract() override;
 
-	/** The minesweeper the console will manage */
-	UPROPERTY(EditAnywhere, Category = "ConsoleMinesweeper")
-		TSubclassOf<class AMinesweeper> Minesweeper;
-
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "ConsoleMinesweeper")
-		void ResetMinesweeper();
+	void ResetMinesweeper();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ConsoleMinesweeper")
+	ACameraActor* CameraConsole;
+
+private:
+	bool bInGame;
 };

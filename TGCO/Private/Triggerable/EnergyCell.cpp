@@ -22,14 +22,12 @@ void AEnergyCell::OnOverlapBegin(class AActor* OtherActor, class UPrimitiveCompo
 	ATGCOCharacter *Player = Cast<ATGCOCharacter>(OtherActor);
 	if (Player != nullptr)
 	{
-		UE_LOG(LogDebug, Warning, TEXT("Begin Overlap Energy"));
 		Consumed();
 	}
 }
 
 void AEnergyCell::OnOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
-{
-}
+{}
 
 void AEnergyCell::Consumed()
 {

@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerInput.h"
 #include "Props.h"
 #include "LightningBarrier.h"
+#include "MinesBox.h"
 #include "Fan.h"
 
 ATGCOPlayerController::ATGCOPlayerController(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -81,9 +82,23 @@ void ATGCOPlayerController::ServerUpdateSpeedValueOnProps_Implementation(class A
 	}
 }
 
+bool ATGCOPlayerController::ServerUpdateVisibilityOnMesh_Validate(class AMinesBox* MinesBox)
+{
+	return true;
+}
+
 bool ATGCOPlayerController::ServerChangeActiveStateOnBarrier_Validate(class ALightningBarrier* LightningBarrier, bool bValue)
 {
 	return true;
+}
+
+void ATGCOPlayerController::ServerUpdateVisibilityOnMesh_Implementation(class AMinesBox* MinesBox)
+{
+	if (MinesBox)
+	{
+		UE_LOG(LogDebug, Warning, TEXT("Begin of ServerUpdateVisibilityOnMesh"));
+		MinesBox->SetVisibilityOfFlag();
+	}
 }
 
 void ATGCOPlayerController::ServerChangeActiveStateOnBarrier_Implementation(class ALightningBarrier* LightningBarrier, bool bValue)

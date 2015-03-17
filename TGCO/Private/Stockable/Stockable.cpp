@@ -5,10 +5,9 @@
 #include "Stockable.h"
 
 AStockable::AStockable(const class FObjectInitializer& ObjectInitializer)
-: Super(ObjectInitializer),
-sDescription("Stockable")
-{
-}
+: Super(ObjectInitializer)
+, sDescription(FString("Stockable"))
+{}
 
 void AStockable::OnOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {

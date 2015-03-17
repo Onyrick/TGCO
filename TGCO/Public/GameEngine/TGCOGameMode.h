@@ -28,4 +28,6 @@ protected:
 private:
 	/** Select best spawn point for player */
 	virtual AActor* ChoosePlayerStart(AController* Player) override;
+	virtual AActor* FindPlayerStart( AController* Player, const FString& IncomingName = TEXT("") ) override;
+	virtual void RestartPlayer(AController* NewPlayer) override;
 };

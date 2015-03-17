@@ -43,12 +43,18 @@ public:
 	/** Calculate the number of neighbours that are undermined */
 	void CalculateNeighboursUndermined();
 
+	UFUNCTION(BlueprintCallable, Category = "Minesweeper")
+	void OnResetConsole();
+
 	/** Content all the mine box */
 	TArray<AMinesBox*> Squares;
 	/** Content the BluePrint of the MineBox */
 	TSubclassOf<class AMinesBox> MineBoxBP;
 
 private:
+	UFUNCTION(Server, WithValidation, Reliable)
+		void ServerResetMinesweeper();
+
 	/** The number of columns */
 	const int NB_COL = 5;
 	/** The number of rows */
@@ -56,6 +62,6 @@ private:
 	/** The size of the Minesweeper */
 	const int SIZE = NB_COL * NB_ROW;
 	/** The number of mines presents in minesweeper */
-	const int NB_MINES = 4;
+	const int NB_MINES = 5;
 
 };

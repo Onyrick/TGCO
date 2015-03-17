@@ -19,11 +19,11 @@ namespace TGCOGameInstanceState
 
 UTGCOGameInstance::UTGCOGameInstance(const FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer)
-{
-	CurrentState = TGCOGameInstanceState::None;
-	ServerListObject = nullptr;
-}
-
+, CurrentState(TGCOGameInstanceState::None)
+, PendingState(TGCOGameInstanceState::None)
+, TravelURL(FString(""))
+, ServerListObject(nullptr)
+{}
 
 void UTGCOGameInstance::Init()
 {
@@ -491,7 +491,7 @@ void UTGCOGameInstance::BeginPlayingState()
 		GameState->MulticastGoToPlayingState();
 	}
 
-	GetWorld()->ServerTravel(FString("/Game/Maps/TestMap/Monstroplante_Map?listen"));
+	GetWorld()->ServerTravel(FString("/Game/Maps/TestMap/MapTestLucie?listen"));
 }
 
 void UTGCOGameInstance::EndPlayingState()
@@ -504,8 +504,6 @@ void UTGCOGameInstance::BeginHostingState()
 	UGameViewportClient* GVC = GEngine->GameViewport;
 	GVC->RemoveAllViewportWidgets();
 	GetWorld()->ServerTravel(TravelURL);
-	//UGameplayStatics::OpenLevel(GetWorld(), FName(*TravelURL), true, FString(TEXT("listen")));
-	//UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("/Game/Maps/HostMap")), true);
 }
 
 void UTGCOGameInstance::EndHostingState()

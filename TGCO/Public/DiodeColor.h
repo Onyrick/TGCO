@@ -1,8 +1,18 @@
+
 #pragma once
 
+/**
+* @namespace	EDiodeColor
+*
+* @brief	Contain the enum of diode's colors
+*/
 namespace EDiodeColor
 {
-	/** List of the diode's colors */
+	/**
+	* @enum	Color
+	*
+	* @brief	List of the diode's colors
+	*/
 	enum Color
 	{
 		WHITE,

@@ -1,13 +1,21 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
 #include "SolutionType.generated.h"
 
+/**
+* @namespace	ESolutionType
+*
+* @brief	Contain the enum of solution type
+*/
 UENUM(BlueprintType)
 namespace ESolutionType
 {
-	/** List of solution type */
+	/**
+	* @enum	Type
+	*
+	* @brief	List of solution type
+	*/
 	enum Type
 	{
 		NONE UMETA(DisplayName = "None"),

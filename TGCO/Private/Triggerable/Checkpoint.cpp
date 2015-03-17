@@ -15,11 +15,7 @@ void ACheckpoint::OnOverlapBegin(class AActor* OtherActor, class UPrimitiveCompo
 	ATGCOCharacter* Character = Cast<ATGCOCharacter>(OtherActor);
 	if (Character)
 	{
-		if (Character->SetCheckpoint())
-		{
-			// Destroy the Checkpoint
-			// Destroy();
-		}
+		Character->SetCheckpoint();
 	}
 }
 
@@ -27,4 +23,3 @@ void ACheckpoint::OnOverlapEnd(class AActor* OtherActor, class UPrimitiveCompone
 {
 	UE_LOG(LogDebug, Warning, TEXT("End Overlap Checkpoint"));
 }
-

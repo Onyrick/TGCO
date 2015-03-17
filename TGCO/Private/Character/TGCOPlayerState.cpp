@@ -94,3 +94,18 @@ void ATGCOPlayerState::SetModUsed(EShootMode::Type _mod)
 {
 	ModUsedOnProp = _mod;
 }
+
+void ATGCOPlayerState::EnterInAPuzzle()
+{
+	bIsInPuzzle = true;
+}
+
+void ATGCOPlayerState::LeaveAPuzzle()
+{
+	bIsInPuzzle = false;
+}
+
+bool ATGCOPlayerState::IsInPuzzle()
+{
+	return bIsInPuzzle;
+}

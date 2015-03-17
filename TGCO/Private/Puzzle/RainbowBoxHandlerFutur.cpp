@@ -6,6 +6,7 @@
 
 ARainbowBoxHandlerFuture::ARainbowBoxHandlerFuture(const FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer)
+, MustStayRainbowBox(nullptr)
 {
 	static ConstructorHelpers::FClassFinder<ARainbowBox> ItemBlueprint(TEXT("/Game/Blueprints/RainbowBox_BP"));
 	if (ItemBlueprint.Class != nullptr)
@@ -13,7 +14,6 @@ ARainbowBoxHandlerFuture::ARainbowBoxHandlerFuture(const FObjectInitializer& Obj
 		RainbowBoxBP = (UClass*)ItemBlueprint.Class;
 	}
 	Squares = TArray< ARainbowBox* >();
-	MustStayRainbowBox = nullptr;
 	bReplicates = true;
 }
 
@@ -22,11 +22,9 @@ void ARainbowBoxHandlerFuture::CreateRainbowBoxHandler()
 	if (Role < ROLE_Authority)
 	{
 		ServerCreateRainbowBoxHandler();
-		UE_LOG(LogTest, Warning, TEXT("Call Server"));
 	}
 	else
 	{
-		UE_LOG(LogTest, Warning, TEXT("In future"));
 		UWorld* const World = GetWorld();
 		if (World != nullptr)
 		{
@@ -36,9 +34,12 @@ void ARainbowBoxHandlerFuture::CreateRainbowBoxHandler()
 				srand(time(nullptr));
 
 				//Create all the RainbowBox and set a random color between red, blue and green
+				// TODO : make it works with NB_COL != NB_ROW, make size blueprint editable
 				for (int i = 0; i < SIZE; ++i)
 				{
+					// TODO : Check this random, make it FMath::RandRange(min, max) ?
 					int iAddrandom = rand() % 6;
+					// Make some holes when random is 0
 					if (iAddrandom > 0)
 					{
 						unsigned int x = i / NB_COL;
@@ -52,19 +53,15 @@ void ARainbowBoxHandlerFuture::CreateRainbowBoxHandler()
 						{
 						case 0:
 							RainbowBox->SetColor(ERainbowBoxColor::RED);
-							UE_LOG(LogTest, Warning, TEXT("RainbowBox %i is RED"), i);
 							break;
 						case 1:
 							RainbowBox->SetColor(ERainbowBoxColor::GREEN);
-							UE_LOG(LogTest, Warning, TEXT("RainbowBox %i is GREEN"), i);
 							break;
 						case 2:
 							RainbowBox->SetColor(ERainbowBoxColor::BLUE);
-							UE_LOG(LogTest, Warning, TEXT("RainbowBox %i is BLUE"), i);
 							break;
 						default:
 							RainbowBox->SetColor(ERainbowBoxColor::NONE);
-							UE_LOG(LogTest, Warning, TEXT("RainbowBox %i is NONE"), i);
 							break;
 						}
 						RainbowBox->Hide();
@@ -94,6 +91,7 @@ void ARainbowBoxHandlerFuture::DeleteRainbow()
 
 void ARainbowBoxHandlerFuture::HideAllOfThisColor(ERainbowBoxColor::Color HideColor)
 {
+	// TODO : check if some "else" should be remove
 	for (int i = 0; i < Squares.Num(); ++i)
 	{
 		ARainbowBox* RainbowBox = Squares[i];
@@ -104,13 +102,11 @@ void ARainbowBoxHandlerFuture::HideAllOfThisColor(ERainbowBoxColor::Color HideCo
 		}
 		else
 		{
-
 			RainbowBox->SetIsHideInPast(false);
 			if (MustStayRainbowBox != nullptr)
 			{
 				if (GetNameOfTheColor(MustStayRainbowBox->GetColor()).IsEqual(GetNameOfTheColor(RainbowBox->GetColor())))
 				{
-
 					if (!(RainbowBox->GetActorLocation() == MustStayRainbowBox->GetActorLocation()))
 					{
 						RainbowBox->Hide();
@@ -160,4 +156,3 @@ void ARainbowBoxHandlerFuture::HideAllExcepted(ARainbowBox* StayRainbowBox)
 		}
 	}
 }
-
