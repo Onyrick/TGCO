@@ -1,5 +1,4 @@
 
-
 #pragma once
 
 #include "RainbowBoxColor.h"
@@ -7,43 +6,83 @@
 #include "RainbowBox.generated.h"
 
 /**
- * 
- */
+* @class	ARainbowBox
+*
+* @brief	Rainbow boxes for the rainbow box puzzle
+*
+*/
 UCLASS()
 class TGCO_API ARainbowBox : public ATriggerable
 {
 	GENERATED_UCLASS_BODY()
 	
 public:
-	/** Event launch when Player begin to trigger the TriggerBox component. */
+
+	/**
+	 * @brief	When player walk on a rainbow box.
+	 *
+	 * @param	OtherActor	If non-null, the other actor.
+	 * @param	OtherComp 	If non-null, the other component.
+	 * @param	OtherBodyIndex	  	Zero-based index of the other body.
+	 * @param	bFromSweep		  	true to from sweep.
+	 * @param	SweepResult		  	The sweep result.
+	 *
+	 * ### summary	Event launch when Player begin to trigger the TriggerBox component.
+	 */
 	virtual void OnOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult) override;
 
-	/** Event launch when Player end to trigger the TriggerBox component. */
+	/**
+	 * @brief	Executes the overlap end action.
+	 *
+	 * @param	OtherActor	If non-null, the other actor.
+	 * @param	OtherComp 	If non-null, the other component.
+	 * @param	OtherBodyIndex	  	Zero-based index of the other body.
+	 *
+	 * ### summary	Event launch when Player end to trigger the TriggerBox component.
+	 */
 	virtual void OnOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex) override;
 
-	/** Hide and disable collision */
+	/** 
+	 * @brief Hide and disable collision 
+	*/
 	void Hide();
 
-	/** Show and enable collision */
+	/** 
+	 * @brief Show and enable collision
+	*/
 	void Show();
 
-	/** Set a color to the RainbowBox */
+	/** 
+	 * @brief Set a color to the RainbowBox
+	 * 
+	 * @param eNewColor The color to be set
+	*/
 	void SetColor(const ERainbowBoxColor::Color eNewColor);
 
-	/** Set the color of the RainbowBox */
+	/** 
+	 * @brief Get the color of the RainbowBox
+	 * 
+	 * @return ERainbowBoxColor::Color The color of the RainbowBox
+	*/
 	ERainbowBoxColor::Color GetColor();
 
-	/** Set bNewShouldNotify to know if the RainbowBox is in the past or in the futur */
+	/** 
+	 * @brief Set bNewShouldNotify to know if the RainbowBox is in the past or in the futur
+	*/
 	void SetShouldNotify(bool bNewShouldNotify);
 
-	/** Set bNewIsHideInPast to known if the RainbowBox is hidden by the player in the past */
+	/** 
+	 * @brief Set bNewIsHideInPast to known if the RainbowBox is hidden by the player in the past (and had to be hidden inthe futur)
+	*/
 	void SetIsHideInPast(bool bNewIsHideInPast);
 
-	/** Get bNewIsHideInPast */
+	/** 
+	 * @brief Get bNewIsHideInPast
+	*/
 	bool GetIsHideInPast();
 	
 private:
-	/** The color of the RainbowBox */
+	/** The color of the RainbowBox (int format) */
 	UPROPERTY(Transient, ReplicatedUsing = OnRep_Material)
 	int32 iColor;
 
@@ -56,7 +95,9 @@ private:
 	/** To known if the RainbowBox is hidden by the player in the past */
 	bool bIsHideInPast;
 
-	/** Function called when iColor is changed by replication, change the color of the material instance */
+	/**
+	* @brief Function called when iColor is changed by replication, change the color of the material instance
+	*/
 	UFUNCTION()
 	void OnRep_Material();
 };

@@ -1,11 +1,18 @@
 
-
 #pragma once
 
-
+/**
+* @namespace	ERainbowBoxColor
+*
+* @brief	Contain the enum of rainbow box color
+*/
 namespace ERainbowBoxColor
 {
-	/** List of solution type */
+	/**
+	* @enum	Color
+	*
+	* @brief	List of color
+	*/
 	enum Color
 	{
 		NONE,
@@ -47,8 +54,18 @@ float GetBlueValueOfTheColor(const ERainbowBoxColor::Color RainbowBoxColor);
 */
 FName GetNameOfTheColor(const ERainbowBoxColor::Color RainbowBoxColor);
 
-/** Convert a int to a RainbowBoxColor */
+/**
+* Return the color from a int
+*
+* @param iColor Int of the color
+* @return ERainbowBoxColor::Color The corresponding Color
+*/
 ERainbowBoxColor::Color GetColorFromInt(int iColor);
 
-/** Convert a RainbowBoxColor to a int */
+/**
+* Return the int from a color
+*
+* @param RainbowBoxColor The color
+* @return int The corresponding int
+*/
 int GetIntFromColor(ERainbowBoxColor::Color RainbowBoxColor);

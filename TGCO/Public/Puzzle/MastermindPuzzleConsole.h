@@ -1,39 +1,116 @@
 
-
 #pragma once
 
 #include "InteractiveElement/InteractiveElement.h"
 #include "SolutionType.h"
 #include "MastermindPuzzleConsole.generated.h"
 
-
+/**
+* @class	AMastermindPuzzleConsole
+*
+* @brief	The console for the mastermind puzzle
+*
+* Create the solution of the mastermind, receive proposals from the user, and display clues.
+*
+* @sa	AInteractiveElement
+*/
 UCLASS()
 class TGCO_API AMastermindPuzzleConsole : public AInteractiveElement
 {
 	GENERATED_BODY()
 	
 public:
+	/**
+	* @brief	Constructor.
+	*
+	* @param	ObjectInitializer	The object initializer.
+	*/
 	AMastermindPuzzleConsole(const FObjectInitializer& ObjectInitializer);
 
+	/**
+	* @brief	On begin play, create the mastermind.
+	*/
 	virtual void BeginPlay() override;
 
+	/**
+	* @brief	Submit the current proposal of the player and update display.
+	*/
 	UFUNCTION(BlueprintCallable, Category = "Mastermind")
 	void SubmitAnswer();
 
-	/** Initialize Mastermind solution */
+	/**
+	* @brief	Enter or leave the puzzle, move camera and set correct inputs.
+	*/
 	UFUNCTION(BlueprintCallable, Category = "Mastermind")
 	virtual bool OnInteract() override;
 
-	/** Diode components */
+	/**
+	* @brief	Set the SolutionType proposal at a position.
+	*
+	* @param	NewProposal	The new proposal.
+	* @param	iIndex	   	Index for the new proposal.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "Mastermind")
+	void SetProposalAt(ESolutionType::Type NewProposal, int32 iIndex);
+
+	/**
+	* @brief	Remove the SolutionType proposal at this position.
+	*
+	* @param	iIndex	   	Index where to remove.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "Mastermind")
+	void RemoveProposalAt(int32 iIndex);
+
+	/**
+	* @brief	Get the SolutionType proposal at this position.
+	*
+	* @param	iIndex	   	Index where to get.
+	* @return	ESolutionType::Type	   	Index where to get.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "Mastermind")
+	ESolutionType::Type GetProposalAt(int32 iIndex);
+
+	/**
+	* @brief	Delete all SolutionType of the proposal.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "Mastermind")
+	void ClearProposal();
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Mastermind")
+	void QuitMastermindPuzzleConsole();
+
+private: 
+	TArray<int32> CreateRandomArrayOfSolution(int32 iSize);
+
+	void UpdateDiode();
+
+	/**
+	* @brief	Update diodes color according the proposition of the player.
+	*
+	* @param	Difference	   	Index where to get.
+	*/
+	void UpdateDiode(int* Difference);
+
+	/**
+	* @brief	Update diodes color like if their are on.
+	*/
+	void SwitchDiodeOn();
+	/**
+	* @brief	Update diodes color like if their are off.
+	*/
+	void SwitchDiodeOff();
+
+public:
+	/** First diode component */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Diode")
 	class UStaticMeshComponent* Diode1;
-
+	/** Second diode component */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Diode")
 	class UStaticMeshComponent* Diode2;
-
+	/** Third diode component */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Diode")
 	class UStaticMeshComponent* Diode3;
-
+	/** Fourth diode component */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Diode")
 	class UStaticMeshComponent* Diode4;
 
@@ -41,41 +118,21 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MastermindCamera")
 	ACameraActor* CameraPuzzle;
 
-	UFUNCTION(BlueprintCallable, Category = "Mastermind")
-	void SetProposalAt(ESolutionType::Type NewProposal, int32 Index);
-
-	UFUNCTION(BlueprintCallable, Category = "Mastermind")
-	void RemoveProposalAt(int32 Index);
-
-	UFUNCTION(BlueprintCallable, Category = "Mastermind")
-	ESolutionType::Type GetProposalAt(int32 Index);
-
-	UFUNCTION(BlueprintCallable, Category = "Mastermind")
-	void ClearProposal();
-
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Mastermind")
-	void QuitMastermindPuzzleConsole();
-
 private:
 	/** Solution of the mastermind */
 	ESolutionType::Type* Solution;
+	/** Proposal of the user for the mastermind */
 	ESolutionType::Type* Proposal;
-	void UpdateDiode(int* Difference);
 
-	/** Update color of the diodes according the proposition of the player
-	* TO DO
-	*/
-	void UpdateDiode();
-	/** Switch all light on */
-	void SwitchDiodeOn();
-	/** Switch all light off */
-	void SwitchDiodeOff();
+	/** Materials of the first diode */
+	UMaterialInstanceDynamic* MaterialInstance1;
+	/** Materials of the second diode */
+	UMaterialInstanceDynamic* MaterialInstance2;
+	/** Materials of the third diode */
+	UMaterialInstanceDynamic* MaterialInstance3;
+	/** Materials of the fourth diode */
+	UMaterialInstanceDynamic* MaterialInstance4;
 
-	/** Materials of the diode */
-	UMaterialInstanceDynamic *MaterialInstance1;
-	UMaterialInstanceDynamic *MaterialInstance2;
-	UMaterialInstanceDynamic *MaterialInstance3;
-	UMaterialInstanceDynamic *MaterialInstance4;
 	/** Boolean to know if the player is in game or in puzzle */
 	bool bInGame;
 };
