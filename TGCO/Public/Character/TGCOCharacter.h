@@ -8,199 +8,287 @@
 #include "SolutionType.h"
 #include "TGCOCharacter.generated.h"
 
-/**
- * Represent a Character for a Player
- * 
- */
-UCLASS(config=Game)
+/** @brief	Represent a Character (Pawn) for a Player. */
+UCLASS(config = Game)
 class ATGCOCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
 public:
-	/** Constructors */
+
+	/**
+	 * @brief	Constructor.
+	 *
+	 * @param	ObjectInitializer	The object initializer.
+	 */
 	ATGCOCharacter(const FObjectInitializer& ObjectInitializer);
 
 /// BEGIN INPUT ///
 protected:
-	/** APawn interface */
-	/** Set up gameplay key binding */
-	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
-	/** End of APawn interface */
+	/// APawn interface ///
 
-	/** Handler for when a touch input begins. */
+	/**
+	 * @brief	Sets up the player input component.
+	 *
+	 * @param [in,out]	InputComponent	If non-null, the input component.
+	 *
+	 * ### summary	Set up gameplay key binding.
+	 */
+	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
+
+	/// End of APawn interface ///
+
+	/**
+	 * @brief	Handler for when a touch input started.
+	 *
+	 * @param	FingerIndex	Zero-based index of the finger.
+	 * @param	Location   	The location.
+	 */
 	void TouchStarted(ETouchIndex::Type FingerIndex, FVector Location);
 
-	/** Handler for when a touch input stops. */
+	/**
+	 * @brief	Handler for when a touch input stopped.
+	 *
+	 * @param	FingerIndex	Zero-based index of the finger.
+	 * @param	Location   	The location.
+	 */
 	void TouchStopped(ETouchIndex::Type FingerIndex, FVector Location);
 
-	/** Called to augment max speed and allow player to run */
+	/** @brief   Called to augment max speed and allow player to run */
 	void Run();
 
-	/** Called to decrease max speed and disabled player to run */
+	/** @brief   Called to decrease max speed and disabled player to run */
 	void StopRunning();
 
 	/**
-	* Called via input to turn at a given rate.
-	* @param Rate	This is a normalized rate, i.e. 1.0 means 100% of desired turn rate
-	*/
+	 * @brief	Called via input to turn at a given rate.
+	 *
+	 * @param	Rate	This is a normalized rate, i.e. 1.0 means 100% of desired turn rate.
+	 */
 	void TurnAtRate(float Rate);
 
 	/**
-	* Called via input to turn look up/down at a given rate.
-	* @param Rate	This is a normalized rate, i.e. 1.0 means 100% of desired turn rate
-	*/
+	 * @brief	Called via input to turn look up/down at a given rate.
+	 *
+	 * @param	Rate	This is a normalized rate, i.e. 1.0 means 100% of desired turn rate.
+	 */
 	void LookUpAtRate(float Rate);
 
-	/** Called for forwards/backward input */
+	/**
+	 * @brief	Move forward.
+	 *
+	 * @param	Value	The value.
+	 */
 	void MoveForward(float Value);
 
-	/** Called for side to side input */
+	/**
+	 * @brief	Move right.
+	 *
+	 * @param	Value	The value.
+	 */
 	void MoveRight(float Value);
 
-	/** Handler for firing */
+	/** @brief	Executes the fire action. */
 	UFUNCTION()
 	void OnFire();
 
-	/** Switch Wrist Mode to the previous mode in the Enumeration */
+	/** @brief	Sets previous wrist mode. */
 	void SetPreviousWristMode();
 
-	/** Switch Wrist Mode to the previous mode in the Enumeration */
+	/** @brief	Sets next wrist mode. */
 	void SetNextWristMode();
 
-	/** Cancel Action on the Props that is affected by time because of Projectile Shoot */
+	/** @brief   Cancel Action on the Props that is affected by time because of Projectile Shoot */
 	void CancelActionTime();
 
 public:	
-	/** Handler for using an InteractiveElement of the World */
+
+	/** @brief	Handler for using an InteractiveElement of the World. */
 	UFUNCTION(BlueprintCallable, Category = "TGCOCharacter")
 	void Use();
 
 /// END INPUT ///
 
-	/** Set a checkpoint for re spawn */
+	/**
+	 * @brief	Sets the checkpoint.
+	 *
+	 * @return	true if it succeeds, false if it fails.
+	 */
 	bool SetCheckpoint();
-	/** Get the checkpoint for re spawn */
+
+	/**
+	 * @brief	Gets the checkpoint.
+	 *
+	 * @return	The checkpoint.
+	 */
 	FTransform GetCheckpoint() const;
-	/** Spawn the Player to the last checkpoint */
+
+	/**
+	 * @brief	Spawn player to the last checkpoint.
+	 *
+	 * @return	A const new Character for the Player.
+	 */
 	ATGCOCharacter* const SpawnPlayer();
 
-	/** Function called when the Player receive damage from Elements in the World. Decrease Player's Energy and activate Shield.
-	* @param DamageAmount How much damage to apply
-	* @param DamageEvent Datapackage that fully describes the damage received
-	* @param EventInvestigator The Controller responsible for the damage.
-	* @param DamageCauser The Actor that directly caused the damage
-	*
-	* @return The amount of damage actually applied
-	*/
+	/**
+	 * @brief	Function called when the Player receive damage from Elements in the World. Decrease
+	 * 			Player's Energy and activate Shield.
+	 *
+	 * @param	fDamageAmount		   	How much damage to apply.
+	 * @param	DamageEvent			   	Datapackage that fully describes the damage received.
+	 * @param [in,out]	EventInstigator	The Controller responsible for the damage.
+	 * @param [in,out]	DamageCauser   	The Actor that directly caused the damage.
+	 *
+	 * @return	The amount of damage actually applied.
+	 */
 	virtual float TakeDamage(float fDamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser) override;
 
-	/** Increase the iNumberOfCloseInteractiveElement */
+	/** @brief	Increase number of close interactive element. */
 	void IncreaseNumberOfCloseInteractiveElement();
-	/** Decrease the iNumberOfCloseInteractiveElement */
+
+	/** @brief	Decrease number of close interactive element. */
 	void DecreaseNumberOfCloseInteractiveElement();
 
-	/** Function to add a stockable item in the inventory*/
+	/**
+	 * @brief	Picks the stockable item described by _item.
+	 *
+	 * @param [in,out]	_item	If non-null, the item.
+	 */
 	void PickStockableItem(AStockable* _item);
 
-	/**Getter / Setter */
+	/// GETTER / SETTER ///
+
+	/**
+	 * @brief	Gets inventory umg.
+	 *
+	 * @return	null if it fails, else the inventory umg.
+	 */
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	UInventoryUMG* GetInventoryUMG() const;
 
+	/**
+	 * @brief	Sets inventory umg.
+	 *
+	 * @param [in,out]	_widget	If non-null, the widget.
+	 */
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void SetInventoryUMG(UInventoryUMG* _widget);
 
-	/** Toggle the visibility of the mouse and of the widget */
-	void ToggleInventory();
-
+	/**
+	 * @brief	Gets solution type.
+	 *
+	 * @return	The solution type.
+	 */
 	UFUNCTION(BlueprintCallable, Category = "SolutionType")
 	ESolutionType::Type GetSolutionType();
 
+	/**
+	 * @brief	Sets solution type.
+	 *
+	 * @param	_solution	The solution.
+	 */
 	UFUNCTION(BlueprintCallable, Category = "SolutionType")
 	void SetSolutionType(ESolutionType::Type _solution);
 
-	/** Get the WristMode of Character */
+	/**
+	 * @brief	Gets wrist mode.
+	 *
+	 * @return	The wrist mode.
+	 */
 	EShootMode::Type GetWristMode();
+
+	/// END GETTER / SETTER ///
+
+	/** @brief	Toggle inventory visibility. */
+	void ToggleInventory();
+
 protected:
-	/** Tick function */
+	/**
+	 * @brief	Ticks.
+	 *
+	 * @param	DeltaSeconds	The seconds elapsed since the last called.
+	 */
 	virtual void Tick(float DeltaSeconds) override;
 
-	/** Activates the protection of the Character. When active the Character can't die but loose some energy.
-	* @param bActivate To active or deactivate the shield
-	*/
+	/**
+	 * @brief	Active shield.
+	 *
+	 * @param	bActivate	true to activate.
+	 */
 	void ActiveShield(bool bActivate);
 
-	/** Play the shield animation when the Player is taking damage */
+	/** @brief   Play the shield animation when the Player is taking damage */
 	void PlayShieldAnimation();
 
-	/** Play the shield sound when the Player is taking damage */
+	/** @brief   Play the shield sound when the Player is taking damage */
 	void PlayShieldSound();
 
-	/** Highlight the InteractiveElement that the Character look */
-	void HightlightCloseInteractiveElement();
+	/** @brief	Highlight close interactive element Character look at. */
+	void HighlightCloseInteractiveElement();
 
-// PUBLIC MEMBER
+/// PUBLIC MEMBER ///
 public:
-	/** Pawn mesh: 1st person view (seen only by self) */
+
+	/** @brief	A skeletal mesh component*. (seen only by self) */
 	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
 	class USkeletalMeshComponent* Mesh1P;
 
-	/** First person camera */
+	/** @brief	A camera component*. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FirstPersonCameraComponent;
 
-	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
+	/** @brief   Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
 	float BaseTurnRate;
 
-	/** Base look up/down rate, in deg/sec. Other scaling may affect final rate. */
+	/** @brief   Base look up/down rate, in deg/sec. Other scaling may affect final rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
 	float BaseLookUpRate;
 
-	/** Gun muzzle's offset from the characters location */
+	/** @brief  Gun muzzle's offset from the characters location */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	FVector GunOffset;
 
-	/** Projectile class to spawn */
+	/** @brief   Projectile class to spawn */
 	UPROPERTY(EditDefaultsOnly, Category = Projectile)
 	TSubclassOf<class AProjectile> ProjectileClass;
 
-	/** Sound to play each time we fire */
+	/** @brief  Sound to play each time we fire */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	class USoundBase* FireSound;
 
-	/** AnimMontage to play each time we fire */
+	/** @brief   AnimMontage to play each time we fire */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	class UAnimMontage* FireAnimation;
 
-// PRIVATE MEMBER
+/// PRIVATE MEMBER ///
 protected:
-	/** Previous element which was highlighted */
+	/** @brief	The previous interactive element highlighted. */
 	AInteractiveElement* PreviousInteractiveElement;
-	/** Number of InteractiveElement that the Player can use in their perimeter */
+	/** @brief	Number of close interactive elements. */
 	int32 iNumberOfCloseInteractiveElement;
-	/** Last Character checkpoint */
+	/** @brief	The last checkpoint. */
 	FTransform LastCheckpoint;
-	/** Character PlayerStart */
+	/** @brief	The last spawn. */
 	APlayerStart* LastSpawn;
-	/** Character Pawn */
+	/** @brief	The player pawn. */
 	ATGCOCharacter* PlayerPawn;
-	/** Wrist Mode for Shoot */
+	/** @brief	The wrist mode. */
 	EShootMode::Type WristMode;
-	/** Index of ShootMode in Enum */
+	/** @brief	Zero-based index of the wrist mode. */
 	int WristModeIndex;
-	/** The UMG Inventory */
+	/** @brief	The inventory umg. */
 	UInventoryUMG* InventoryUMG;
-	/** Solution Type owned by the Player */
+	/** @brief	Type of the solution owned. */
 	TEnumAsByte<ESolutionType::Type> SolutionType;
-	/** Last time when Player Regen */
+	/** @brief	The last regen time. */
 	float fLastRegenTime;
 
 public:
-	/** Returns Mesh1P subobject **/
+	/** @brief   Returns Mesh1P subobject **/
 	FORCEINLINE class USkeletalMeshComponent* GetMesh1P() const { return Mesh1P; }
 
-	/** Returns FirstPersonCameraComponent subobject **/
+	/** @brief   Returns FirstPersonCameraComponent subobject **/
 	FORCEINLINE class UCameraComponent* GetFirstPersonCamera() const { return FirstPersonCameraComponent; }
 };
 

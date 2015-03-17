@@ -377,7 +377,7 @@ void ATGCOCharacter::Tick(float DeltaSeconds)
 
 	if (iNumberOfCloseInteractiveElement > 0)
 	{
-		HightlightCloseInteractiveElement();
+		HighlightCloseInteractiveElement();
 	}
 }
 
@@ -391,7 +391,7 @@ void ATGCOCharacter::DecreaseNumberOfCloseInteractiveElement()
 	iNumberOfCloseInteractiveElement--;
 }
 
-void ATGCOCharacter::HightlightCloseInteractiveElement()
+void ATGCOCharacter::HighlightCloseInteractiveElement()
 {
 	FHitResult OutHitResult;
 	FCollisionQueryParams Params(false);
