@@ -39,8 +39,7 @@ void ARainbowBoxHandlerPast::CreateRainbowBoxHandler()
 				{
 					for (int y = 0; y < iRows; ++y)
 					{
-						// int iAddrandom = rand() % 6;
-						int iAddrandom = 6;
+						int iAddrandom = rand() % 6;
 						if (iAddrandom > 0)
 						{
 							const FVector SpawnLocation = GetActorLocation() + FVector(x * 480, y * 480, 5.0);
