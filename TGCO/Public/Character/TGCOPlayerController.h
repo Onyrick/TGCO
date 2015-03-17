@@ -36,14 +36,12 @@ public:
 	 * @return	true if it succeeds, false if it fails.
 	 */
 	virtual bool SetPause(bool bPause, FCanUnpause CanUnpauseDelegate = FCanUnpause()) override;
-
-	/// SERVER FUNCTIONS ///
-
+	
 	/**
 	 * @brief	Function that update speed characteristic on a specific Props.
 	 * 			Call on server by client.
 	 *
-	 * @param [in,out]	Props	Props for updating speed characteristic.
+	 * @param 	Props	Props for updating speed characteristic.
 	 */
 	UFUNCTION(Server, WithValidation, Reliable)
 	void ServerUpdateSpeedOnProps(class AProps* Props);
@@ -52,7 +50,7 @@ public:
 	 * @brief	Function that update the speed value on a specific Props.
 	 * 			Call on server by client.
 	 *
-	 * @param [in,out]	Props	Props for updating speed value.
+	 * @param 	Props	Props for updating speed value.
 	 * @param	fValue		 	The value.
 	 */
 	UFUNCTION(Server, WithValidation, Reliable)
@@ -62,7 +60,7 @@ public:
 	 * @brief	Function that change the activate state on a specific LightningBarrier.
 	 * 			Call on server by client.
 	 *
-	 * @param [in,out]	LightningBarrier	LightningBarrier for updating active State.
+	 * @param 	LightningBarrier	LightningBarrier for updating active State.
 	 * @param	bValue						The value.
 	 */
 	UFUNCTION(Server, WithValidation, Reliable)
@@ -72,7 +70,7 @@ public:
 	 * @brief	Function that change the visibility of a mesh.
 	 * 			Call on server by client.
 	 *
-	 * @param [in,out]	MinesBox	Static Mesh for updating Visibility.
+	 * @param 	MinesBox	Static Mesh for updating Visibility.
 	 */
 	UFUNCTION(Server, WithValidation, Reliable)
 	void ServerUpdateVisibilityOnMesh(class AMinesBox* MinesBox);
@@ -81,7 +79,7 @@ public:
 	 * @brief	Function that update the speed characteristic on a specific Fan.
 	 * 			Call on client by server.
 	 *
-	 * @param [in,out]	Fan	Fan for updating speed characteristic.
+	 * @param 	Fan	Fan for updating speed characteristic.
 	 * @param	_fSpeed	   	The speed.
 	 */
 	UFUNCTION(Client, Reliable)
@@ -91,7 +89,7 @@ public:
 	 * @brief	Function that activate a specific Fan.
 	 * 			Call on server by client.
 	 *
-	 * @param [in,out]	Fan	Fan for activation.
+	 * @param 	Fan	Fan for activation.
 	 * @param	bActive	   	Whether the Fan will be active.
 	 */
 	UFUNCTION(Server, WithValidation, Reliable)
@@ -101,18 +99,18 @@ public:
 	 * @brief	Function that decrease energy for players.
 	 * 			Call on server by client.
 	 *
-	 * @param [in,out]	GameState	GameState for decrease.
+	 * @param 	GameState	GameState for decrease.
 	 * @param	iEnergyAmount	 	The amount to decrease.
 	 * @param	monsterHit		 	If decrease is due to monster.
 	 */
 	UFUNCTION(Server, WithValidation, reliable)
-	void ServerDecreaseEnergy(class ATGCOGameState* GameState, int32 iEnergyAmount, bool monsterHit = false);
+	void ServerDecreaseEnergy(class ATGCOGameState* GameState, int32 iEnergyAmount, bool bCanPlayerDie = false);
 
 	/**
 	 * @brief	Function that add energy for players.
 	 * 			Call on server by client.
 	 *
-	 * @param [in,out]	GameState	GameState for adding energy.
+	 * @param 	GameState	GameState for adding energy.
 	 * @param	iEnergyAmount	 	The amount to add.
 	 */
 	UFUNCTION(Server, WithValidation, reliable)
@@ -127,7 +125,7 @@ protected:
 	 *
 	 * @param	DeltaTime					The delta time.
 	 * @param	TickType					Type of the tick.
-	 * @param [in,out]	ThisTickFunction	this tick function.
+	 * @param 	ThisTickFunction	this tick function.
 	 */
 	virtual void TickActor(float DeltaTime, enum ELevelTick TickType, FActorTickFunction& ThisTickFunction) override;
 

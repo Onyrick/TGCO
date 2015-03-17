@@ -25,7 +25,7 @@ public:
 	*
 	* @param	ObjectInitializer	The object initializer.
 	*/
-	ARainbowBoxHandlerPast(const FObjectInitializer& PCIP);
+	ARainbowBoxHandlerPast(const FObjectInitializer& ObjectInitializer);
 
 	/**
 	* @brief	Create rainbow boxes, store and spawn them.

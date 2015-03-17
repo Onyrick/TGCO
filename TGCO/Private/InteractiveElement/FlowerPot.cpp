@@ -54,7 +54,7 @@ void AFlowerPot::GrowTree()
 			if (classname.Contains(TEXT("Lever")))
 			{
 				auto tempLever = Cast<ALever>(component);
-				tempLever->getStaticMesh()->SetVisibility(false);
+				tempLever->GetStaticMesh()->SetVisibility(false);
 
 				UE_LOG(LogDebug, Warning, TEXT("Tree has pushed the lever"));
 			}			

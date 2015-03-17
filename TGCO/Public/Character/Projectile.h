@@ -47,8 +47,8 @@ public:
 	 * @brief	Executes the hit action.
 	 * 			Call when projectile hits something.
 	 *
-	 * @param [in,out]	OtherActor	If non-null, the other actor hit.
-	 * @param [in,out]	OtherComp 	If non-null, the other component hit.
+	 * @param 	OtherActor	If non-null, the other actor hit.
+	 * @param 	OtherComp 	If non-null, the other component hit.
 	 * @param	NormalImpulse	  	The normal impulse.
 	 * @param	Hit				  	The hit structure.
 	 */

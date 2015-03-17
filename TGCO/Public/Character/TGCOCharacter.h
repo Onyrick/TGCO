@@ -23,20 +23,15 @@ public:
 	 */
 	ATGCOCharacter(const FObjectInitializer& ObjectInitializer);
 
-/// BEGIN INPUT ///
 protected:
-	/// APawn interface ///
-
 	/**
 	 * @brief	Sets up the player input component.
 	 *
-	 * @param [in,out]	InputComponent	If non-null, the input component.
+	 * @param 	InputComponent	If non-null, the input component.
 	 *
 	 * ### summary	Set up gameplay key binding.
 	 */
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
-
-	/// End of APawn interface ///
 
 	/**
 	 * @brief	Handler for when a touch input started.
@@ -107,8 +102,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "TGCOCharacter")
 	void Use();
 
-/// END INPUT ///
-
 	/**
 	 * @brief	Sets the checkpoint.
 	 *
@@ -136,8 +129,8 @@ public:
 	 *
 	 * @param	fDamageAmount		   	How much damage to apply.
 	 * @param	DamageEvent			   	Datapackage that fully describes the damage received.
-	 * @param [in,out]	EventInstigator	The Controller responsible for the damage.
-	 * @param [in,out]	DamageCauser   	The Actor that directly caused the damage.
+	 * @param 	EventInstigator	The Controller responsible for the damage.
+	 * @param 	DamageCauser   	The Actor that directly caused the damage.
 	 *
 	 * @return	The amount of damage actually applied.
 	 */
@@ -152,11 +145,9 @@ public:
 	/**
 	 * @brief	Picks the stockable item described by _item.
 	 *
-	 * @param [in,out]	_item	If non-null, the item.
+	 * @param 	_item	If non-null, the item.
 	 */
 	void PickStockableItem(AStockable* _item);
-
-	/// GETTER / SETTER ///
 
 	/**
 	 * @brief	Gets inventory umg.
@@ -169,7 +160,7 @@ public:
 	/**
 	 * @brief	Sets inventory umg.
 	 *
-	 * @param [in,out]	_widget	If non-null, the widget.
+	 * @param 	_widget	If non-null, the widget.
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void SetInventoryUMG(UInventoryUMG* _widget);
@@ -196,8 +187,6 @@ public:
 	 * @return	The wrist mode.
 	 */
 	EShootMode::Type GetWristMode();
-
-	/// END GETTER / SETTER ///
 
 	/** @brief	Toggle inventory visibility. */
 	void ToggleInventory();
@@ -226,7 +215,6 @@ protected:
 	/** @brief	Highlight close interactive element Character look at. */
 	void HighlightCloseInteractiveElement();
 
-/// PUBLIC MEMBER ///
 public:
 
 	/** @brief	A skeletal mesh component*. (seen only by self) */
@@ -261,7 +249,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	class UAnimMontage* FireAnimation;
 
-/// PRIVATE MEMBER ///
 protected:
 	/** @brief	The previous interactive element highlighted. */
 	AInteractiveElement* PreviousInteractiveElement;
@@ -283,6 +270,10 @@ protected:
 	TEnumAsByte<ESolutionType::Type> SolutionType;
 	/** @brief	The last regen time. */
 	float fLastRegenTime;
+	/** @brief	true if Player is protect. */
+	bool bIsProtect;
+	/** @brief	The time since protection is active. */
+	float fTimeSinceProtectionIsActive;
 
 public:
 	/** @brief   Returns Mesh1P subobject **/

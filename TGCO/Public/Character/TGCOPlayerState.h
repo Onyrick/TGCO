@@ -52,27 +52,27 @@ public:
 	/**
 	 * @brief	Copies the properties described by PlayerState.
 	 *
-	 * @param [in,out]	PlayerState	If non-null, state of the player.
+	 * @param 	PlayerState	If non-null, state of the player.
 	 */
 	virtual void CopyProperties(APlayerState* PlayerState) override;
 
 	/**
 	 * @brief	Adds a new inventory item.
 	 *
-	 * @param [in,out]	_item	If non-null, the item.
+	 * @param 	_item	If non-null, the item.
 	 */
 	void AddNewInventoryItem(AStockable* _item);
 	/**
 	 * @brief	Removes the inventory item described by _item.
 	 *
-	 * @param [in,out]	_item	If non-null, the item.
+	 * @param 	_item	If non-null, the item.
 	 */
 	void RemoveInventoryItem(AStockable* _item);
 
 	/**
 	 * @brief	Sets Props affected.
 	 *
-	 * @param [in,out]	PropsAffected	If non-null, the properties affected.
+	 * @param 	PropsAffected	If non-null, the properties affected.
 	 */
 	void SetPropsAffected(AProps* PropsAffected);
 

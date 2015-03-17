@@ -6,7 +6,7 @@
 #include "TGCOCharacter.h"
 #include "BTT_MonstroFinishAvoiding.h"
 
-UBTT_MonstroFinishAvoiding::UBTT_MonstroFinishAvoiding(const class FObjectInitializer& PCIP) : Super(PCIP)
+UBTT_MonstroFinishAvoiding::UBTT_MonstroFinishAvoiding(const class FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 }
 

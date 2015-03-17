@@ -43,7 +43,7 @@ public:
 	void OnRep_Activate();
 
 	/** @brief	Reinitializes the speed to the fInitialSpeed. */
-	virtual void ReinitSpeed();
+	virtual void ReinitSpeedToInitialSpeed();
 
 	/**
 	 * @brief	Update Fan's rotating movement and radial force according to Fan's fCurrentSpeed 
@@ -51,7 +51,7 @@ public:
 	 *
 	 * @see	AffectBySpeed
 	 */
-	virtual void UpdateSpeed();
+	virtual void UpdateSpeedComponents();
 
 private:
 
@@ -81,7 +81,6 @@ public:
 	AFan * FutureFan;
 
 private:
-
 	/** @brief	true if this object is active. */
 	UPROPERTY(ReplicatedUsing = OnRep_Activate)
 	bool bIsActive;
