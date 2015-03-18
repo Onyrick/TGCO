@@ -25,6 +25,4 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ConsoleMinesweeper")
 	ACameraActor* CameraConsole;
 
-private:
-	bool bInGame;
 };

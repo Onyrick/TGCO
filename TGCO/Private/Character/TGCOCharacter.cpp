@@ -159,7 +159,7 @@ void ATGCOCharacter::OnFire()
 	ATGCOPlayerState* PlayerState = Cast<ATGCOPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
 	if (PlayerState)
 	{
-		if (!PlayerState->IsInPuzzle())
+		if (PlayerState->eCurrentState == EPlayerStatus::IN_GAME)
 		{
 			ATGCOGameState* gameState = Cast<ATGCOGameState>(GetWorld()->GetGameState());
 			if (gameState && gameState->GetEnergy() > 20)
@@ -242,7 +242,7 @@ void ATGCOCharacter::SetPreviousWristMode()
 	ATGCOPlayerState* PlayerState = Cast<ATGCOPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
 	if (PlayerState)
 	{
-		if (!PlayerState->IsInPuzzle())
+		if (PlayerState->eCurrentState == EPlayerStatus::IN_GAME)
 		{
 			ATGCOGameState * GS = Cast<ATGCOGameState>(GetWorld()->GetGameState());
 			const TMap<int, EShootMode::Type>& UnlockSkills = GS->GetUnlockSkills();
@@ -267,7 +267,7 @@ void ATGCOCharacter::SetNextWristMode()
 	ATGCOPlayerState* PlayerState = Cast<ATGCOPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
 	if (PlayerState)
 	{
-		if (!PlayerState->IsInPuzzle())
+		if (PlayerState->eCurrentState == EPlayerStatus::IN_GAME)
 		{
 			ATGCOGameState * GS = Cast<ATGCOGameState>(GetWorld()->GetGameState());
 			const TMap<int, EShootMode::Type>& UnlockSkills = GS->GetUnlockSkills();

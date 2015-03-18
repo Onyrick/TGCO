@@ -130,6 +130,4 @@ private:
 	/** Array of materials for diodes*/
 	TArray<UMaterialInstanceDynamic*> MaterialArray;
 
-	/** Boolean to know if the player is in game or in puzzle */
-	bool bInGame;
 };

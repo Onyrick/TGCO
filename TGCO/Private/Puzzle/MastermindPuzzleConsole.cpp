@@ -8,7 +8,6 @@
 
 AMastermindPuzzleConsole::AMastermindPuzzleConsole(const FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer)
-, bInGame(true)
 {
 	bReplicates = true;
 	Solution = new ESolutionType::Type[4]();
