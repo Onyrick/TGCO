@@ -127,14 +127,8 @@ private:
 	/** Proposal of the user for the mastermind */
 	ESolutionType::Type* Proposal;
 
-	/** Materials of the first diode */
-	UMaterialInstanceDynamic* MaterialInstance1;
-	/** Materials of the second diode */
-	UMaterialInstanceDynamic* MaterialInstance2;
-	/** Materials of the third diode */
-	UMaterialInstanceDynamic* MaterialInstance3;
-	/** Materials of the fourth diode */
-	UMaterialInstanceDynamic* MaterialInstance4;
+	/** Array of materials for diodes*/
+	TArray<UMaterialInstanceDynamic*> MaterialArray;
 
 	/** Boolean to know if the player is in game or in puzzle */
 	bool bInGame;

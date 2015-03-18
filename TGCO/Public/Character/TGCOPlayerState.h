@@ -5,6 +5,7 @@
 #include "GameFramework/PlayerState.h"
 #include "Stockable.h"
 #include "ShootMode.h"
+#include "PlayerStatus.h"
 #include "TGCOPlayerState.generated.h"
 
 /**
@@ -58,9 +59,15 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "TGCOPlayerState")
 	TArray<AStockable*> GetInventoryListItems();
 
-	void EnterInAPuzzle();
-	void LeaveAPuzzle();
-	bool IsInPuzzle();
+	/**   
+	* @brief Switch game between game and puzzle    
+	*
+	* @param NewViewTarget New target for camera
+	*/
+	void SwitchGamePuzzle(AActor* NewViewTarget);
+
+	/** @brief Current state of the player */
+	EPlayerStatus::State eCurrentState;
 
 protected:
 	/** Player number (0 = Maximilien = future / 1 = Samantha = past */

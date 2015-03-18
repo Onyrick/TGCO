@@ -13,6 +13,7 @@ AMastermindPuzzleConsole::AMastermindPuzzleConsole(const FObjectInitializer& Obj
 	bReplicates = true;
 	Solution = new ESolutionType::Type[4]();
 	Proposal = new ESolutionType::Type[4]();
+	MaterialArray = TArray<UMaterialInstanceDynamic*>();
 
 	/** Create static mesh for diode */
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> StaticMesh(TEXT("StaticMesh'/Game/StarterContent/Shapes/Shape_Sphere'"));
@@ -60,13 +61,13 @@ void AMastermindPuzzleConsole::BeginPlay()
 {
 	Super::BeginPlay();
 	UMaterialInterface* MeshMat = Diode1->GetMaterial(0);
-	MaterialInstance1 = UMaterialInstanceDynamic::Create(MeshMat, this);
+	MaterialArray.Push(UMaterialInstanceDynamic::Create(MeshMat, this));
 	MeshMat = Diode2->GetMaterial(0);
-	MaterialInstance2 = UMaterialInstanceDynamic::Create(MeshMat, this);
+	MaterialArray.Push(UMaterialInstanceDynamic::Create(MeshMat, this));
 	MeshMat = Diode3->GetMaterial(0);
-	MaterialInstance3 = UMaterialInstanceDynamic::Create(MeshMat, this);
+	MaterialArray.Push(UMaterialInstanceDynamic::Create(MeshMat, this));
 	MeshMat = Diode4->GetMaterial(0);
-	MaterialInstance4 = UMaterialInstanceDynamic::Create(MeshMat, this);
+	MaterialArray.Push(UMaterialInstanceDynamic::Create(MeshMat, this));
 
 	SwitchDiodeOff();
 }
@@ -101,121 +102,67 @@ TArray<int32> AMastermindPuzzleConsole::CreateRandomArrayOfSolution(int32 iSize)
 
 void AMastermindPuzzleConsole::UpdateDiode(int* Difference)
 {
-	// TODO : Put material instance in array and compress code
-	switch (Difference[0]){
-	case -1:
-		// Good for the player, bad for the tree
-		MaterialInstance1->SetVectorParameterValue(FName(TEXT("Color")), FColor(30, 250, 30));
-		break;
-	case 0:
-		// Exist in solution to destroy the tree, but not a this place
-		MaterialInstance1->SetVectorParameterValue(FName(TEXT("Color")), FColor(255, 245, 87));
-		break;
-	case 1:
-		// Bad for the player, good for the tree
-		MaterialInstance1->SetVectorParameterValue(FName(TEXT("Color")), FColor(250, 30, 30));
-		break;
-	default:
-		MaterialInstance1->SetVectorParameterValue(FName(TEXT("Color")), FColor(30, 250, 30));
-		break;
+	for (int i = 0; i < MaterialArray.Num(); ++i)
+	{
 
-	}
-	switch (Difference[1]){
-	case -1:
-		MaterialInstance2->SetVectorParameterValue(FName(TEXT("Color")), FColor(30, 250, 30));
-		break;
-	case 0:
-		MaterialInstance2->SetVectorParameterValue(FName(TEXT("Color")), FColor(255, 245, 87));
-		break;
-	case 1:
-		MaterialInstance2->SetVectorParameterValue(FName(TEXT("Color")), FColor(250, 30, 30));
-		break;
-	default:
-		MaterialInstance2->SetVectorParameterValue(FName(TEXT("Color")), FColor(30, 250, 30));
-		break;
+		UMaterialInstanceDynamic* MaterialInstance = MaterialArray[i];
+		switch (Difference[i]){
+			case -1:
+				// Good for the player, bad for the tree
+				MaterialInstance->SetVectorParameterValue(FName(TEXT("Color")), FColor(30, 250, 30));
+				break;
+			case 0:
+				// Exist in solution to destroy the tree, but not a this place
+				MaterialInstance->SetVectorParameterValue(FName(TEXT("Color")), FColor(255, 245, 87));
+				break;
+			case 1:
+				// Bad for the player, good for the tree
+				MaterialInstance->SetVectorParameterValue(FName(TEXT("Color")), FColor(250, 30, 30));
+				break;
+			default:
+				MaterialInstance->SetVectorParameterValue(FName(TEXT("Color")), FColor(30, 250, 30));
+				break;
 
-	}
-	switch (Difference[2]){
-	case -1:
-		MaterialInstance3->SetVectorParameterValue(FName(TEXT("Color")), FColor(30, 250, 30));
-		break;
-	case 0:
-		MaterialInstance3->SetVectorParameterValue(FName(TEXT("Color")), FColor(255, 245, 87));
-		break;
-	case 1:
-		MaterialInstance3->SetVectorParameterValue(FName(TEXT("Color")), FColor(250, 30, 30));
-		break;
-	default:
-		MaterialInstance3->SetVectorParameterValue(FName(TEXT("Color")), FColor(30, 250, 30));
-		break;
-
-	}
-	switch (Difference[3]){
-	case -1:
-		MaterialInstance4->SetVectorParameterValue(FName(TEXT("Color")), FColor(30, 250, 30));
-		break;
-	case 0:
-		MaterialInstance4->SetVectorParameterValue(FName(TEXT("Color")), FColor(255, 245, 87));
-		break;
-	case 1:
-		MaterialInstance4->SetVectorParameterValue(FName(TEXT("Color")), FColor(250, 30, 30));
-		break;
-	default:
-		MaterialInstance4->SetVectorParameterValue(FName(TEXT("Color")), FColor(30, 250, 30));
-		break;
-
+		}
+		MaterialInstance->SetScalarParameterValue(FName(TEXT("Intensity")), 10);
 	}
 
-	MaterialInstance1->SetScalarParameterValue(FName(TEXT("Intensity")), 10);
-	MaterialInstance2->SetScalarParameterValue(FName(TEXT("Intensity")), 10);
-	MaterialInstance3->SetScalarParameterValue(FName(TEXT("Intensity")), 10);
-	MaterialInstance4->SetScalarParameterValue(FName(TEXT("Intensity")), 10);
-
-	Diode1->SetMaterial(0, MaterialInstance1);
-	Diode2->SetMaterial(0, MaterialInstance2);
-	Diode3->SetMaterial(0, MaterialInstance3);
-	Diode4->SetMaterial(0, MaterialInstance4);
+	Diode1->SetMaterial(0, MaterialArray[0]);
+	Diode2->SetMaterial(0, MaterialArray[1]);
+	Diode3->SetMaterial(0, MaterialArray[2]);
+	Diode4->SetMaterial(0, MaterialArray[3]);
 
 }
 
 void AMastermindPuzzleConsole::SwitchDiodeOn()
 {
 	// Change color to white
-	MaterialInstance1->SetVectorParameterValue(FName(TEXT("Color")), FColor(255, 255, 255));
-	MaterialInstance1->SetScalarParameterValue(FName(TEXT("Intensity")), 10);
-	Diode1->SetMaterial(0, MaterialInstance1);
-
-	MaterialInstance2->SetVectorParameterValue(FName(TEXT("Color")), FColor(255, 255, 255));
-	MaterialInstance2->SetScalarParameterValue(FName(TEXT("Intensity")), 10);
-	Diode2->SetMaterial(0, MaterialInstance2);
-
-	MaterialInstance3->SetVectorParameterValue(FName(TEXT("Color")), FColor(255, 255, 255));
-	MaterialInstance3->SetScalarParameterValue(FName(TEXT("Intensity")), 10);
-	Diode3->SetMaterial(0, MaterialInstance3);
-
-	MaterialInstance4->SetVectorParameterValue(FName(TEXT("Color")), FColor(255, 255, 255));
-	MaterialInstance4->SetScalarParameterValue(FName(TEXT("Intensity")), 10);
-	Diode4->SetMaterial(0, MaterialInstance4);
+	for (int i = 0; i < MaterialArray.Num(); ++i)
+	{
+		UMaterialInstanceDynamic* MaterialInstance = MaterialArray[i];
+		MaterialInstance->SetVectorParameterValue(FName(TEXT("Color")), FColor(255, 255, 255));
+		MaterialInstance->SetScalarParameterValue(FName(TEXT("Intensity")), 10);
+	}
+	Diode1->SetMaterial(0, MaterialArray[0]);
+	Diode2->SetMaterial(0, MaterialArray[1]);
+	Diode3->SetMaterial(0, MaterialArray[2]);
+	Diode4->SetMaterial(0, MaterialArray[3]);
 
 }
 
 void AMastermindPuzzleConsole::SwitchDiodeOff()
 {
-	MaterialInstance1->SetVectorParameterValue(FName(TEXT("Color")), FColor(255, 255, 255));
-	MaterialInstance1->SetScalarParameterValue(FName(TEXT("Intensity")), 1);
-	Diode1->SetMaterial(0, MaterialInstance1);
 
-	MaterialInstance2->SetVectorParameterValue(FName(TEXT("Color")), FColor(255, 255, 255));
-	MaterialInstance2->SetScalarParameterValue(FName(TEXT("Intensity")), 1);
-	Diode2->SetMaterial(0, MaterialInstance2);
-
-	MaterialInstance3->SetVectorParameterValue(FName(TEXT("Color")), FColor(255, 255, 255));
-	MaterialInstance3->SetScalarParameterValue(FName(TEXT("Intensity")), 1);
-	Diode3->SetMaterial(0, MaterialInstance3);
-
-	MaterialInstance4->SetVectorParameterValue(FName(TEXT("Color")), FColor(255, 255, 255));
-	MaterialInstance4->SetScalarParameterValue(FName(TEXT("Intensity")), 1);
-	Diode4->SetMaterial(0, MaterialInstance4);
+	for (int i = 0; i < MaterialArray.Num(); ++i)
+	{
+		UMaterialInstanceDynamic* MaterialInstance = MaterialArray[i];
+		MaterialInstance->SetVectorParameterValue(FName(TEXT("Color")), FColor(255, 255, 255));
+		MaterialInstance->SetScalarParameterValue(FName(TEXT("Intensity")), 1);
+	}
+	Diode1->SetMaterial(0, MaterialArray[0]);
+	Diode2->SetMaterial(0, MaterialArray[1]);
+	Diode3->SetMaterial(0, MaterialArray[2]);
+	Diode4->SetMaterial(0, MaterialArray[3]);
 
 }
 
@@ -227,52 +174,21 @@ bool AMastermindPuzzleConsole::OnInteract()
 		APlayerController* PlayerController = World->GetFirstPlayerController();
 		if (PlayerController)
 		{
-			if (bInGame)
+			ATGCOPlayerState* PlayerState = Cast<ATGCOPlayerState>(PlayerController->PlayerState);
+			if (PlayerState)
 			{
-				// TODO : see in ConsoleMinesweeper same functions ! 
-				UE_LOG(LogTest, Warning, TEXT("Console activate"));
-				// Move to the camera puzzle
-				PlayerController->SetViewTargetWithBlend(CameraPuzzle, 1.5, EViewTargetBlendFunction::VTBlend_EaseInOut, 1.0, true);
-				EnableInput(PlayerController);
-				PlayerController->SetIgnoreMoveInput(true);
-				PlayerController->SetIgnoreLookInput(true);
-				PlayerController->bShowMouseCursor = true;
-				PlayerController->bEnableClickEvents = true;
-				PlayerController->bEnableMouseOverEvents = true;
-
-				SwitchDiodeOn();
-				bInGame = false;
-
-				FInputModeGameAndUI Mode;
-				PlayerController->SetInputMode(Mode);
-				ATGCOPlayerState* PlayerState = Cast<ATGCOPlayerState>(PlayerController->PlayerState);
-				if (PlayerState)
+				if (PlayerState->eCurrentState == EPlayerStatus::IN_GAME)
 				{
-					PlayerState->EnterInAPuzzle();
+					PlayerState->SwitchGamePuzzle(CameraPuzzle);
+					SwitchDiodeOn();
 				}
-			}
-			else
-			{
-				UE_LOG(LogTest, Warning, TEXT("Console desactivate"));
-				// Move to the camera of the player
-				ACharacter* PlayerCharacter = PlayerController->GetCharacter();
-				PlayerController->SetViewTargetWithBlend(PlayerCharacter, 1.5, EViewTargetBlendFunction::VTBlend_EaseInOut, 1.0, true);
-				DisableInput(PlayerController);
-				PlayerController->SetIgnoreMoveInput(false);
-				PlayerController->SetIgnoreLookInput(false);
-				PlayerController->bShowMouseCursor = false;
-				PlayerController->bEnableClickEvents = false;
-				PlayerController->bEnableMouseOverEvents = false;
-				SwitchDiodeOff();
-				bInGame = true;
-				QuitMastermindPuzzleConsole();
-
-				FInputModeGameOnly GameMode;
-				PlayerController->SetInputMode(GameMode);
-				ATGCOPlayerState* PlayerState = Cast<ATGCOPlayerState>(PlayerController->PlayerState);
-				if (PlayerState)
+				else
 				{
-					PlayerState->LeaveAPuzzle();
+					if (PlayerState->eCurrentState == EPlayerStatus::IN_PUZZLE_GAME)
+					{
+						PlayerState->SwitchGamePuzzle(PlayerController->GetCharacter());
+						SwitchDiodeOff();
+					}
 				}
 			}
 		}
