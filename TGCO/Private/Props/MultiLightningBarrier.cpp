@@ -83,8 +83,8 @@ void AMultiLightningBarrier::PostEditChangeProperty(struct FPropertyChangedEvent
 						barrier->GetActorBounds(false, Origin, BoxExtent);
 						barrier->SetActorRelativeTransform(FTransform(FRotator::ZeroRotator, FVector(0.f, 0.f, Origin.Z + BoxExtent.Z), FVector(1.0)));
 					}
-					barrier->getStaticMesh()->SetMobility(EComponentMobility::Stationary);
-					barrier->getStaticMesh()->AttachTo(StaticMeshProps);
+					barrier->GetStaticMesh()->SetMobility(EComponentMobility::Stationary);
+					barrier->GetStaticMesh()->AttachTo(StaticMeshProps);
 					barrier->GetRootComponent()->SetAbsolute(false, false, true);
 					aBarriers.Push(barrier);
 				}

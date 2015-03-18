@@ -8,7 +8,7 @@ ATGCOPlayerState::ATGCOPlayerState(const FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer)
 , PlayerNumber(0)
 , PropsAffectedByTime(nullptr)
-, ModUsedOnProp(EShootMode::NONE)
+, ModUsedOnProps(EShootMode::NONE)
 , eCurrentState(EPlayerStatus::IN_GAME)
 {
 	bReplicates = true;
@@ -46,10 +46,11 @@ void ATGCOPlayerState::ServerSetPlayerNumber_Implementation(int32 NewPlayerNumbe
 
 void ATGCOPlayerState::CopyProperties(APlayerState* PlayerState)
 {
+	check(PlayerState);
 	Super::CopyProperties(PlayerState);
 
 	ATGCOPlayerState* TGCOPlayer = Cast<ATGCOPlayerState>(PlayerState);
-	if (TGCOPlayer)
+	if (TGCOPlayer != nullptr)
 	{
 		TGCOPlayer->PlayerNumber = PlayerNumber;
 	}
@@ -57,6 +58,7 @@ void ATGCOPlayerState::CopyProperties(APlayerState* PlayerState)
 
 void ATGCOPlayerState::AddNewInventoryItem(AStockable* _item)
 {
+	check(_item);
 	InventoryListItems.Add(_item);
 	UE_LOG(LogTest, Warning, TEXT("Number of element %d "), InventoryListItems.Num());
 
@@ -64,6 +66,7 @@ void ATGCOPlayerState::AddNewInventoryItem(AStockable* _item)
 
 void ATGCOPlayerState::RemoveInventoryItem(AStockable* _item)
 {
+	check(_item);
 	InventoryListItems.Remove(_item);
 }
 
@@ -74,9 +77,9 @@ TArray<AStockable*> ATGCOPlayerState::GetInventoryListItems()
 
 void ATGCOPlayerState::SetPropsAffected(AProps* PropsAffected)
 {
-	if (PropsAffectedByTime)
+	if (PropsAffectedByTime != nullptr)
 	{
-		PropsAffectedByTime->ReinitSpeed();
+		PropsAffectedByTime->ReinitSpeedToInitialSpeed();
 	}
 	PropsAffectedByTime = PropsAffected;
 }
@@ -88,12 +91,12 @@ bool ATGCOPlayerState::IsPropsAffected()
 
 EShootMode::Type ATGCOPlayerState::GetModUsed()
 {
-	return ModUsedOnProp;
+	return ModUsedOnProps;
 }
 
 void ATGCOPlayerState::SetModUsed(EShootMode::Type _mod)
 {
-	ModUsedOnProp = _mod;
+	ModUsedOnProps = _mod;
 }
 
 void ATGCOPlayerState::SwitchGamePuzzle(AActor* NewViewTarget)

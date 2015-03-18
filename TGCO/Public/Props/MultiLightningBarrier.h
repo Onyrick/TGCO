@@ -19,7 +19,7 @@ class TGCO_API AMultiLightningBarrier : public ALightningBarrier
 	GENERATED_BODY()
 public:
 	/** Constructors */
-	AMultiLightningBarrier(const FObjectInitializer& PCIP);
+	AMultiLightningBarrier(const FObjectInitializer& ObjectInitializer);
 
 	/**
 	 * virtual public  method : Called when the user has deleted the item in the unreal

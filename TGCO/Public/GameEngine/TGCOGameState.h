@@ -10,9 +10,8 @@
 #include "TGCOGameState.generated.h"
 
 /**
- * State of the game
- * Take care of energy for Players
- * GameState exists on the server and all clients
+ * @brief	State of the game Take care of energy for Players GameState exists on the server and
+ * 			all clients.
  */
 UCLASS()
 class TGCO_API ATGCOGameState : public AGameState
@@ -20,78 +19,129 @@ class TGCO_API ATGCOGameState : public AGameState
 	GENERATED_BODY()
 
 public:
-	/** Constructors */
+
+	/**
+	 * @brief	Constructor.
+	 *
+	 * @param	ObjectInitializer	The object initializer.
+	 */
 	ATGCOGameState(const FObjectInitializer& ObjectInitializer);
 
-	/** Get skills unlock by players */
+	/**
+	 * @brief	Gets unlock skills by players.
+	 *
+	 * @return	The unlock skills.
+	 */
 	const TMap<int, EShootMode::Type>& GetUnlockSkills();
 
-	/** Manage the Players Energy */
+	/** @brief	Manage players energy. */
 	void ManagePlayersEnergy();
 
-	/** Add an amount of energy to the total Player's energy */
+	/** @brief	Updates the Player's energy. */
 	UFUNCTION(BlueprintCallable, Category = "Players")
 	void UpdateEnergy();
 
-	/** Add an amount of energy to the total Player's energy */
+	/**
+	* @brief	Add an amount of energy to the total Player's energy.
+	*
+	* @param	iEnergyAmount	The energy amount.
+	*/
 	UFUNCTION(BlueprintCallable, Category = "Players")
 	void AddEnergy(int32 iEnergyAmount);
 
-	/** Remove an amount of energy to the total Player's energy*/
+	/**
+	* @brief	Remove an amount of energy to the total Player's energy.
+	*
+	* @param	iEnergyAmount	The energy amount.
+	* @param	monsterHit   	true if player can die.
+	*/
 	UFUNCTION(BlueprintCallable, Category = "Players")
-	void DecreaseEnergy(int32 iEnergyAmount, bool monsterHit = false);
-
-	/** Increase the maximum amount of Players energy */
+	void DecreaseEnergy(int32 iEnergyAmount, bool bCanPlayerDie = false);
+	
+	/**
+	* @brief	Increase the maximum energy players can have by iEnergyAmount.
+	*
+	* @param	iEnergyAmount	The energy amount.
+	*/
 	UFUNCTION(BlueprintCallable, Category = "Players")
 	void IncreaseEnergyMax(int32 iEnergyAmount);
 
-	/** Get the Player's current energy*/
+	/**
+	* @brief	Gets the energy.
+	*
+	* @return	The energy.
+	*/
 	UFUNCTION(BlueprintCallable, Category = "Players")
 	int32 GetEnergy();
 
-	/** Get the Player's max energy*/
+	/**
+	* @brief	Gets maximum energy.
+	*
+	* @return	The maximum energy.
+	*/
 	UFUNCTION(BlueprintCallable, Category = "Players")
 	int32 GetMaxEnergy();
 
-	/** Remove all widgets attached to viewport */
+	/** @brief	Multicast remove all widgets attached to viewport */
 	UFUNCTION(Netmulticast, reliable)
 	void MulticastRemoveAllWidgets();
 
-	/** TODO */
+	/** @brief	Multicast go to playing state. */
 	UFUNCTION(Netmulticast, reliable)
 	void MulticastGoToPlayingState();
 
-	/** Check if Players have remaining energy and can continue the game. If not launch Game Over. */
+	/**
+	 * @brief	Determines if Players have remaining energy and can continue the game.
+	 *
+	 * @return	true if there is still energy, false otherwise.
+	 */
 	bool CheckRemainingEnergy();
 
 private:
-
+	/**
+	* @brief	Increase the maximum energy.
+	* 			Called by client on server.
+	*
+	* @param	iEnergyAmount	The energy amount.
+	*/
 	UFUNCTION(Server, WithValidation, reliable)
 	void ServerIncreaseEnergyMax(int32 iEnergyAmount);
 
 private:
-	/*
-	UFUNCTION(NetMulticast)
-	void MulticastAddEnergy(int32 iEnergyAmount);
-	*/
-	/** Array that contains the skill that the Player unlock */
+
+	/** @brief	Array that contains the skill that the Player unlock. */
 	TMap<int, EShootMode::Type> MapUnlockSkills;
 
 protected:
-	/** Amount of energy remaining for both Players */
+	/** @brief   Amount of energy remaining for both Players */
 	UPROPERTY(SaveGame, Replicated)
 	int32 iPlayersEnergy;
+	/** @brief	The players energy increment in time. */
 	int32 iPlayersEnergyIncrement;
+	/** @brief	The last regen time. */
 	float fLastRegenTime;
+	/** @brief	The regen time. */
 	float fRegenTime;
+	/** @brief	The resume regen after decrease. */
 	float fResumeRegenAfterDecrease;
 
 private:
-	/** Maximum amount of energy Players can have */
+	/** @brief  Maximum amount of energy Players can have */
 	UPROPERTY(SaveGame, Replicated)
 	int32 iMaxPlayersEnergy;
 
 };
 
+/**
+ * @brief	Gets the energy.
+ *
+ * @return	The energy.
+ */
 FORCEINLINE int32 ATGCOGameState::GetEnergy(void){ return iPlayersEnergy; }
+
+/**
+ * @brief	Gets maximum energy.
+ *
+ * @return	The maximum energy.
+ */
 FORCEINLINE int32 ATGCOGameState::GetMaxEnergy(void){ return iMaxPlayersEnergy; }

@@ -19,12 +19,12 @@ AProps::AProps(const FObjectInitializer& ObjectInitializer)
 	RootComponent = StaticMeshProps;
 }
 
-UStaticMeshComponent* AProps::getStaticMesh()
+UStaticMeshComponent* AProps::GetStaticMesh()
 {
 	return StaticMeshProps;
 }
 
-float AProps::TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser)
+float AProps::TakeDamage(float fDamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser)
 {
 	AProjectile* Projectile = Cast<AProjectile>(DamageCauser);
 
@@ -75,21 +75,21 @@ void AProps::UpdateSpeedValue(float fNewSpeed)
 	else
 	{
 		fCurrentSpeed = fNewSpeed;
-		UpdateSpeed();
+		UpdateSpeedComponents();
 	}
 }
 
-void AProps::ReinitSpeed()
+void AProps::ReinitSpeedToInitialSpeed()
 {
 	fCurrentSpeed = fInitialSpeed;
 }
 
 void AProps::OnRep_Speed()
 {
-	UpdateSpeed();
+	UpdateSpeedComponents();
 }
 
-void AProps::UpdateSpeed()
+void AProps::UpdateSpeedComponents()
 {
 	//unimplemented();
 }
