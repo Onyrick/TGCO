@@ -27,6 +27,10 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
 	class UProjectileMovementComponent* ProjectileMovement;
 
+	/** Projectile Mesh */
+	UPROPERTY(EditAnywhere, Category = "Projectile Static Mesh")
+	class UStaticMeshComponent* MeshProjectile;
+
 public:
 	/** Constructors */
 	AProjectile(const FObjectInitializer& ObjectInitializer);
@@ -60,4 +64,7 @@ protected:
 	/** Projectile SolutionType that affect Monster */
 	TEnumAsByte<ESolutionType::Type> SolutionType;
 
+	/** Projectile Material */
+	UMaterialInstanceDynamic *MaterialInstance;
+	
 };

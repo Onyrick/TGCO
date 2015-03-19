@@ -33,3 +33,11 @@ int GetEnergyConsuming(const EShootMode::Type ShootMode);
 * @return FString string of the shoot mode
 */
 FString GetNameOfTheMode(const EShootMode::Type ShootMode);
+
+/**
+* Return the name of the shoot mode
+*
+* @param ShootMode value of the enum EShootMode
+* @return FColor color of the shoot mode
+*/
+FColor GetColorOfTheMode(const EShootMode::Type ShootMode);
