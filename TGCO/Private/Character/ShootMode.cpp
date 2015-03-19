@@ -12,7 +12,6 @@ int GetEnergyConsuming(const EShootMode::Type ShootMode)
 		case EShootMode::STOP:					return 40;
 		default:								return 0;
 	}
-
 }
 
 FString GetNameOfTheMode(const EShootMode::Type ShootMode)

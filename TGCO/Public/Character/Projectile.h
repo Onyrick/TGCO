@@ -27,7 +27,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
 	class UProjectileMovementComponent* ProjectileMovement;
 
-	/** Projectile Mesh */
+	/** @brief A projectile static mesh component*. */
 	UPROPERTY(EditAnywhere, Category = "Projectile Static Mesh")
 	class UStaticMeshComponent* MeshProjectile;
 

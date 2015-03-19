@@ -23,6 +23,7 @@ public:
 	/** Event launched when the monster has to be destroyed */
 	virtual void Destroyed();
 
+
 	void AddNewResistenceSolution(ESolutionType::Type _solution);
 	void RemoveResistenceSolution(ESolutionType::Type _solution);
 	void RespawnAI();
