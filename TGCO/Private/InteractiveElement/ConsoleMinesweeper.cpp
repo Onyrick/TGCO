@@ -8,7 +8,6 @@
 
 AConsoleMinesweeper::AConsoleMinesweeper(const class FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer)
-, bInGame(true)
 {
 	bReplicates = true;
 }
@@ -16,6 +15,36 @@ AConsoleMinesweeper::AConsoleMinesweeper(const class FObjectInitializer& ObjectI
 bool AConsoleMinesweeper::OnInteract()
 {
 	UWorld* World = GetWorld();
+	if (World)
+	{
+		APlayerController* PlayerController = World->GetFirstPlayerController();
+		if (PlayerController)
+		{
+			ATGCOPlayerState* PlayerState = Cast<ATGCOPlayerState>(PlayerController->PlayerState);
+			if (PlayerState)
+			{
+				if (PlayerState->eCurrentState == EPlayerStatus::IN_GAME)
+				{
+					// The player should not see its own character after camera movement
+					Cast<ATGCOCharacter>(PlayerController->GetPawn())->GetMesh()->SetVisibility(false);
+
+					PlayerState->SwitchGamePuzzle(CameraConsole);
+				}
+				else
+				{
+					if (PlayerState->eCurrentState == EPlayerStatus::IN_PUZZLE_GAME)
+					{
+						// The player should see its own character after camera movement
+						ACharacter* PlayerCharacter = PlayerController->GetCharacter();
+						PlayerCharacter->GetMesh()->SetVisibility(true);
+
+						PlayerState->SwitchGamePuzzle(PlayerController->GetCharacter());
+					}
+				}
+			}
+		}
+	}
+	/*UWorld* World = GetWorld();
 	if (World)
 	{
 		APlayerController* PlayerController = World->GetFirstPlayerController();
@@ -69,7 +98,7 @@ bool AConsoleMinesweeper::OnInteract()
 				bInGame = true;
 			}
 		}
-	}
+	}*/
 
 	return true;
 }

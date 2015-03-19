@@ -32,8 +32,4 @@ public:
 	/** @brief	The camera console. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ConsoleMinesweeper")
 	ACameraActor* CameraConsole;
-
-private:
-	/** @brief	true if it is in game mode. */
-	bool bInGame;
 };

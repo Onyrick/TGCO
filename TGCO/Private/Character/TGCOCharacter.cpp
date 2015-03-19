@@ -161,7 +161,7 @@ void ATGCOCharacter::OnFire()
 	ATGCOPlayerState* PlayerState = Cast<ATGCOPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
 	if (PlayerState)
 	{
-		if (!PlayerState->IsInPuzzle())
+		if (PlayerState->eCurrentState == EPlayerStatus::IN_GAME)
 		{
 			ATGCOGameState* GameState = Cast<ATGCOGameState>(GetWorld()->GetGameState());
 			if (GameState != nullptr && GameState->GetEnergy() > 20)
@@ -247,7 +247,7 @@ void ATGCOCharacter::SetPreviousWristMode()
 	ATGCOPlayerState* PlayerState = Cast<ATGCOPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
 	if (PlayerState != nullptr)
 	{
-		if (!PlayerState->IsInPuzzle())
+		if (PlayerState->eCurrentState == EPlayerStatus::IN_GAME)
 		{
 			ATGCOGameState * GameState = Cast<ATGCOGameState>(GetWorld()->GetGameState());
 			if (GameState != nullptr)
@@ -273,7 +273,7 @@ void ATGCOCharacter::SetNextWristMode()
 	ATGCOPlayerState* PlayerState = Cast<ATGCOPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
 	if (PlayerState != nullptr)
 	{
-		if (!PlayerState->IsInPuzzle())
+		if (PlayerState->eCurrentState == EPlayerStatus::IN_GAME)
 		{
 			ATGCOGameState * GameState = Cast<ATGCOGameState>(GetWorld()->GetGameState());
 			if (GameState != nullptr)

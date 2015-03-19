@@ -5,6 +5,7 @@
 #include "GameFramework/PlayerState.h"
 #include "Stockable.h"
 #include "ShootMode.h"
+#include "PlayerStatus.h"
 #include "TGCOPlayerState.generated.h"
 
 /**
@@ -105,16 +106,15 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "TGCOPlayerState")
 	TArray<AStockable*> GetInventoryListItems();
 
-	/** @brief	Enter in a puzzle. */
-	void EnterInAPuzzle();
-	/** @brief	Leave a puzzle. */
-	void LeaveAPuzzle();
-	/**
-	 * @brief	Query if this object is in puzzle.
-	 *
-	 * @return	true if in puzzle, false if not.
-	 */
-	bool IsInPuzzle();
+	/**   
+	* @brief Switch game between game and puzzle    
+	*
+	* @param NewViewTarget New target for camera
+	*/
+	void SwitchGamePuzzle(AActor* NewViewTarget);
+
+	/** @brief Current state of the player */
+	EPlayerStatus::State eCurrentState;
 
 protected:
 	/** @brief   Player number (0 = Maximilien = future / 1 = Samantha = past) */
@@ -129,7 +129,4 @@ protected:
 
 	/** Mod Used on this Props */
 	EShootMode::Type ModUsedOnProps;
-
-	/** @brief	true if player is in puzzle. can't shoot / open the inventory / change mode... */
-	bool bIsInPuzzle;
 };
