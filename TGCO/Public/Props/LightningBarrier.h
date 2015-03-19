@@ -17,8 +17,8 @@ class TGCO_API ALightningBarrier : public AProps
 	GENERATED_BODY()
 
 public:
-	/** Constructors */
-	ALightningBarrier(const FObjectInitializer& PCIP);
+
+	ALightningBarrier(const FObjectInitializer& ObjectInitializer);
 	
 	/**
 	* public  method : Change the active state (whether or not the lightning

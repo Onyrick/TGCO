@@ -30,16 +30,16 @@ AFan::AFan(const FObjectInitializer& ObjectInitializer)
 	RadialForce->AttachParent = StaticMeshProps;
 }
 
-void AFan::UpdateSpeed()
+void AFan::UpdateSpeedComponents()
 {
 	RotatingMovement->RotationRate = FRotator(0.f, 0.f, fCurrentSpeed);
-	if (RadialForce)
+	if (RadialForce != nullptr)
 	{
 		RadialForce->ForceStrength = fCurrentSpeed * 1000;
 		RadialForce->ImpulseStrength = fCurrentSpeed * 0;
 	}
 
-	if (FutureFan)
+	if (FutureFan != nullptr)
 	{
 		FutureFan->AffectBySpeed(fCurrentSpeed);
 	}
@@ -48,21 +48,23 @@ void AFan::UpdateSpeed()
 void AFan::AffectBySpeed(float _fSpeed)
 {
 	RotatingMovement->RotationRate = FRotator(0.f, 0.f, _fSpeed);
-	if (RadialForce)
+	if (RadialForce != nullptr)
 	{
 		RadialForce->ForceStrength = _fSpeed * 1000;
 		RadialForce->ImpulseStrength = _fSpeed * 0;
 	}
 
-	ATGCOPlayerController * PC;
 	for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
 	{
-		PC = Cast<ATGCOPlayerController>(Iterator->Get());
-		PC->ClientAffectSpeedOnFutureFan(this, _fSpeed);
+		ATGCOPlayerController * PC = Cast<ATGCOPlayerController>(Iterator->Get());
+		if (PC != nullptr)
+		{
+			PC->ClientAffectSpeedOnFutureFan(this, _fSpeed);
+		}
 	}
 }
 
-void AFan::ReinitSpeed()
+void AFan::ReinitSpeedToInitialSpeed()
 {
 	UpdateSpeedValue(fInitialSpeed);
 }
@@ -71,11 +73,13 @@ void AFan::Activate(bool bActive)
 {
 	if (Role < ROLE_Authority)
 	{
-		ATGCOPlayerController * PC;
 		for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
 		{
-			PC = Cast<ATGCOPlayerController>(Iterator->Get());
-			PC->ServerActivateFan(this, bActive);
+			ATGCOPlayerController * PC = Cast<ATGCOPlayerController>(Iterator->Get());
+			if (PC != nullptr)
+			{
+				PC->ServerActivateFan(this, bActive);
+			}
 		}
 	}
 	else
@@ -83,7 +87,7 @@ void AFan::Activate(bool bActive)
 		bIsActive = bActive;
 		RotatingMovement->SetActive(bIsActive);
 
-		if (FutureFan)
+		if (FutureFan != nullptr)
 		{
 			FutureFan->bIsActive = bActive;
 			FutureFan->RotatingMovement->SetActive(bIsActive);

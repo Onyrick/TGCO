@@ -26,6 +26,8 @@ ATGCOCharacter::ATGCOCharacter(const FObjectInitializer& ObjectInitializer)
 , WristModeIndex(0)
 , SolutionType(ESolutionType::NONE)
 , fLastRegenTime(0.f)
+, bIsProtect(false)
+, fTimeSinceProtectionIsActive(0.f)
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -159,12 +161,12 @@ void ATGCOCharacter::OnFire()
 	ATGCOPlayerState* PlayerState = Cast<ATGCOPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
 	if (PlayerState)
 	{
-		if (!PlayerState->IsInPuzzle())
+		if (PlayerState->eCurrentState == EPlayerStatus::IN_GAME)
 		{
-			ATGCOGameState* gameState = Cast<ATGCOGameState>(GetWorld()->GetGameState());
-			if (gameState && gameState->GetEnergy() > 20)
+			ATGCOGameState* GameState = Cast<ATGCOGameState>(GetWorld()->GetGameState());
+			if (GameState != nullptr && GameState->GetEnergy() > 20)
 			{
-				gameState->DecreaseEnergy(20);
+				GameState->DecreaseEnergy(20);
 
 				// try and fire a projectile
 				if (ProjectileClass != nullptr)
@@ -178,8 +180,11 @@ void ATGCOCharacter::OnFire()
 					{
 						// spawn the projectile at the muzzle
 						AProjectile* Projectile = World->SpawnActor<AProjectile>(ProjectileClass, SpawnLocation, SpawnRotation);
-						Projectile->SetSolutionType(SolutionType);
-						Projectile->SetMode(WristMode);
+						if (Projectile != nullptr)
+						{
+							Projectile->SetSolutionType(SolutionType);
+							Projectile->SetMode(WristMode);
+						}
 					}
 				}
 
@@ -240,24 +245,25 @@ void ATGCOCharacter::Use()
 void ATGCOCharacter::SetPreviousWristMode()
 {
 	ATGCOPlayerState* PlayerState = Cast<ATGCOPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
-	if (PlayerState)
+	if (PlayerState != nullptr)
 	{
-		if (!PlayerState->IsInPuzzle())
+		if (PlayerState->eCurrentState == EPlayerStatus::IN_GAME)
 		{
-			ATGCOGameState * GS = Cast<ATGCOGameState>(GetWorld()->GetGameState());
-			const TMap<int, EShootMode::Type>& UnlockSkills = GS->GetUnlockSkills();
-
-			int lengthMap = UnlockSkills.Num();
-
-			WristModeIndex = WristModeIndex - 1;
-			if (WristModeIndex < 0)
+			ATGCOGameState * GameState = Cast<ATGCOGameState>(GetWorld()->GetGameState());
+			if (GameState != nullptr)
 			{
-				WristModeIndex = lengthMap - 1;
-			}
+				const TMap<int, EShootMode::Type>& UnlockSkills = GameState->GetUnlockSkills();
 
-			WristMode = UnlockSkills[WristModeIndex];
+				int lengthMap = UnlockSkills.Num();
 
-			UE_LOG(LogDebug, Warning, TEXT("Previous : %s"), *GetNameOfTheMode(WristMode));
+				WristModeIndex = WristModeIndex - 1;
+				if (WristModeIndex < 0)
+				{
+					WristModeIndex = lengthMap - 1;
+				}
+
+				WristMode = UnlockSkills[WristModeIndex];
+			}			
 		}
 	}
 }
@@ -265,29 +271,33 @@ void ATGCOCharacter::SetPreviousWristMode()
 void ATGCOCharacter::SetNextWristMode()
 {
 	ATGCOPlayerState* PlayerState = Cast<ATGCOPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
-	if (PlayerState)
+	if (PlayerState != nullptr)
 	{
-		if (!PlayerState->IsInPuzzle())
+		if (PlayerState->eCurrentState == EPlayerStatus::IN_GAME)
 		{
-			ATGCOGameState * GS = Cast<ATGCOGameState>(GetWorld()->GetGameState());
-			const TMap<int, EShootMode::Type>& UnlockSkills = GS->GetUnlockSkills();
+			ATGCOGameState * GameState = Cast<ATGCOGameState>(GetWorld()->GetGameState());
+			if (GameState != nullptr)
+			{
+				const TMap<int, EShootMode::Type>& UnlockSkills = GameState->GetUnlockSkills();
 
-			int lengthMap = UnlockSkills.Num();
+				int lengthMap = UnlockSkills.Num();
 
-			WristModeIndex = (WristModeIndex + 1) % lengthMap;
+				WristModeIndex = (WristModeIndex + 1) % lengthMap;
 
-			WristMode = UnlockSkills[WristModeIndex];
-
-			UE_LOG(LogDebug, Warning, TEXT("Next : %s"), *GetNameOfTheMode(WristMode));
+				WristMode = UnlockSkills[WristModeIndex];
+			}
 		}
 	}
 }
 
 void ATGCOCharacter::CancelActionTime()
 {
-	ATGCOPlayerState* PS = Cast<ATGCOPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
-	PS->SetPropsAffected(nullptr);
-	PS->SetModUsed(EShootMode::NONE);
+	ATGCOPlayerState* PlayerState = Cast<ATGCOPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
+	if (PlayerState != nullptr)
+	{
+		PlayerState->SetPropsAffected(nullptr);
+		PlayerState->SetModUsed(EShootMode::NONE);
+	}
 
 	UE_LOG(LogDebug, Warning, TEXT("Cancel action time"));
 }
@@ -371,13 +381,19 @@ void ATGCOCharacter::Tick(float DeltaSeconds)
 				{
 					GameMode->ServerKillPlayersThenRespawn();
 				}
-			}				
+			}
+
+			// Check for protection 
+			if (fGameTime - fTimeSinceProtectionIsActive >= 5.f && bIsProtect)
+			{
+				ActiveShield(false);
+			}
 		}
 	}
 
 	if (iNumberOfCloseInteractiveElement > 0)
 	{
-		HightlightCloseInteractiveElement();
+		HighlightCloseInteractiveElement();
 	}
 }
 
@@ -391,7 +407,7 @@ void ATGCOCharacter::DecreaseNumberOfCloseInteractiveElement()
 	iNumberOfCloseInteractiveElement--;
 }
 
-void ATGCOCharacter::HightlightCloseInteractiveElement()
+void ATGCOCharacter::HighlightCloseInteractiveElement()
 {
 	FHitResult OutHitResult;
 	FCollisionQueryParams Params(false);
@@ -437,9 +453,16 @@ float ATGCOCharacter::TakeDamage(float fDamageAmount, struct FDamageEvent const 
 		ATGCOGameState* GameState = Cast<ATGCOGameState>(World->GetGameState());
 		if (GameState != nullptr)
 		{
-			// TODO : If shield is activate, decrease less energy (because we are protected) !
 			// Active shield
-			ActiveShield(true);
+			if (!bIsProtect)
+			{
+				ActiveShield(true);
+			}
+			else
+			{
+				// If shield is activate, decrease less energy (because we are protected) !
+				fDamageAmount *= 0.7f;
+			}
 
 			// Decrease energy in the GameState
 			GameState->DecreaseEnergy(fDamageAmount, true);
@@ -453,16 +476,28 @@ float ATGCOCharacter::TakeDamage(float fDamageAmount, struct FDamageEvent const 
 
 void ATGCOCharacter::ActiveShield(bool bActivate)
 {
+	if (bActivate == false)
+	{
+		UE_LOG(LogDebug, Warning, TEXT("Desactive shield"));
+	}
+	else
+	{
+		UE_LOG(LogDebug, Warning, TEXT("Activate shield"));
+	}
+
+	bIsProtect = bActivate;
+
 	if (bActivate)
 	{
 		// Activate the shield
 		PlayShieldAnimation();
 		PlayShieldSound();
-	}
-	else
-	{
-		// TODO : Deactivate the shield
-		// Need to do something ?
+
+		UWorld * const World = GetWorld();
+		if (World != nullptr)
+		{
+			fTimeSinceProtectionIsActive = World->GetTimeSeconds();
+		}
 	}
 }
 
@@ -483,17 +518,22 @@ UInventoryUMG* ATGCOCharacter::GetInventoryUMG() const
 
 void ATGCOCharacter::SetInventoryUMG(UInventoryUMG* _widget)
 {
+	check(_widget);
 	InventoryUMG = _widget;
 }
 
 void ATGCOCharacter::PickStockableItem(AStockable* _item)
 {
+	check(_item);
 	InventoryUMG->AddNewItem(_item);
 	UWorld* World = GetWorld();
 	if (World)
 	{
 		ATGCOPlayerState* PlayerState = Cast<ATGCOPlayerState>(World->GetFirstPlayerController()->PlayerState);
-		PlayerState->AddNewInventoryItem(_item);
+		if (PlayerState != nullptr)
+		{
+			PlayerState->AddNewInventoryItem(_item);
+		}
 	}
 
 }
@@ -501,18 +541,19 @@ void ATGCOCharacter::PickStockableItem(AStockable* _item)
 void ATGCOCharacter::ToggleInventory()
 {
 	APlayerController* MyController = GetWorld()->GetFirstPlayerController();
-
-	if (InventoryUMG->IsVisible())
+	if (MyController != nullptr)
 	{
-		InventoryUMG->SetVisibility(ESlateVisibility::Hidden);
-		MyController->bShowMouseCursor = false;
+		if (InventoryUMG->IsVisible())
+		{
+			InventoryUMG->SetVisibility(ESlateVisibility::Hidden);
+			MyController->bShowMouseCursor = false;
+		}
+		else
+		{
+			InventoryUMG->SetVisibility(ESlateVisibility::Visible);
+			MyController->bShowMouseCursor = true;
+		}
 	}
-	else
-	{
-		InventoryUMG->SetVisibility(ESlateVisibility::Visible);
-		MyController->bShowMouseCursor = true;
-	}
-	
 }
 
 ESolutionType::Type ATGCOCharacter::GetSolutionType()

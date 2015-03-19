@@ -63,9 +63,9 @@ bool ATGCOPlayerController::ServerUpdateSpeedOnProps_Validate(class AProps* Prop
 
 void ATGCOPlayerController::ServerUpdateSpeedOnProps_Implementation(class AProps* Props)
 {
-	if (Props)
+	if (Props != nullptr)
 	{
-		Props->UpdateSpeed();
+		Props->UpdateSpeedComponents();
 	}
 }
 
@@ -76,7 +76,7 @@ bool ATGCOPlayerController::ServerUpdateSpeedValueOnProps_Validate(class AProps*
 
 void ATGCOPlayerController::ServerUpdateSpeedValueOnProps_Implementation(class AProps* Props, float fValue)
 {
-	if (Props)
+	if (Props != nullptr)
 	{
 		Props->UpdateSpeedValue(fValue);
 	}
@@ -94,7 +94,7 @@ bool ATGCOPlayerController::ServerChangeActiveStateOnBarrier_Validate(class ALig
 
 void ATGCOPlayerController::ServerUpdateVisibilityOnMesh_Implementation(class AMinesBox* MinesBox)
 {
-	if (MinesBox)
+	if (MinesBox != nullptr)
 	{
 		UE_LOG(LogDebug, Warning, TEXT("Begin of ServerUpdateVisibilityOnMesh"));
 		MinesBox->SetVisibilityOfFlag();
@@ -103,7 +103,7 @@ void ATGCOPlayerController::ServerUpdateVisibilityOnMesh_Implementation(class AM
 
 void ATGCOPlayerController::ServerChangeActiveStateOnBarrier_Implementation(class ALightningBarrier* LightningBarrier, bool bValue)
 {
-	if (LightningBarrier)
+	if (LightningBarrier != nullptr)
 	{
 		LightningBarrier->ChangeActiveStateFromServer(bValue);
 	}
@@ -111,11 +111,14 @@ void ATGCOPlayerController::ServerChangeActiveStateOnBarrier_Implementation(clas
 
 void ATGCOPlayerController::ClientAffectSpeedOnFutureFan_Implementation(class AFan* Fan, float _fSpeed)
 {
-	Fan->RotatingMovement->RotationRate = FRotator(0.f, 0.f, _fSpeed);
-	if (Fan->RadialForce)
+	if (Fan != nullptr)
 	{
-		Fan->RadialForce->ForceStrength = _fSpeed * 1000;
-		Fan->RadialForce->ImpulseStrength = _fSpeed * 0;
+		Fan->RotatingMovement->RotationRate = FRotator(0.f, 0.f, _fSpeed);
+		if (Fan->RadialForce)
+		{
+			Fan->RadialForce->ForceStrength = _fSpeed * 1000;
+			Fan->RadialForce->ImpulseStrength = _fSpeed * 0;
+		}
 	}
 }
 
@@ -126,7 +129,7 @@ bool ATGCOPlayerController::ServerActivateFan_Validate(class AFan* Fan, bool bAc
 
 void ATGCOPlayerController::ServerActivateFan_Implementation(class AFan* Fan, bool bActivate)
 {
-	if (Fan)
+	if (Fan != nullptr)
 	{
 		Fan->Activate(bActivate);
 	}
@@ -139,17 +142,23 @@ bool ATGCOPlayerController::ServerAddEnergy_Validate(class ATGCOGameState* GameS
 
 void ATGCOPlayerController::ServerAddEnergy_Implementation(class ATGCOGameState* GameState, int32 iEnergyAmount)
 {
-	GameState->AddEnergy(iEnergyAmount);
+	if (GameState != nullptr)
+	{
+		GameState->AddEnergy(iEnergyAmount);
+	}
 }
 
-bool ATGCOPlayerController::ServerDecreaseEnergy_Validate(class ATGCOGameState* GameState, int32 iEnergyAmount, bool monsterHit)
+bool ATGCOPlayerController::ServerDecreaseEnergy_Validate(class ATGCOGameState* GameState, int32 iEnergyAmount, bool bCanPlayerDie)
 {
 	return true;
 }
 
-void ATGCOPlayerController::ServerDecreaseEnergy_Implementation(class ATGCOGameState* GameState, int32 iEnergyAmount, bool monsterHit)
+void ATGCOPlayerController::ServerDecreaseEnergy_Implementation(class ATGCOGameState* GameState, int32 iEnergyAmount, bool bCanPlayerDie)
 {
-	GameState->DecreaseEnergy(iEnergyAmount, monsterHit);
+	if (GameState != nullptr)
+	{
+		GameState->DecreaseEnergy(iEnergyAmount, bCanPlayerDie);
+	}
 }
 
 bool ATGCOPlayerController::ServerSetReadyToMove_Validate(class AMonster* Monster, bool _ready)

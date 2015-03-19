@@ -8,7 +8,8 @@ ATGCOPlayerState::ATGCOPlayerState(const FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer)
 , PlayerNumber(0)
 , PropsAffectedByTime(nullptr)
-, ModUsedOnProp(EShootMode::NONE)
+, ModUsedOnProps(EShootMode::NONE)
+, eCurrentState(EPlayerStatus::IN_GAME)
 {
 	bReplicates = true;
 }
@@ -45,10 +46,11 @@ void ATGCOPlayerState::ServerSetPlayerNumber_Implementation(int32 NewPlayerNumbe
 
 void ATGCOPlayerState::CopyProperties(APlayerState* PlayerState)
 {
+	check(PlayerState);
 	Super::CopyProperties(PlayerState);
 
 	ATGCOPlayerState* TGCOPlayer = Cast<ATGCOPlayerState>(PlayerState);
-	if (TGCOPlayer)
+	if (TGCOPlayer != nullptr)
 	{
 		TGCOPlayer->PlayerNumber = PlayerNumber;
 	}
@@ -56,6 +58,7 @@ void ATGCOPlayerState::CopyProperties(APlayerState* PlayerState)
 
 void ATGCOPlayerState::AddNewInventoryItem(AStockable* _item)
 {
+	check(_item);
 	InventoryListItems.Add(_item);
 	UE_LOG(LogTest, Warning, TEXT("Number of element %d "), InventoryListItems.Num());
 
@@ -63,6 +66,7 @@ void ATGCOPlayerState::AddNewInventoryItem(AStockable* _item)
 
 void ATGCOPlayerState::RemoveInventoryItem(AStockable* _item)
 {
+	check(_item);
 	InventoryListItems.Remove(_item);
 }
 
@@ -73,9 +77,9 @@ TArray<AStockable*> ATGCOPlayerState::GetInventoryListItems()
 
 void ATGCOPlayerState::SetPropsAffected(AProps* PropsAffected)
 {
-	if (PropsAffectedByTime)
+	if (PropsAffectedByTime != nullptr)
 	{
-		PropsAffectedByTime->ReinitSpeed();
+		PropsAffectedByTime->ReinitSpeedToInitialSpeed();
 	}
 	PropsAffectedByTime = PropsAffected;
 }
@@ -87,25 +91,71 @@ bool ATGCOPlayerState::IsPropsAffected()
 
 EShootMode::Type ATGCOPlayerState::GetModUsed()
 {
-	return ModUsedOnProp;
+	return ModUsedOnProps;
 }
 
 void ATGCOPlayerState::SetModUsed(EShootMode::Type _mod)
 {
-	ModUsedOnProp = _mod;
+	ModUsedOnProps = _mod;
 }
 
-void ATGCOPlayerState::EnterInAPuzzle()
+void ATGCOPlayerState::SwitchGamePuzzle(AActor* NewViewTarget)
 {
-	bIsInPuzzle = true;
-}
+	if (eCurrentState == EPlayerStatus::IN_GAME)
+	{
+		// Go to puzzle game state
+		UWorld* World = GetWorld();
+		if (World)
+		{
+			APlayerController* PlayerController = World->GetFirstPlayerController();
+			if (PlayerController)
+			{
+				// Move to the camera puzzle
+				PlayerController->SetViewTargetWithBlend(NewViewTarget, 1.5, EViewTargetBlendFunction::VTBlend_EaseInOut, 1.0, true);
+				// Inputs
+				EnableInput(PlayerController);
+				PlayerController->SetIgnoreMoveInput(true);
+				PlayerController->SetIgnoreLookInput(true);
+				PlayerController->bEnableClickEvents = true;
+				PlayerController->bEnableMouseOverEvents = true;
+				PlayerController->bShowMouseCursor = true;
 
-void ATGCOPlayerState::LeaveAPuzzle()
-{
-	bIsInPuzzle = false;
-}
+				// Change Input mode
+				FInputModeGameAndUI Mode;
+				PlayerController->SetInputMode(Mode);
 
-bool ATGCOPlayerState::IsInPuzzle()
-{
-	return bIsInPuzzle;
+				eCurrentState = EPlayerStatus::IN_PUZZLE_GAME;
+			}
+		}
+	}
+	else
+	{
+		if (eCurrentState == EPlayerStatus::IN_PUZZLE_GAME)
+		{
+			// Go to game state
+			UWorld* World = GetWorld();
+			if (World)
+			{
+				APlayerController* PlayerController = World->GetFirstPlayerController();
+				if (PlayerController)
+				{
+					// Move to the camera of the player
+					PlayerController->SetViewTargetWithBlend(NewViewTarget, 1.5, EViewTargetBlendFunction::VTBlend_EaseInOut, 1.0, true);
+					// Inputs
+					DisableInput(PlayerController);
+					PlayerController->SetIgnoreMoveInput(false);
+					PlayerController->SetIgnoreLookInput(false);
+					PlayerController->bShowMouseCursor = false;
+					PlayerController->bEnableClickEvents = false;
+					PlayerController->bEnableMouseOverEvents = false;
+					
+					// Change game mode
+					FInputModeGameOnly GameMode;
+					PlayerController->SetInputMode(GameMode);
+
+					eCurrentState = EPlayerStatus::IN_GAME;
+				}
+			}
+		}
+	}
 }

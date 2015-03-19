@@ -16,7 +16,7 @@ class TGCO_API ULightningBarrierSkeletalMeshComp : public USkeletalMeshComponent
 	GENERATED_BODY()
 public:
 	/* Constructors */
-	ULightningBarrierSkeletalMeshComp(const FObjectInitializer& PCIP);
+	ULightningBarrierSkeletalMeshComp(const FObjectInitializer& ObjectInitializer);
 
 	UFUNCTION(BlueprintCallable, Category = "LightningBarrier")
 		/**

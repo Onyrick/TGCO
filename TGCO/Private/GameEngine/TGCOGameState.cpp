@@ -29,7 +29,7 @@ const TMap<int, EShootMode::Type>& ATGCOGameState::GetUnlockSkills()
 void ATGCOGameState::ManagePlayersEnergy()
 {
 	ATGCOPlayerState* PlayerState = Cast<ATGCOPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
-	if (PlayerState != NULL)
+	if (PlayerState != nullptr)
 	{
 		if (PlayerState->GetModUsed() != EShootMode::NONE)
 		{
@@ -66,7 +66,10 @@ void ATGCOGameState::AddEnergy(int32 iEnergyAmount)
 	if (Role < ROLE_Authority)
 	{
 		ATGCOPlayerController * PC = Cast<ATGCOPlayerController>(GetWorld()->GetFirstPlayerController());
-		PC->ServerAddEnergy(this, iEnergyAmount);
+		if (PC != nullptr)
+		{
+			PC->ServerAddEnergy(this, iEnergyAmount);
+		}
 	}
 	else
 	{
@@ -96,12 +99,15 @@ void ATGCOGameState::ServerIncreaseEnergyMax_Implementation(int32 iEnergyAmount)
 	IncreaseEnergyMax(iEnergyAmount);
 }
 
-void ATGCOGameState::DecreaseEnergy(int32 iEnergyAmount, bool monsterHit)
+void ATGCOGameState::DecreaseEnergy(int32 iEnergyAmount, bool bCanPlayerDie)
 {
 	if (Role < ROLE_Authority)
 	{
 		ATGCOPlayerController * PC = Cast<ATGCOPlayerController>(GetWorld()->GetFirstPlayerController());
-		PC->ServerDecreaseEnergy(this, iEnergyAmount, monsterHit);
+		if (PC != nullptr)
+		{
+			PC->ServerDecreaseEnergy(this, iEnergyAmount, bCanPlayerDie);
+		}
 	}
 	else
 	{
@@ -112,7 +118,7 @@ void ATGCOGameState::DecreaseEnergy(int32 iEnergyAmount, bool monsterHit)
 
 		iPlayersEnergy = FMath::Max(0, iPlayersEnergy - iEnergyAmount);
 
-		if (iPlayersEnergy <= 0 && monsterHit == false)
+		if (iPlayersEnergy <= 0 && bCanPlayerDie == false)
 		{
 			iPlayersEnergy = 1;
 		}
@@ -129,16 +135,19 @@ bool ATGCOGameState::CheckRemainingEnergy()
 void ATGCOGameState::MulticastRemoveAllWidgets_Implementation()
 {
 	UGameViewportClient* GVC = GEngine->GameViewport;
-	GVC->RemoveAllViewportWidgets();
+	if (GVC != nullptr)
+	{
+		GVC->RemoveAllViewportWidgets();
+	}
 }
 
 void ATGCOGameState::MulticastGoToPlayingState_Implementation()
 {
 	UWorld* const World = GetWorld();
-	if (World)
+	if (World != nullptr)
 	{
 		UTGCOGameInstance* GameInstance = Cast<UTGCOGameInstance>(World->GetGameInstance());
-		if (GameInstance)
+		if (GameInstance != nullptr)
 		{
 			GameInstance->SetCurrentState(FName(TEXT("Playing")));
 		}

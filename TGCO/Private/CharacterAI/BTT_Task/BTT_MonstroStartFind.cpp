@@ -9,7 +9,7 @@
 #include <limits>
 #include "BTT_MonstroStartFind.h"
 
-UBTT_MonstroStartFind::UBTT_MonstroStartFind(const class FObjectInitializer& PCIP) : Super(PCIP)
+UBTT_MonstroStartFind::UBTT_MonstroStartFind(const class FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	fLastHitTime = 0.f;
 }

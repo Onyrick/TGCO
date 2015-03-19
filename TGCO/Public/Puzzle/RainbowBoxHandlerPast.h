@@ -25,7 +25,7 @@ public:
 	*
 	* @param	ObjectInitializer	The object initializer.
 	*/
-	ARainbowBoxHandlerPast(const FObjectInitializer& PCIP);
+	ARainbowBoxHandlerPast(const FObjectInitializer& ObjectInitializer);
 
 	/**
 	* @brief	Create rainbow boxes, store and spawn them.
@@ -54,15 +54,19 @@ private:
 
 public: 
 	/** Contain all the rainbow box */
-	TArray< ARainbowBox* > Squares;
+	TArray< ARainbowBox* > Handler;
 	/** The blueprint of RainbowBox*/
 	TSubclassOf<class ARainbowBox> RainbowBoxBP;
 
-private:
 	/** Number of columns */
-	const int NB_COL = 8;
+	UPROPERTY(EditAnywhere, Category = "RaibowBox handler")
+	int32 iColumns;
+
 	/** Number of rows */
-	const int NB_ROW = 8;
+	UPROPERTY(EditAnywhere, Category = "RaibowBox handler")
+	int32 iRows;
+
+private:
 	/** Size of the puzzle */
-	const int SIZE = NB_COL * NB_ROW;
+	int iSize;
 };

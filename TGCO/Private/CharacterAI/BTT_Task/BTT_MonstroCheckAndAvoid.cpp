@@ -7,7 +7,7 @@
 #include "EnergyCell.h"
 #include "BTT_MonstroCheckAndAvoid.h"
 
-UBTT_MonstroCheckAndAvoid::UBTT_MonstroCheckAndAvoid(const class FObjectInitializer& PCIP) : Super(PCIP)
+UBTT_MonstroCheckAndAvoid::UBTT_MonstroCheckAndAvoid(const class FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	bIsAvoiding = false;
 }

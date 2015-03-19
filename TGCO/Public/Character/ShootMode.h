@@ -7,7 +7,7 @@
 UENUM(BlueprintType)
 namespace EShootMode
 {
-	/** List of projectile type */
+	/** @brief	Values that represent projectile types. */
 	enum Type
 	{
 		NONE UMETA(DisplayName = "None"),
@@ -18,19 +18,20 @@ namespace EShootMode
 }
 
 /**
-* Return the energy that the current projectile mode consumed
+* @brief   Return the energy that the current projectile mode consumed
 *
-* @param ShootMode value of the enum EShootMode
+* @param   ShootMode    value of the enum EShootMode
 *
-* @return int amount consumed by the mode
+* @return  int          amount consumed by the mode
 */
 int GetEnergyConsuming(const EShootMode::Type ShootMode);
 
 /**
-* Return the name of the shoot mode
+* @brief   Return the name of the shoot mode
 *
-* @param ShootMode value of the enum EShootMode
-* @return FString string of the shoot mode
+* @param   ShootMode    value of the enum EShootMode
+* 						
+* @return  FString      string of the shoot mode
 */
 FString GetNameOfTheMode(const EShootMode::Type ShootMode);
 

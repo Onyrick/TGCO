@@ -19,7 +19,7 @@ class TGCO_API ALightningSwitch : public AInteractiveElement
 
 public:
 	/** Constructors */
-	ALightningSwitch(const FObjectInitializer& PCIP);
+	ALightningSwitch(const FObjectInitializer& ObjectInitializer);
 
 	/** Called when the Player uses the object */
 	UFUNCTION(BlueprintCallable, Category = "LightningSwitch")
