@@ -70,10 +70,10 @@ public:
 	 * @brief	Function that change the visibility of a mesh.
 	 * 			Call on server by client.
 	 *
-	 * @param 	MinesBox	Static Mesh for updating Visibility.
+	 * @param 	MinesweeperBox	Static Mesh for updating Visibility.
 	 */
 	UFUNCTION(Server, WithValidation, Reliable)
-	void ServerUpdateVisibilityOnMesh(class AMinesBox* MinesBox);
+		void ServerUpdateVisibilityOnMesh(class AMinesweeperBox* MinesweeperBox);
 
 	/**
 	 * @brief	Function that update the speed characteristic on a specific Fan.

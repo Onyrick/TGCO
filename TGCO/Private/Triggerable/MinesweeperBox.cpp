@@ -6,19 +6,19 @@
 #include "TGCOPlayerController.h"
 #include "TGCOCharacter.h"
 #include "Minesweeper.h"
-#include "MinesBox.h"
+#include "MinesweeperBox.h"
 
 
-AMinesBox::AMinesBox(const class FObjectInitializer& ObjectInitializer)
+AMinesweeperBox::AMinesweeperBox(const class FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer)
 , bIsUndermined(false)
 , iNeighboursUndermined(0)
 , bIsDisplayed(false)
 {
-	MineFlag = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("MineFlag_MineBox"));
+	MineFlag = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("MineFlag_MinesweeperBox"));
 	MineFlag->AttachParent = RootComponent;
 
-	Number = ObjectInitializer.CreateDefaultSubobject<UTextRenderComponent>(this, TEXT("Number_MineBox"), true );
+	Number = ObjectInitializer.CreateDefaultSubobject<UTextRenderComponent>(this, TEXT("Number_MinesweeperBox"), true );
 	Number->SetRelativeRotation(FRotator(90.0, 90.0, 0.0));
 	Number->SetRelativeLocation(FVector(0.0,0.0,25.0));
 	Number->SetText(TEXT("0"));
@@ -29,7 +29,7 @@ AMinesBox::AMinesBox(const class FObjectInitializer& ObjectInitializer)
 	bReplicates = true;
 }
 
-void AMinesBox::OnOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
+void AMinesweeperBox::OnOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
 	if (bIsUndermined)
 	{
@@ -44,7 +44,7 @@ void AMinesBox::OnOverlapBegin(class AActor* OtherActor, class UPrimitiveCompone
 	}
 }
 
-void AMinesBox::OnOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+void AMinesweeperBox::OnOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	if (Number != nullptr)
 	{
@@ -52,17 +52,17 @@ void AMinesBox::OnOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent
 	}
 }
 
-void AMinesBox::SetIsUndermined()
+void AMinesweeperBox::SetIsUndermined()
 {
 	bIsUndermined = !(bIsUndermined);
 }
 
-bool AMinesBox::GetIsUndermined()
+bool AMinesweeperBox::GetIsUndermined()
 {
 	return bIsUndermined;
 }
 
-void AMinesBox::Explode(class AActor* OtherActor)
+void AMinesweeperBox::Explode(class AActor* OtherActor)
 {
 	UE_LOG(LogDebug, Warning, TEXT("BOOM !!!"));
 	ATGCOGameState* gameState = Cast<ATGCOGameState>(GetWorld()->GetGameState());
@@ -88,23 +88,28 @@ void AMinesBox::Explode(class AActor* OtherActor)
 	}
 }
 
-void AMinesBox::SetNeighboursUndermined()
+void AMinesweeperBox::SetNeighboursUndermined()
 {
-	//UE_LOG(LogDebug, Warning, TEXT("Set neighbours undermined"));
+	UE_LOG(LogDebug, Warning, TEXT("Set neighbours undermined"));
 	iNeighboursUndermined += 1;
 	// Object has authority
+	// TODO
 	if (!(Role < ROLE_Authority))
 	{
-		Number->SetText(FString::Printf(TEXT("%d"), iNeighboursUndermined));
+		UE_LOG(LogDebug, Warning, TEXT("No authority: change the Text render Number"));
+		if (Number != nullptr)
+		{
+			Number->SetText(FString::Printf(TEXT("%d"), iNeighboursUndermined));
+		}
 	}
 }
 
-unsigned int AMinesBox::GetNeighboursUndermined()
+unsigned int AMinesweeperBox::GetNeighboursUndermined()
 {
 	return iNeighboursUndermined;
 }
 
-void AMinesBox::SetIsMarked()
+void AMinesweeperBox::SetIsMarked()
 {
 	bIsMarked = !bIsMarked;
 	if (!(Role < ROLE_Authority))
@@ -113,12 +118,12 @@ void AMinesBox::SetIsMarked()
 	}
 }
 
-bool AMinesBox::IsMarked()
+bool AMinesweeperBox::IsMarked()
 {
 	return bIsMarked;
 }
 
-void AMinesBox::SetVisibilityOfFlag()
+void AMinesweeperBox::SetVisibilityOfFlag()
 {
 	if (Role < ROLE_Authority)
 	{
@@ -138,31 +143,31 @@ void AMinesBox::SetVisibilityOfFlag()
 	}
 }
 
-void AMinesBox::OnRep_TextRender()
+void AMinesweeperBox::OnRep_TextRender()
 {
-	if (Number != NULL)
+	if (Number != nullptr)
 	{
 		Number->SetText(FString::Printf(TEXT("%d"), iNeighboursUndermined));
 	}
 	
 }
 
-void AMinesBox::OnRep_Flag()
+void AMinesweeperBox::OnRep_Flag()
 {
 	UE_LOG(LogDebug, Warning, TEXT("i'm on OnRep_Flag"));
-	if (MineFlag != NULL)
+	if (MineFlag != nullptr)
 	{
 		MineFlag->SetVisibility(!(MineFlag->IsVisible()));
 	}
 }
 
-void AMinesBox::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> & OutLifetimeProps) const
+void AMinesweeperBox::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> & OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	// Replicate to everyone
-	DOREPLIFETIME(AMinesBox, iNeighboursUndermined);
-	DOREPLIFETIME(AMinesBox, Number);
-	DOREPLIFETIME(AMinesBox, bIsUndermined);
-	DOREPLIFETIME(AMinesBox, MineFlag);
-	DOREPLIFETIME(AMinesBox, bIsMarked);
+	DOREPLIFETIME(AMinesweeperBox, iNeighboursUndermined);
+	DOREPLIFETIME(AMinesweeperBox, Number);
+	DOREPLIFETIME(AMinesweeperBox, bIsUndermined);
+	DOREPLIFETIME(AMinesweeperBox, MineFlag);
+	DOREPLIFETIME(AMinesweeperBox, bIsMarked);
 }
