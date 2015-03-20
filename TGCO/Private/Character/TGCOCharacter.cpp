@@ -522,6 +522,17 @@ void ATGCOCharacter::SetInventoryUMG(UInventoryUMG* _widget)
 	InventoryUMG = _widget;
 }
 
+UUserWidget* ATGCOCharacter::GetHUDEnergyUMG() const
+{
+	return HUDEnergyUMG;
+}
+
+void ATGCOCharacter::SetHUDEnergyUMG(UUserWidget* _widget)
+{
+	check(_widget);
+	HUDEnergyUMG = _widget;
+}
+
 void ATGCOCharacter::PickStockableItem(AStockable* _item)
 {
 	check(_item);
@@ -553,6 +564,20 @@ void ATGCOCharacter::ToggleInventory()
 			InventoryUMG->SetVisibility(ESlateVisibility::Visible);
 			MyController->bShowMouseCursor = true;
 		}
+	}
+}
+
+void ATGCOCharacter::SetHUDVisibility(bool _visible)
+{
+	if (_visible)
+	{
+		HUDEnergyUMG->SetVisibility(ESlateVisibility::Visible);
+		UE_LOG(LogOnline, Log, TEXT("Change HUD to be visible"));
+	}
+	else
+	{
+		HUDEnergyUMG->SetVisibility(ESlateVisibility::Hidden);
+		UE_LOG(LogOnline, Log, TEXT("Change HUD to be hidden"));
 	}
 }
 

@@ -3,6 +3,7 @@
 #include "TGCO.h"
 #include "TGCOGameInstance.h"
 #include "TGCOGameState.h"
+#include "TGCOCharacter.h"
 
 #include "Online.h"
 #include "Engine.h"
@@ -486,12 +487,16 @@ void UTGCOGameInstance::BeginPlayingState()
 		{
 			Game->bUseSeamlessTravel = true;
 		}
+
 		ATGCOGameState* const GameState = Cast<ATGCOGameState>(World->GetGameState());
 		GameState->MulticastRemoveAllWidgets();
 		GameState->MulticastGoToPlayingState();
+
+		World->ServerTravel(FString("/Game/Maps/TestMap/GymRainbow?listen"));
 	}
 
-	GetWorld()->ServerTravel(FString("/Game/Maps/TestMap/MapTestLucie?listen"));
+
+
 }
 
 void UTGCOGameInstance::EndPlayingState()
