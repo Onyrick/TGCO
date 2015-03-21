@@ -39,11 +39,29 @@ void ATGCOHUD::DrawHUD()
 	FCanvasTileItem TileItem(CrosshairDrawPosition, CrosshairTex->Resource, FLinearColor::White);
 	TileItem.BlendMode = SE_BLEND_Translucent;
 	Canvas->DrawItem(TileItem);
+}
 
-	ATGCOCharacter* Character = Cast<ATGCOCharacter>(GetWorld()->GetFirstPlayerController()->GetCharacter());
-	if (Character != nullptr)
+UUserWidget* ATGCOHUD::GetHUDEnergyUMG() const
+{
+	return HUDEnergyUMG;
+}
+
+void ATGCOHUD::SetHUDEnergyUMG(UUserWidget* _widget)
+{
+	check(_widget);
+	HUDEnergyUMG = _widget;
+}
+
+void ATGCOHUD::SetHUDVisibility(bool _visible)
+{
+	if (_visible)
 	{
-		FString ShootModeString = GetNameOfTheMode(Character->GetWristMode());
-		DrawText(ShootModeString, FColor::White, 0, 50, HUDFont);
+		HUDEnergyUMG->SetVisibility(ESlateVisibility::Visible);
+		UE_LOG(LogOnline, Log, TEXT("Change HUD to be visible"));
+	}
+	else
+	{
+		HUDEnergyUMG->SetVisibility(ESlateVisibility::Hidden);
+		UE_LOG(LogOnline, Log, TEXT("Change HUD to be hidden"));
 	}
 }

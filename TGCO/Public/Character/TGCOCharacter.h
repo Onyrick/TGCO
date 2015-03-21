@@ -164,23 +164,7 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void SetInventoryUMG(UInventoryUMG* _widget);
-
-	/**
-	* @brief	Gets HUD energy umg.
-	*
-	* @return	null if it fails, else the HUD energy umg.
-	*/
-	UFUNCTION(BlueprintCallable, Category = "HUD")
-	UUserWidget* GetHUDEnergyUMG() const;
-
-	/**
-	* @brief	Sets HUD energy umg.
-	*
-	* @param 	_widget	If non-null, the widget.
-	*/
-	UFUNCTION(BlueprintCallable, Category = "HUD")
-	void SetHUDEnergyUMG(UUserWidget* _widget);
-
+	
 	/**
 	 * @brief	Gets solution type.
 	 *
@@ -198,17 +182,22 @@ public:
 	void SetSolutionType(ESolutionType::Type _solution);
 
 	/**
-	 * @brief	Gets wrist mode.
-	 *
-	 * @return	The wrist mode.
-	 */
+	* @brief	Gets wrist mode.
+	*
+	* @return	The wrist mode.
+	*/
+
 	EShootMode::Type GetWristMode();
+	/**
+	* @brief	Gets string of the wrist mode.
+	*
+	* @return	The wrist mode name.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "Character")
+	FString GetWristModeString();
 
 	/** @brief	Toggle inventory visibility. */
 	void ToggleInventory();
-
-	/** @brief Change the visibility of the HUD */
-	void SetHUDVisibility(bool _visible);
 
 protected:
 	/**
@@ -289,8 +278,6 @@ protected:
 	int WristModeIndex;
 	/** @brief	The inventory umg. */
 	UInventoryUMG* InventoryUMG;
-	/** @brief	The HUD of the player with energy and shoot mode umg. */
-	UUserWidget* HUDEnergyUMG;
 	/** @brief	Type of the solution owned. */
 	TEnumAsByte<ESolutionType::Type> SolutionType;
 	/** @brief	The last regen time. */
