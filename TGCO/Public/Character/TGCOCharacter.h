@@ -251,6 +251,10 @@ public:
 	/** @brief   Base look up/down rate, in deg/sec. Other scaling may affect final rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
 	float BaseLookUpRate;
+	
+	/** @brief	The shield component*. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Shield)
+	class UStaticMeshComponent* Shield;
 
 	/** @brief  Gun muzzle's offset from the characters location */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
