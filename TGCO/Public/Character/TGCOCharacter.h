@@ -164,7 +164,7 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void SetInventoryUMG(UInventoryUMG* _widget);
-
+	
 	/**
 	 * @brief	Gets solution type.
 	 *
@@ -182,11 +182,19 @@ public:
 	void SetSolutionType(ESolutionType::Type _solution);
 
 	/**
-	 * @brief	Gets wrist mode.
-	 *
-	 * @return	The wrist mode.
-	 */
+	* @brief	Gets wrist mode.
+	*
+	* @return	The wrist mode.
+	*/
+
 	EShootMode::Type GetWristMode();
+	/**
+	* @brief	Gets string of the wrist mode.
+	*
+	* @return	The wrist mode name.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "Character")
+	FString GetWristModeString();
 
 	/** @brief	Toggle inventory visibility. */
 	void ToggleInventory();
@@ -232,6 +240,10 @@ public:
 	/** @brief   Base look up/down rate, in deg/sec. Other scaling may affect final rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
 	float BaseLookUpRate;
+	
+	/** @brief	The shield component*. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Shield)
+	class UStaticMeshComponent* Shield;
 
 	/** @brief  Gun muzzle's offset from the characters location */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)

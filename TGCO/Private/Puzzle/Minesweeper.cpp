@@ -10,19 +10,19 @@ AMinesweeper::AMinesweeper(const class FObjectInitializer& ObjectInitializer)
 {
 	//static ConstructorHelpers::FObjectFinder<UBlueprint> ItemBlueprint(TEXT("Blueprint'/Game/Blueprints/MinesBox_BP'"));
 	//if (ItemBlueprint.Object){
-	static ConstructorHelpers::FClassFinder<AMinesBox> ItemBlueprint(TEXT("/Game/Blueprints/MineBox_BP"));
+	static ConstructorHelpers::FClassFinder<AMinesweeperBox> ItemBlueprint(TEXT("/Game/Blueprints/MinesweeperBox_BP"));
 	if (ItemBlueprint.Class != nullptr)
 	{
-		MineBoxBP = (UClass*)ItemBlueprint.Class;
+		MinesweeperBoxBP = (UClass*)ItemBlueprint.Class;
 	}
 	bReplicates = true;
 }
 
 void AMinesweeper::CreateMinesweeper()
 {
-	//Create all the MinesBox and initialize them without mine
+	//Create all the MinesweeperBox and initialize them without mine
 	//UE_LOG(LogTest, Warning, TEXT("Je suis dans la fonction CreateMinesweeper"));
-	// TODO : Works with non squares datas (NB_COL != NB_ROWS), Make size of minebox a constant int for future changement !
+	// TODO : Works with non squares datas (NB_COL != NB_ROWS), Make size of minesweeper box a constant int for future changement !
 	for (int i = 0; i < SIZE; ++i)
 	{
 		UWorld* const World = GetWorld();
@@ -32,14 +32,14 @@ void AMinesweeper::CreateMinesweeper()
 			unsigned int y = i % NB_COL;
 			const FVector SpawnLocation = GetActorLocation() + FVector(x * 405, y * 405, 5.0);
 			const FRotator SpawnRotation = GetActorRotation();
-			AMinesBox* m = (AMinesBox*)World->SpawnActor<AMinesBox>(MineBoxBP, SpawnLocation, SpawnRotation);
+			AMinesweeperBox* m = (AMinesweeperBox*)World->SpawnActor<AMinesweeperBox>(MinesweeperBoxBP, SpawnLocation, SpawnRotation);
 			Squares.Add(m);
 		}
 	}
 
 	PutMinesRandomly();
 	CalculateNeighboursUndermined();
-	
+	UE_LOG(LogTest, Warning, TEXT("After CalculateNeighboursUndermined"));
 }
 
 bool AMinesweeper::ServerResetMinesweeper_Validate()
@@ -71,6 +71,7 @@ void AMinesweeper::ResetMinesweeper()
 		}
 		else
 		{
+			//DeleteMinesweeper();
 			for (int i = 0; i < Squares.Num(); ++i)
 			{
 				Squares[i]->Destroy();
@@ -114,15 +115,17 @@ void AMinesweeper::PutMinesRandomly()
 
 void AMinesweeper::CalculateNeighboursUndermined()
 {
-	//UE_LOG(LogTest, Warning, TEXT("Je suis dans la fonction CalculateNeighboursUndermined"));
+	UE_LOG(LogTest, Warning, TEXT("Je suis dans la fonction CalculateNeighboursUndermined"));
 	// TODO : Make it works with NB_COL != NB_ROWS, launch some exceptions ...
-	//For all MineBox
+	//For all MinesweeperBox
 	for (int i = 0; i < SIZE; ++i)
 	{
+		UE_LOG(LogTest, Warning, TEXT("for i"));
 		//Check the neighbors
 		for (int j = -1; j <= 1; ++j)
 		{
-			// If the MineBox is at the beginning of a row, don't check the previous one. 
+			UE_LOG(LogTest, Warning, TEXT("for j"));
+			// If the MinesweeperBox is at the beginning of a row, don't check the previous one. 
 			// And if it is at the end of the row, don't check the next one.
 			if (((i%NB_COL == 0) && (j == -1)) 
 				|| ((i%NB_COL == NB_COL - 1) && (j == 1)) )
@@ -153,7 +156,7 @@ int32 AMinesweeper::GetMinesweeperSize()
 	return SIZE;
 }
 
-AMinesBox* AMinesweeper::GetMineBoxAt(int32 index)
+AMinesweeperBox* AMinesweeper::GetMinesweeperBoxAt(int32 index)
 {
 	if (index >= SIZE) { return nullptr; }
 
@@ -182,5 +185,9 @@ void AMinesweeper::OnResetConsole()
 
 void AMinesweeper::DeleteMinesweeper()
 {
-	Squares.Empty();
+	for (int i = 0; i < Squares.Num(); ++i)
+	{
+		Squares[i]->Destroy();
+	}
+	Squares.Empty(Squares.Num());
 }

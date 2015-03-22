@@ -6,7 +6,7 @@
 #include "GameFramework/PlayerInput.h"
 #include "Props.h"
 #include "LightningBarrier.h"
-#include "MinesBox.h"
+#include "MinesweeperBox.h"
 #include "Fan.h"
 
 ATGCOPlayerController::ATGCOPlayerController(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -82,7 +82,7 @@ void ATGCOPlayerController::ServerUpdateSpeedValueOnProps_Implementation(class A
 	}
 }
 
-bool ATGCOPlayerController::ServerUpdateVisibilityOnMesh_Validate(class AMinesBox* MinesBox)
+bool ATGCOPlayerController::ServerUpdateVisibilityOnMesh_Validate(class AMinesweeperBox* MinesweeperBox)
 {
 	return true;
 }
@@ -92,12 +92,12 @@ bool ATGCOPlayerController::ServerChangeActiveStateOnBarrier_Validate(class ALig
 	return true;
 }
 
-void ATGCOPlayerController::ServerUpdateVisibilityOnMesh_Implementation(class AMinesBox* MinesBox)
+void ATGCOPlayerController::ServerUpdateVisibilityOnMesh_Implementation(class AMinesweeperBox* MinesweeperBox)
 {
-	if (MinesBox != nullptr)
+	if (MinesweeperBox != nullptr)
 	{
 		UE_LOG(LogDebug, Warning, TEXT("Begin of ServerUpdateVisibilityOnMesh"));
-		MinesBox->SetVisibilityOfFlag();
+		MinesweeperBox->SetVisibilityOfFlag();
 	}
 }
 
