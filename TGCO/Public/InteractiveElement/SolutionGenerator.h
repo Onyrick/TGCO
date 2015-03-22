@@ -1,4 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -10,6 +9,8 @@
 
 /**
  * The Solution Generator, the player has to activated it to acquire the solution
+ * 	
+ * 	@sa AInteractiveElement
  */
 UCLASS()
 class TGCO_API ASolutionGenerator : public AInteractiveElement

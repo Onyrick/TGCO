@@ -1,4 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -6,7 +5,9 @@
 #include "Tree.generated.h"
 
 /**
- * TODO
+ * @class UTree
+ * 		  
+ * @brief Class that defines a tree. It's a static mesh component that can be add in actor.
  */
 UCLASS()
 class TGCO_API UTree : public UStaticMeshComponent

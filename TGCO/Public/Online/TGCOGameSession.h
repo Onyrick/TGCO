@@ -1,4 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -29,7 +28,7 @@ struct FTGCOGameSessionsParams
 };
 
 /**
- * TODO
+ * @brief Manage session (creation, search, join...)
  */
 UCLASS(config = Game)
 class TGCO_API ATGCOGameSession : public AGameSession
@@ -40,7 +39,7 @@ protected:
 	ATGCOGameSession(const FObjectInitializer& ObjectInitializer);
 
 	/*
-	 * Event triggered when a presence session is created
+	 * @brief Event triggered when a presence session is created
 	 *
 	 * @param SessionName name of session that was created
 	 * @param bWasSuccessful was the create successful
@@ -49,7 +48,7 @@ protected:
 	FOnCreatePresenceSessionComplete CreatePresenceSessionCompleteEvent;
 
 	/*
-	 * Event triggered when a session is joined
+	 * @brief Event triggered when a session is joined
 	 *
 	 * @param SessionName name of session that was joined
 	 * @param bWasSuccessful was the create successful
@@ -58,14 +57,14 @@ protected:
 	FOnJoinSessionComplete JoinSessionCompleteEvent;
 
 	/*
-	 * Event triggered after session search completes
+	 * @brief Event triggered after session search completes
 	 */
 	DECLARE_EVENT_OneParam(ATGCOGameSession, FOnFindSessionsComplete, bool /*bWasSuccessful*/);
 	FOnFindSessionsComplete FindSessionsCompleteEvent;
 
 public:
 	/**
-	 * Host a new online session
+	 * @brief Host a new online session
 	 *
 	 * @param UserId user that initiated the request
 	 * @param SessionName name of session
@@ -78,7 +77,7 @@ public:
 	bool HostSession(TSharedPtr<FUniqueNetId> UserId, FName SessionName, const FString& MapName, bool bIsLAN, bool bIsPresence, int32 MaxNumPlayers);
 
 	/**
-	 * Find an online session
+	 * @brief Find an online session
 	 *
 	 * @param UserId user that initiated the request
 	 * @param SessionName name of session this search will generate
@@ -88,7 +87,7 @@ public:
 	void FindSessions(TSharedPtr<FUniqueNetId> UserId, FName SessionName, bool bIsLAN, bool bIsPresence);
 
 	/**
-	 * Joins one of the session in search results
+	 * @brief Joins one of the session in search results
 	 * 
 	 * @param UserId user that initiated the request
 	 * @param SessionName name of session
@@ -99,7 +98,7 @@ public:
 	bool JoinSession(TSharedPtr<FUniqueNetId> UserId, FName SessionName, int32 SessionIndexInSearchResults);
 
 	/**
-	 * Joins a session via a search result
+	 * @brief Joins a session via a search result
 	 *
 	 * @param SessionName name of session
 	 * @param SearchResult Session to join
@@ -109,7 +108,7 @@ public:
 	bool JoinSession(TSharedPtr<FUniqueNetId> UserId, FName SessionName, const FOnlineSessionSearchResult& SearchResult);
 
 	/**
-	 * Get the search results found and the current search result being probed
+	 * @brief Get the search results found and the current search result being probed
 	 *
 	 * @param SearchResultIdx idx of current search result accessed
 	 * @param NumSearchResults number of total search results found in FindGame()
@@ -119,31 +118,44 @@ public:
 	EOnlineAsyncTaskState::Type GetSearchResultStatus(int32& SearchResultIdx, int32& NumSearchResults);
 
 	/**
-	 * Get the search results.
+	 * @brief Get the search results.
 	 *
 	 * @return Search results
 	 */
 	const TArray<FOnlineSessionSearchResult> & GetSearchResults() const;
 
-	/** @return the delegate fired when creating a presence session */
+	/**    
+	* @brief Return the delegate fired when creating a presence session
+	* 		 
+	* @return The delegate fired when creating a presence session 
+	*/
 	FOnCreatePresenceSessionComplete& OnCreatePresenceSessionComplete() { return CreatePresenceSessionCompleteEvent; }
 
-	/** @return the delegate fired when joining a session */
+	/**    
+	* @brief Return the delegate fired when joining a session
+	* 		 
+	* @return The delegate fired when joining a session 
+	*/
 	FOnJoinSessionComplete& OnJoinSessionComplete() { return JoinSessionCompleteEvent; }
 
 	/** @return the delegate fired when search of session completes */
 	FOnFindSessionsComplete& OnFindSessionsComplete() { return FindSessionsCompleteEvent; }
 
+	/**
+	 * @brief	Gets session name.
+	 *
+	 * @return	The session name.
+	 */
 	UFUNCTION(BlueprintCallable, Category = "Test")
 	FName GetSessionName();
 
 public:
-	/** Default number of players allowed in a game */
+	/** @brief Default number of players allowed in a game */
 	static const int32 DEFAULT_NUM_PLAYERS = 2;
 
 protected:
 	/**
-	 * Delegate fired when a session create request has completed
+	 * @brief Delegate fired when a session create request has completed
 	 *
 	 * @param SessionName the name of the session this callback is for
 	 * @param bWasSuccessful true if the async action completed without error, false if there was an error
@@ -151,7 +163,7 @@ protected:
 	virtual void OnCreateSessionComplete(FName SessionName, bool bWasSuccessful);
 
 	/**
-	 * Delegate fired when a session start request has completed
+	 * @brief Delegate fired when a session start request has completed
 	 *
 	 * @param SessionName the name of the session this callback is for
 	 * @param bWasSuccessful true if the async action completed without error, false if there was an error
@@ -159,14 +171,14 @@ protected:
 	void OnStartOnlineGameComplete(FName SessionName, bool bWasSuccessful);
 
 	/**
-	 * Delegate fired when a session search query has completed
+	 * @brief Delegate fired when a session search query has completed
 	 *
 	 * @param bWasSuccessful true if the async action completed without error, false if there was an error
 	 */
 	void OnFindSessionsComplete(bool bWasSuccessful);
 
 	/**
-	 * Delegate fired when a session join request has completed
+	 * @brief Delegate fired when a session join request has completed
 	 *
 	 * @param SessionName the name of the session this callback is for
 	 * @param bWasSuccessful true if the async action completed without error, false if there was an error
@@ -174,7 +186,7 @@ protected:
 	void OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result);
 
 	/**
-	 * Delegate fired when a destroying an online session has completed
+	 * @brief Delegate fired when a destroying an online session has completed
 	 *
 	 * @param SessionName the name of the session this callback is for
 	 * @param bWasSuccessful true if the async action completed without error, false if there was an error
