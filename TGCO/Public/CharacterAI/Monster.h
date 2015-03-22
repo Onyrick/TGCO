@@ -6,8 +6,9 @@
 #include "Monster.generated.h"
 
 /**
- *	TODO
- */
+* @brief Define a movable monster which interact with the player
+*/
+
 UCLASS()
 class TGCO_API AMonster : public ACharacterAI
 {
@@ -15,63 +16,122 @@ class TGCO_API AMonster : public ACharacterAI
 public:
 	AMonster(const FObjectInitializer& ObjectInitializer);
 
-	/** Event launch when the Monster take damage */
+	/**********************************************************************************************//**
+	* @brief	Take damage.
+	*
+	* @param	DamageAmount		   	The damage amount.
+	* @param	DamageEvent			   	The damage event.
+	* @param 	EventInstigator	        If non-null, the event instigator.
+	* @param 	DamageCauser   	        If non-null, the damage causer.
+	*
+	* @return	The damage actually applied.
+	*
+	* ### summary	Event launch when the Monster take damage.
+	**************************************************************************************************/
+
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser) override;
 
-	/** Event launched when the monster has to be destroyed */
+
+	/**********************************************************************************************//**
+	 * @brief	Destroyed this object.
+	 *
+	 * ### summary	Event launched when the monster has to be destroyed.
+	 **************************************************************************************************/
+
 	virtual void Destroyed();
 
-	/** Return wether the Monster is stunned */
+
+	/**********************************************************************************************//**
+	 * @brief	Return wether the Monster is stunned.
+	 *
+	 * @return	true if stun, false if not.
+	 **************************************************************************************************/
 	UFUNCTION(BlueprintCallable, Category = "Monster")
 	virtual bool IsStun();
-	
-	/** Stun the Monster during a laps of time */
+
+	/**********************************************************************************************//**
+	 * @brief	Stun this Monster.
+	 *
+	 * ### summary	Stun the Monster during a laps of time.
+	 **************************************************************************************************/
+
 	virtual void Stun();
 
-	/** Unstun the Monster */
+	/**********************************************************************************************//**
+	 * @brief	Unstun this Monster.
+	 **************************************************************************************************/
+
 	virtual void UnStun();
 
-	/** Return wether the Monster is stunned */
+
+	/**********************************************************************************************//**
+	 * @brief	Return wether the Monster is dead.
+	 *
+	 * @return	true if dead, false if not.
+	 **************************************************************************************************/
 	UFUNCTION(BlueprintCallable, Category = "Monster")
 	virtual bool IsDead();
 
-	/** Move the actor to a location */
-	UFUNCTION(BlueprintCallable, Category = "Monster")
-	virtual EPathFollowingRequestResult::Type MoveToLocation(const FVector & Dest);// const FVector & Dest, float AcceptanceRadius, bool bStopOnOverlap, bool bUsePathfinding, bool bProjectDestinationToNavigation, bool bCanStrafe, TSubclassOf< class UNavigationQueryFilter > FilterClass);
-
-	/** Play a move sound when the Monster move */
+	/**********************************************************************************************//**
+	 * @brief	Play a move sound when the Monster move.
+	 **************************************************************************************************/
 	UFUNCTION(BlueprintCallable, Category = "Monster")
 	virtual void PlayMoveSound();
 
-	/** Play a move animation when the Monster move */
+	/**********************************************************************************************//**
+	 * @brief	Play a move animation when the Monster move.
+	 **************************************************************************************************/
 	UFUNCTION(BlueprintCallable, Category = "Monster")
 	virtual void PlayMoveAnimation();
-	
-	/** Getter / Setter / Is */
+
+	/**********************************************************************************************//**
+	 * @brief	Getter for the walk speed.
+	 *
+	 * @return	The walk speed.
+	 **************************************************************************************************/
 	UFUNCTION(BlueprintCallable, Category = "Monster")
 	virtual float GetWalkSpeed();
 
+	/**********************************************************************************************//**
+	 * @brief	Setter for the walk speed.
+	 *
+	 * @param	_speed	The speed to set.
+	 **************************************************************************************************/
 	UFUNCTION(BlueprintCallable, Category = "Monster")
 	virtual void SetWalkSpeed(float _speed);
 
+	/** @brief	Respawn the current Monster. */
 	virtual void RespawnAI();
 
+	/**********************************************************************************************//**
+	 * @brief	Allow or forbid the monster to move. For instance.
+	 *
+	 * @param	_ready	value to set.
+	 **************************************************************************************************/
 	UFUNCTION(BlueprintCallable, Category = "Monster")
 	void SetReadyToMove(bool _ready);
 
+	/**********************************************************************************************//**
+	 * @brief	check if this monster is ready to move.
+	 *
+	 * @return	true if ready to move, false if not.
+	 **************************************************************************************************/
 	UFUNCTION(BlueprintCallable, Category = "Monster")
 	bool isReadyToMove();
 
 protected:
-	/** Whether the Monster is stunned or not */
+
+	/** @brief	Whether the Monster is stunned or not. */
 	bool bIsStun;
-	/** The time the Monster stay stunned */
+
+	/** @brief	The time the Monster stay stunned. */
 	float fStunTime;
-	/** The time before the Monster respawn */
+
+	/** @brief The time before the Monster respawn */
 	float fRespawnTime;
 	/** Whether the Monster is dead or not */
 	bool bIsDead;
-	/** Whether the Monster has to move */
+	/** @brief Whether the Monster has to move */
 	UPROPERTY(Transient, Replicated)
 	bool bReadyToMove;
 };

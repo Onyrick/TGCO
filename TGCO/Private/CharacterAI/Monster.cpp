@@ -50,11 +50,6 @@ void AMonster::UnStun()
 	bIsStun = false;
 }
 
-EPathFollowingRequestResult::Type AMonster::MoveToLocation(const FVector & Dest)
-{
-	return GetAIController()->MoveToLocation(Dest);
-}
-
 void AMonster::PlayMoveSound()
 {
 	//TODO
