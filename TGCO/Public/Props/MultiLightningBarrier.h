@@ -8,7 +8,9 @@
 #include "MultiLightningBarrier.generated.h"
 
 /**
- * Inherits from @ref ALightningBarrier. Represents a barrier with multiple
+ * @class AMultiLightningBarrier
+ * 		  
+ * @brief Inherits from @ref ALightningBarrier. Represents a barrier with multiple
  * lightning barrier on top of one another. Each LightningBarrier can be controlled
  * by a different @ref ALightningSwitch
  */
@@ -18,17 +20,20 @@ class TGCO_API AMultiLightningBarrier : public ALightningBarrier
 {
 	GENERATED_BODY()
 public:
-	/** Constructors */
+	/**
+	* @brief	Constructor.
+	*
+	* @param	ObjectInitializer	The object initializer.
+	*/
 	AMultiLightningBarrier(const FObjectInitializer& ObjectInitializer);
 
 	/**
-	 * virtual public  method : Called when the user has deleted the item in the unreal
+	 * @brief Called when the user has deleted the item in the unreal
 	 * editor, ie during edition time (as opposed to during runtime).
-	 * @method:    ReceiveDestroyed
-	 * @return:   void
 	 */
 	virtual void ReceiveDestroyed() override;
 
+public:
 	/** Number of barrier that the multi barrier must hold */
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "MultiLightningBarrier")
 		int32 iNbBarriers;

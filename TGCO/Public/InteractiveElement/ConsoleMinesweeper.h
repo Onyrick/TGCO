@@ -7,7 +7,9 @@
 #include "ConsoleMinesweeper.generated.h"
 
 /**
- * 
+ * @brief An Interactive Element is an element the player can interact with by pressing "E"
+ * 	
+ * 	@sa AInteractiveElement
  */
 UCLASS()
 class TGCO_API AConsoleMinesweeper : public AInteractiveElement

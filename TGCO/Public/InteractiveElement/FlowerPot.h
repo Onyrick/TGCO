@@ -1,4 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -8,7 +7,9 @@
 #include "FlowerPot.generated.h"
 
 /**
- * TODO
+ * @brief A flower pot where player can plant a seed to make a tree grow
+ * 	
+ * 	@sa AInteractiveElement
  */
 UCLASS()
 class TGCO_API AFlowerPot : public AInteractiveElement
@@ -16,38 +17,40 @@ class TGCO_API AFlowerPot : public AInteractiveElement
 	GENERATED_BODY()
 
 public:
-	/** Constructors */
+	/** @brief Constructor */
 	AFlowerPot(const FObjectInitializer& ObjectInitializer);
 
-	/** Called when the Player uses the object */
+	/** @brief Called when the Player uses the object */
 	UFUNCTION(BlueprintCallable, Category = "FlowerPot")
 	virtual bool OnInteract() override;
-	
-	/** TODO */
+
+public: 
+
+	/** @brief The capsule  */
 	UPROPERTY(VisibleAnywhere, Category = "Tree")
 	UCapsuleComponent* TreeCapsuleOverlapCheck;
 
-	/** TODO */
+	/** @brief The tree */
 	UPROPERTY(EditAnywhere, Category = "FlowerPot")
 	UTree* TreeTrunc;
 
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FBindableEvent_TreeVisible);
 
-	/** Called when TODO */
+	/** @brief The event that is broadcasted when you have to show the tree */
 	UPROPERTY(BlueprintAssignable, Category = "Tree")
 	FBindableEvent_TreeVisible TreeVisible;
 
 protected:
-	/** TODO */
+	/** @brief Make the tree grow */
 	void GrowTree();
-	/** TODO */
+	/** @brief Plant the seed in the pot */
 	void PlantSeed(ASeed * Seed);
-	/** TODO */
+	/** @brief Remove the seed from the pot */
 	ASeed * RemoveSeed();
-	/** TODO */
+	/** Swap seeds */
 	ASeed * SwapSeed(ASeed * Seed);
 
 private:
-	/** TODO */
+	/** @brief The planted seed */
 	ASeed * PlantedSeed;
 };

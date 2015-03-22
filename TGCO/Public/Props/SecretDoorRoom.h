@@ -1,4 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -6,7 +5,9 @@
 #include "SecretDoorRoom.generated.h"
 
 /**
- * TODO
+ * @class ASecretDoorRoom
+ * 		  
+ * @brief TODO
  */
 UCLASS()
 class TGCO_API ASecretDoorRoom : public AProps
@@ -14,6 +15,10 @@ class TGCO_API ASecretDoorRoom : public AProps
 	GENERATED_BODY()
 
 public:
-	/** Constructors */
+	/**
+	* @brief	Constructor.
+	*
+	* @param	ObjectInitializer	The object initializer.
+	*/
 	ASecretDoorRoom(const FObjectInitializer& ObjectInitializer);
 };

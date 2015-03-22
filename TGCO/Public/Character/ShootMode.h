@@ -1,9 +1,13 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
 #include "ShootMode.generated.h"
 
+/**
+* @namespace	EShootMode
+*
+* @brief	Contain the enum of shoot modes type
+*/
 UENUM(BlueprintType)
 namespace EShootMode
 {
