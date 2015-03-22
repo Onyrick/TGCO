@@ -7,7 +7,9 @@
 #include "ConsoleMinesweeper.generated.h"
 
 /**
- * 
+ * @class AConsoleMinesweeper
+ * 		  
+ * @brief The console that manage the minesweeper
  */
 UCLASS()
 class TGCO_API AConsoleMinesweeper : public AInteractiveElement

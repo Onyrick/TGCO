@@ -93,7 +93,6 @@ void AMinesweeperBox::SetNeighboursUndermined()
 	UE_LOG(LogDebug, Warning, TEXT("Set neighbours undermined"));
 	iNeighboursUndermined += 1;
 	// Object has authority
-	// TODO
 	if (!(Role < ROLE_Authority))
 	{
 		UE_LOG(LogDebug, Warning, TEXT("No authority: change the Text render Number"));
