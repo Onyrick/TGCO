@@ -26,6 +26,10 @@ public:
 	/** @brief   Variable for storing the font */
 	UPROPERTY()
 	class UFont* HUDFont;
+	
+	/** @brief	The material for the mouse cursor. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Materials)
+	UMaterial* MouseCursorMaterial;
 
 	/**
 	* @brief	Gets HUD energy umg.
@@ -53,4 +57,5 @@ protected:
 private:
 	/** @brief  Crosshair asset pointer */
 	class UTexture2D* CrosshairTex;
+
 };

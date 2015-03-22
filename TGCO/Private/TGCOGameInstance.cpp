@@ -470,6 +470,11 @@ void UTGCOGameInstance::BeginMainMenuState()
 
 	// player 0 gets to own the UI
 	ULocalPlayer* const Player = GetFirstGamePlayer();
+	
+	// Set a custom cursor
+	FString Path = FPaths::GameContentDir() / "Cursors";
+
+	FSlateApplication::Get().SetCustomCursor(EMouseCursor::Default, Path / "default.cur");
 }
 
 void UTGCOGameInstance::EndMainMenuState()
@@ -491,12 +496,9 @@ void UTGCOGameInstance::BeginPlayingState()
 		ATGCOGameState* const GameState = Cast<ATGCOGameState>(World->GetGameState());
 		GameState->MulticastRemoveAllWidgets();
 		GameState->MulticastGoToPlayingState();
-
-		World->ServerTravel(FString("/Game/Maps/TestMap/GymRainbow?listen"));
+		
+		World->ServerTravel(FString("/Game/Maps/TestMap/GymMastermind?listen"));
 	}
-
-
-
 }
 
 void UTGCOGameInstance::EndPlayingState()
