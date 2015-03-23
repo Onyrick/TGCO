@@ -210,7 +210,24 @@ void AMonstroPlante::OnOverlapBegin(class AActor* OtherActor, class UPrimitiveCo
 
 	if (projectile != nullptr)
 	{
-		m_bNeedToAvoid = true;
+		SetNeedToAvoid(true);
+	}
+}
+
+void AMonstroPlante::SetNeedToAvoid(bool _avoid)
+{	
+	if (Role < ROLE_Authority)
+	{
+		ATGCOPlayerController * PC;
+		for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
+		{
+			PC = Cast<ATGCOPlayerController>(Iterator->Get());
+			PC->ServerSetNeedToAvoidMonster(this, _avoid);
+		}
+	}
+	else
+	{
+		m_bNeedToAvoid = _avoid;
 	}
 }
 
@@ -245,4 +262,11 @@ void AMonstroPlante::SetSolutionArray(const TArray<ESolutionType::Type> &_soluti
 	}
 
 	UpdateLights();
+}
+
+void AMonstroPlante::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> & OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	// Replicate to everyone
+	DOREPLIFETIME(AMonstroPlante, m_bNeedToAvoid);
 }
