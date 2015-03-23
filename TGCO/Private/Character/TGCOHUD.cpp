@@ -11,7 +11,6 @@
 
 ATGCOHUD::ATGCOHUD(const FObjectInitializer& ObjectInitializer) 
 : Super(ObjectInitializer)
-, MouseCursorMaterial(nullptr)
 {
 	//Use the RobotoDistanceField font from the engine
 	static ConstructorHelpers::FObjectFinder<UFont>HUDFontOb(TEXT("/Game/Character/HUD/HUDFont"));
@@ -49,24 +48,6 @@ void ATGCOHUD::DrawHUD()
 			FCanvasTileItem TileItem(CrosshairDrawPosition, CrosshairTex->Resource, FLinearColor::White);
 			TileItem.BlendMode = SE_BLEND_Translucent;
 			Canvas->DrawItem(TileItem);
-		}
-		else if (PlayerState != nullptr)
-		{
-			// Draw a custom mouse cursor 
-			float fMouseCursorX, fMouseCursorY;
-			bool succes = PlayerController->GetMousePosition(fMouseCursorX, fMouseCursorY);
-			int iViewportSizeX, iViewportSizeY;
-			PlayerController->GetViewportSize(iViewportSizeX, iViewportSizeY);
-
-			float literalFloat = 32.f;
-
-			float newMousePosX = static_cast<float>(ScreenDimensions.X - iViewportSizeX) / 2.0f + fMouseCursorX - (literalFloat / 2.0f);
-			float newMousePosY = static_cast<float>(ScreenDimensions.Y - iViewportSizeY) / 2.0f + fMouseCursorY - (literalFloat / 2.0f);
-
-			if (MouseCursorMaterial != nullptr)
-			{
-				DrawMaterial(MouseCursorMaterial, newMousePosX, newMousePosY, literalFloat, literalFloat, 0.0f, 0.0f, 1.0f, 1.0f);
-			}
 		}
 	}
 }
