@@ -1,4 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -6,8 +5,10 @@
 #include "EnergyCell.generated.h"
 
 /**
- * TODO 
- */
+* @brief TODO 
+* 
+* @sa ATrigerrable	
+*/
 UCLASS()
 class TGCO_API AEnergyCell : public ATriggerable
 {

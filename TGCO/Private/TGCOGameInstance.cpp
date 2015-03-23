@@ -1,8 +1,8 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "TGCO.h"
 #include "TGCOGameInstance.h"
 #include "TGCOGameState.h"
+#include "TGCOCharacter.h"
 
 #include "Online.h"
 #include "Engine.h"
@@ -469,6 +469,11 @@ void UTGCOGameInstance::BeginMainMenuState()
 
 	// player 0 gets to own the UI
 	ULocalPlayer* const Player = GetFirstGamePlayer();
+	
+	// Set a custom cursor
+	FString Path = FPaths::GameContentDir() / "Cursors";
+
+	FSlateApplication::Get().SetCustomCursor(EMouseCursor::Default, Path / "default.cur");
 }
 
 void UTGCOGameInstance::EndMainMenuState()
@@ -486,12 +491,13 @@ void UTGCOGameInstance::BeginPlayingState()
 		{
 			Game->bUseSeamlessTravel = true;
 		}
+
 		ATGCOGameState* const GameState = Cast<ATGCOGameState>(World->GetGameState());
 		GameState->MulticastRemoveAllWidgets();
 		GameState->MulticastGoToPlayingState();
+		
+		World->ServerTravel(FString("/Game/Maps/TestMap/GymMastermind?listen"));
 	}
-
-	GetWorld()->ServerTravel(FString("/Game/Maps/TestMap/MapTestLucie?listen"));
 }
 
 void UTGCOGameInstance::EndPlayingState()

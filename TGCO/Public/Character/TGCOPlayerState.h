@@ -31,7 +31,7 @@ public:
 	 *
 	 * @return	PlayerNumber number of the player.
 	 */
-	UFUNCTION(BlueprintCallable, Category = "Online")
+	UFUNCTION(BlueprintCallable, Category = "PlayerState")
 	int32 GetPlayerNumber();
 
 	/**
@@ -39,6 +39,7 @@ public:
 	 *
 	 * @param	NewPlayerNumber	The new player number.
 	 */
+	UFUNCTION(BlueprintCallable, Category = "PlayerState")
 	void SetPlayerNumber(int32 NewPlayerNumber);
 
 	/**
@@ -47,7 +48,7 @@ public:
 	 *
 	 * @param	NewPlayerNumber	The new player number.
 	 */
-	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable, Category = "Online")
+	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable, Category = "PlayerState")
 	void ServerSetPlayerNumber(int32 NewPlayerNumber);
 
 	/**

@@ -1,4 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -7,7 +6,9 @@
 #include "ConsoleTuto.generated.h"
 
 /**
- * TODO
+ * @brief First test for interactive element
+ * 	
+ * 	@sa AInteractiveElement
  */
 UCLASS()
 class TGCO_API AConsoleTuto : public AInteractiveElement
@@ -15,21 +16,22 @@ class TGCO_API AConsoleTuto : public AInteractiveElement
 	GENERATED_BODY()
 
 public:
+	/** @brief Constructor */
 	AConsoleTuto(const FObjectInitializer& ObjectInitializer);
 
-	/** Called when the Player uses the object */
+	/** @brief Called when the Player uses the object */
 	UFUNCTION(BlueprintCallable, Category = "InteractiveElement")
 	virtual bool OnInteract() override;
 	
-	/** Getter for bIsUnlocked */
+	/** @brief Getter for bIsUnlocked */
 	UFUNCTION(BlueprintCallable, Category = "InteractiveElement")
 	bool IsUnlocked();
 
-	/** Setter for bIsUnlocked */
+	/** @brief Setter for bIsUnlocked */
 	UFUNCTION(BlueprintCallable, Category = "InteractiveElement")
 	void SetUnlocked(bool _unlock);
 
 protected:
-	/** Whether the console is unlocked */
+	/** @brief Whether the console is unlocked */
 	bool bIsUnlocked;
 };

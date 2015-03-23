@@ -10,6 +10,8 @@
  * @class AConsoleMinesweeper
  * 		  
  * @brief The console that manage the minesweeper
+ * 		  	
+ * 	@sa AInteractiveElement
  */
 UCLASS()
 class TGCO_API AConsoleMinesweeper : public AInteractiveElement

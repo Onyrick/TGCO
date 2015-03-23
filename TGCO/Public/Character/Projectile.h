@@ -1,4 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -26,6 +25,10 @@ public:
 	/** @brief	A projectile movement component*. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
 	class UProjectileMovementComponent* ProjectileMovement;
+
+	/** @brief A projectile static mesh component*. */
+	UPROPERTY(EditAnywhere, Category = "Projectile Static Mesh")
+	class UStaticMeshComponent* MeshProjectile;
 
 public:
 
@@ -96,4 +99,7 @@ protected:
 	/** @brief	Type of the solution that affect monsters. */
 	TEnumAsByte<ESolutionType::Type> SolutionType;
 
+	/** Projectile Material */
+	UMaterialInstanceDynamic *MaterialInstance;
+	
 };

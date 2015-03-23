@@ -1,4 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "TGCO.h"
 #include "Monster.h"
@@ -8,6 +7,7 @@ AMonster::AMonster(const FObjectInitializer& ObjectInitializer)
 , fStunTime(1.f)
 , fRespawnTime(1.f)
 , bIsDead(false)
+, bReadyToMove(false)
 {
 	GetCharacterMovement()->MaxWalkSpeed = 100.f;
 }
@@ -49,11 +49,6 @@ void AMonster::UnStun()
 	bIsStun = false;
 }
 
-EPathFollowingRequestResult::Type AMonster::MoveToLocation(const FVector & Dest)
-{
-	return GetAIController()->MoveToLocation(Dest);
-}
-
 void AMonster::PlayMoveSound()
 {
 	//TODO
@@ -77,11 +72,41 @@ void AMonster::SetWalkSpeed(float _speed)
 void AMonster::RespawnAI()
 {
 	Super::RespawnAI();
-	GetAIController()->ResumeMove(GetAIController()->GetCurrentMoveRequestID());
+//	GetAIController()->ResumeMove(GetAIController()->GetCurrentMoveRequestID());
 	bIsDead = false;
 }
 
 bool AMonster::IsDead()
 {
 	return bIsDead;
+}
+
+bool AMonster::isReadyToMove()
+{
+	return bReadyToMove;
+}
+
+void AMonster::SetReadyToMove(bool _ready)
+{
+	if (Role < ROLE_Authority)
+	{
+		ATGCOPlayerController * PC;
+		for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
+		{
+			PC = Cast<ATGCOPlayerController>(Iterator->Get());
+			PC->ServerSetReadyToMove(this, _ready);
+		}
+	}
+	else
+	{
+		bReadyToMove = _ready;
+		RespawnAI();
+	}
+}
+
+void AMonster::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> & OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	// Replicate to everyone
+	DOREPLIFETIME(AMonster, bReadyToMove);
 }

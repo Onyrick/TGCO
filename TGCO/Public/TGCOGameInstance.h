@@ -1,4 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -7,6 +6,11 @@
 #include "TGCOServerList.h"
 #include "TGCOGameInstance.generated.h"
 
+/**
+* @namespace TGCOGameInstanceState
+* 
+* @brief Store String of game state
+*/
 namespace TGCOGameInstanceState
 {
 	extern const FName None;
@@ -18,7 +22,10 @@ namespace TGCOGameInstanceState
 }
 
 /**
- * TODO
+ * @brief GameInstance: high-level manager object for an instance of the running game. 
+ * 		  Spawned at game creation and not destroyed until game instance is shut down. 
+ * 		  Running as a standalone game, there will be one of these.
+ * 		  Manage the state of the game.
  */
 UCLASS(config = Game)
 class TGCO_API UTGCOGameInstance : public UGameInstance
@@ -26,76 +33,151 @@ class TGCO_API UTGCOGameInstance : public UGameInstance
 	GENERATED_BODY()
 
 public:
+
+	/**
+	 * @brief	Constructor.
+	 *
+	 * @param	ObjectInitializer	The object initializer.
+	 */
 	UTGCOGameInstance(const FObjectInitializer& ObjectInitializer);
 
+	/**
+	 * @brief	Tick function.
+	 *
+	 * @param	DeltaSeconds	The delta in seconds.
+	 *
+	 * @return	true if it succeeds, false if it fails.
+	 */
 	bool Tick(float DeltaSeconds);
 
+	/**
+	* @brief	Get the game session. 
+	* 
+	* @return ATGCOGameSession* The game session
+	*/
 	UFUNCTION(BlueprintCallable, Category = "Online")
 	class ATGCOGameSession* GetGameSession() const;
 
+	/**
+	* @brief	Get the list of reachable servers.
+	*
+	* @return UTGCOServerList* The list of reachable servers
+	*/
 	UFUNCTION(BlueprintCallable, Category = "Server")
 	class UTGCOServerList* GetServerList() const;
 
+	/** @brief	Init he game instance. */
 	virtual void Init() override;
+	/** @brief	Shuts down the game instance. */
 	virtual void Shutdown() override;
+	/** @brief	Starts game instance. */
 	virtual void StartGameInstance() override;
 
-	/** Start the game */
+	/** @brief Start the game */
 	UFUNCTION(BlueprintCallable, Category = "Online")
 	void StartGame();
 
-	/** Host a game session */
+	/**   
+	* @brief Host a game session 
+	* 
+	* @param	LocalPlayer	If non-null, the local player.
+	* @param	InMapName		   	Name of the in map.
+	*
+	* @return	true if it succeeds, false if it fails.
+	*/
 	UFUNCTION(BlueprintCallable, Category = "Online")
 	bool HostGame(ULocalPlayer* LocalPlayer, const FString& InMapName);
 
-	/** Join a game session */
+	/**
+	 * @brief	Join a game session.
+	 *
+	 * @param   LocalPlayer		   	If non-null, the local player.
+	 * @param	SessionIndexInSearchResults	The session index to join.
+	 *
+	 * @return	true if it succeeds, false if it fails.
+	 */
 	UFUNCTION(BlueprintCallable, Category = "Online")
 	bool JoinSession(ULocalPlayer* LocalPlayer, int32 SessionIndexInSearchResults);
 
-	/** Begin the server search */
+	/**
+	* @brief Begin the server search 
+	* 		
+	* @param LocalPlayer		   	If non-null, the local player.
+	*/
 	UFUNCTION(BlueprintCallable, Category = "Online")
 	void BeginServerSearch(ULocalPlayer* PlayerOwner);
 
-	/** End the server search auto */
+	/** @brief End the server search auto */
 	void OnServerSearchFinished();
 
-	/** Initiates the session searching */
+	/**  
+	* @brief Initiates the session searching 
+	*
+	* @param 	 LocalPlayer		If non-null, the local player. 	
+	* @param 	 bLANMatch		   	Is it in a local network 	
+	*
+	* @return	true if it succeeds, false if it fails.	 
+	*/
 	UFUNCTION(BlueprintCallable, Category = "Online")
 	bool FindSessions(ULocalPlayer* PlayerOwner, bool bLANMatch);
 
-	/** Sends the game to the specified state. */
+	/**   
+	* @brief Sends the game to the specified state. 
+	* 
+	* @param NewState State to go
+	*/
 	UFUNCTION(BlueprintCallable, Category = "GameState")
 	void GotoState(FName NewState);
 
-	/** Obtains the initial welcome state, which can be different based on platform */
+	/**   
+	* @brief Obtains the initial welcome state, which can be different based on platform 
+	* 	
+	* @return FName Value of the initial state	 
+	*/
 	UFUNCTION(BlueprintCallable, Category = "GameState")
 	FName GetInitialState();
 
-	/** Sends the game to the initial startup/frontend state  */
+	/** @brief Sends the game to the initial startup/frontend state  */
 	UFUNCTION(BlueprintCallable, Category = "GameState")
 	void GotoInitialState();
 
-	/** Get curent state */
+	/**   
+	* @brief Get curent state 
+	* 
+	* @return FName String of the current state
+	*/
 	UFUNCTION(BlueprintCallable, Category = "GameState")
 	FName GetState();
-	/** Set current stage be carefull */
+
+	/**   
+	* @brief Set current stage (be carefull when you use it) 
+	* 
+	* @param NewState The new state
+	*/
 	void SetCurrentState(FName NewState);
 
 	/**
-	 * Creates the message menu, clears other menus and sets the KingState to Message.
+	 * @brief Creates the message menu, clears other menus and sets the KingState to Message.
 	 *
 	 * @param	Message				Main message body
 	 * @param	NewState			Final state to go to when message is discarded
 	 */
 	void ShowMessageThenGotoState(const FString& Message, const FName& NewState);
 
-	/** Shuts down the session, and frees any net driver */
+	/** @brief Shuts down the session, and frees any net driver */
 	UFUNCTION(BlueprintCallable, Category = "Online")
 	void CleanupSessionOnReturnToMenu();
 
+	/** @brief Trim the PC id to remove all after _ or - (tricky)  
+	*
+	* @param Id The id to trim
+	* 
+	* @return FString The trimed id
+	*/
 	UFUNCTION(BlueprintCallable, Category = "Text")
 	FString TrimId(FString Id);
 
+	/** Event launched when server search is finished */
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
 	FBindableEvent_ServerSearchFinished,
 			
@@ -108,7 +190,7 @@ public:
 	FBindableEvent_ServerSearchFinished OnSearchCompleted;
 
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FBindableEvent_GoingToPlay);
-	/** Called when Server Search is finished */
+	/** Called when we are going to play */
 	UPROPERTY(BlueprintAssignable, Category = "Online")
 	FBindableEvent_GoingToPlay OnGoingToPlay;
 	
@@ -127,12 +209,14 @@ private:
 	void EndCurrentState(FName NextState);
 	void BeginNewState(FName NewState, FName PrevState);
 
+	/** Functions called on begin state */
 	void BeginWelcomeScreenState();
 	void BeginMainMenuState();
 	void BeginPlayingState();
 	void BeginJoiningState();
 	void BeginHostingState();
 
+	/** Functions called on ending state */
 	void EndWelcomeScreenState();
 	void EndMainMenuState();
 	void EndPlayingState();
@@ -170,9 +254,11 @@ private:
 	void InternalTravelToSession(const FName& SessionName);
 
 private:
+	/** Current state of the game */
 	FName CurrentState;
+	/** Pending state of the game */
 	FName PendingState;
-
+	 
 	FString TravelURL;
 
 	/** Delegate for callbacks to Tick */

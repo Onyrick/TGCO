@@ -1,4 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "TGCO.h"
 #include "Projectile.h"
@@ -18,6 +17,8 @@ AProjectile::AProjectile(const FObjectInitializer& ObjectInitializer)
 	CollisionComp->BodyInstance.SetCollisionProfileName("Projectile");
 	CollisionComp->OnComponentHit.AddDynamic(this, &AProjectile::OnHit);		// set up a notification for when this component hits something blocking
 
+	//MeshProjectile = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("ProjectileMesh2"));
+
 	// Set as root component
 	RootComponent = CollisionComp;
 
@@ -31,6 +32,7 @@ AProjectile::AProjectile(const FObjectInitializer& ObjectInitializer)
 
 	// Die after 3 seconds by default
 	InitialLifeSpan = 3.0f;
+
 }
 
 void AProjectile::InitVelocity(const FVector& ShootDirection)
@@ -81,6 +83,17 @@ void AProjectile::SetSolutionType(ESolutionType::Type _solution)
 void AProjectile::SetMode(EShootMode::Type _Mode)
 {
 	ProjectileMode = _Mode;
+
+	RootComponent->AttachChildren.FindItemByClass(&MeshProjectile);
+
+	if (MeshProjectile != nullptr)
+	{
+		UMaterialInterface* MeshMat = MeshProjectile->GetMaterial(0);
+		MaterialInstance = UMaterialInstanceDynamic::Create(MeshMat, this);
+		MaterialInstance->SetVectorParameterValue(FName(TEXT("Color")), FLinearColor(GetColorOfTheMode(_Mode)));
+		MaterialInstance->SetScalarParameterValue(FName(TEXT("Intensity")), 100.f);
+		MeshProjectile->SetMaterial(0, MaterialInstance);
+	}
 }
 
 EShootMode::Type AProjectile::GetProjectileMode()

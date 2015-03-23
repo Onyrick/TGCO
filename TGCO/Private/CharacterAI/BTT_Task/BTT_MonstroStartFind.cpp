@@ -1,4 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "TGCO.h"
 #include "ControllerAI.h"
@@ -6,6 +5,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "TGCOCharacter.h"
 #include "TGCOGameState.h"
+#include <limits>
 #include "BTT_MonstroStartFind.h"
 
 UBTT_MonstroStartFind::UBTT_MonstroStartFind(const class FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -31,7 +31,7 @@ EBTNodeResult::Type UBTT_MonstroStartFind::ExecuteTask(UBehaviorTreeComponent* O
 		if ( MonstroCharacter == nullptr )
 			return EBTNodeResult::Failed;
 		
-		if (MonstroCharacter->IsDead() || MonstroCharacter->IsStun())
+		if (MonstroCharacter->IsDead() || MonstroCharacter->IsStun() || MonstroCharacter->isReadyToMove() == false)
 			return EBTNodeResult::Failed;
 
 		ATGCOCharacter *Player = Cast<ATGCOCharacter>(MyBlackboard->GetValueAsObject("PlayerToChase"));
@@ -41,15 +41,18 @@ EBTNodeResult::Type UBTT_MonstroStartFind::ExecuteTask(UBehaviorTreeComponent* O
 
 		if (Player == nullptr)
 		{
+			float distanceMin = std::numeric_limits<float>::max();
 			for (TActorIterator<ATGCOCharacter> It(GetWorld()); It; ++It)
 			{
-				if (It->GetController()->IsLocalPlayerController())
+				float distance = MyController->GetPawn()->GetDistanceTo(*It);
+				if (distance < distanceMin)
 				{
-					MyBlackboard->SetValueAsObject("PlayerToChase", *It);
-					MyBlackboard->SetValueAsBool("RunningAway", false);
-					break;
+					distanceMin = distance;
+					Player = *It;
 				}
 			}
+			MyBlackboard->SetValueAsObject("PlayerToChase", Player);
+			MyBlackboard->SetValueAsBool("RunningAway", false);
 		}
 		else if (MyController->GetPawn()->GetDistanceTo(Player) < 250.f)
 		{

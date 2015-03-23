@@ -14,6 +14,10 @@ class TGCO_API UConsoleMinesweeperUMG : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	/** Constructors */
+	/**
+	* @brief	Constructor.
+	*
+	* @param	ObjectInitializer	The object initializer.
+	*/
 	UConsoleMinesweeperUMG(const FObjectInitializer& ObjectInitializer);
 };

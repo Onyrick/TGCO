@@ -49,6 +49,11 @@ ATGCOCharacter::ATGCOCharacter(const FObjectInitializer& ObjectInitializer)
 	Mesh1P->bCastDynamicShadow = false;
 	Mesh1P->CastShadow = false;
 
+	// Shield component
+	Shield = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("Shield"));
+	Shield->AttachParent = FirstPersonCameraComponent;
+	Shield->SetVisibility(false);
+
 	// Configure character movement
 	GetCharacterMovement()->bOrientRotationToMovement = true; // Character moves in the direction of input...	
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f); // ...at this rotation rate
@@ -479,10 +484,12 @@ void ATGCOCharacter::ActiveShield(bool bActivate)
 	if (bActivate == false)
 	{
 		UE_LOG(LogDebug, Warning, TEXT("Desactive shield"));
+		Shield->SetVisibility(false);
 	}
 	else
 	{
 		UE_LOG(LogDebug, Warning, TEXT("Activate shield"));
+		Shield->SetVisibility(true);
 	}
 
 	bIsProtect = bActivate;
@@ -569,4 +576,9 @@ void ATGCOCharacter::SetSolutionType(ESolutionType::Type _solution)
 EShootMode::Type ATGCOCharacter::GetWristMode()
 {
 	return WristMode;
+}
+
+FString ATGCOCharacter::GetWristModeString()
+{
+	return GetNameOfTheMode(GetWristMode());
 }

@@ -160,3 +160,16 @@ void ATGCOPlayerController::ServerDecreaseEnergy_Implementation(class ATGCOGameS
 		GameState->DecreaseEnergy(iEnergyAmount, bCanPlayerDie);
 	}
 }
+
+bool ATGCOPlayerController::ServerSetReadyToMove_Validate(class AMonster* Monster, bool _ready)
+{
+	return true;
+}
+
+void ATGCOPlayerController::ServerSetReadyToMove_Implementation(class AMonster* Monster, bool _ready)
+{
+	if (Monster)
+	{
+		Monster->SetReadyToMove(_ready);
+	}
+}

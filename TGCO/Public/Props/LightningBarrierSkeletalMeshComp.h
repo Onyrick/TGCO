@@ -6,7 +6,9 @@
 #include "LightningBarrierSkeletalMeshComp.generated.h"
 
 /**
- * Class inherited from skeletal mesh component.
+ * @class ULightningBarrierSkeletalMeshComp
+ * 		  
+ * @brief Class inherited from skeletal mesh component.
  * Used to create a lightning barrier mesh and keeping track of the
  * lightning state (on or off)
  */
@@ -15,18 +17,18 @@ class TGCO_API ULightningBarrierSkeletalMeshComp : public USkeletalMeshComponent
 {
 	GENERATED_BODY()
 public:
-	/* Constructors */
+	/* @brief Constructor */
 	ULightningBarrierSkeletalMeshComp(const FObjectInitializer& ObjectInitializer);
 
+	/**
+	 * @brief Changes the state of the lightning.
+	 * 
+	 * @param ActivateLightning New state for the light
+	 */
 	UFUNCTION(BlueprintCallable, Category = "LightningBarrier")
-		/**
-		 * public method : Changes the state of the lightning.
-		 * @method: ChangeLightningState
-		 * @param:  bool ActivateLightning
-		 * @return: void
-		 */
-		 void ChangeLightningState(bool ActivateLightning);
+	void ChangeLightningState(bool ActivateLightning);
 
+public:
 	/** Mesh of the barrier's first pylon */
 	UPROPERTY(EditAnywhere, Category = "LightningBarrier")
 		UStaticMeshComponent * pFirstTerminalComponent;
