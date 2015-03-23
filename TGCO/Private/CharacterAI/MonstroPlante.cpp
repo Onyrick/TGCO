@@ -1,4 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "TGCO.h"
 #include "TGCOCharacter.h"
@@ -6,7 +5,7 @@
 #include "SolutionType.h"
 #include "MonstroPlante.h"
 
-AMonstroPlante::AMonstroPlante(const class FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+AMonstroPlante::AMonstroPlante(const class FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer), InitializedMaterials(false)
 {
 	this->fStunTime = 3.f;
 	this->fRespawnTime = 3.f;
@@ -27,19 +26,10 @@ AMonstroPlante::AMonstroPlante(const class FObjectInitializer& ObjectInitializer
 	SolutionSphere3 = ObjectInitializer.CreateAbstractDefaultSubobject<UStaticMeshComponent>(this, TEXT("SolutionSphere3"));
 
 	ConstructorHelpers::FObjectFinder<UStaticMesh> StaticMeshSphere(TEXT("StaticMesh'/Game/StarterContent/Shapes/Shape_Sphere'"));
-	ConstructorHelpers::FObjectFinder<UMaterial> Material(TEXT("MaterialInstanceConstant'/Game/Blueprints/AI/MonstroPlante/Mat_Emissive'"));
 
 	SolutionSphere1->SetStaticMesh(StaticMeshSphere.Object);
 	SolutionSphere2->SetStaticMesh(StaticMeshSphere.Object);
 	SolutionSphere3->SetStaticMesh(StaticMeshSphere.Object);
-
-	MaterialInstance1 = UMaterialInstanceDynamic::Create(Material.Object, this);
-	MaterialInstance2 = UMaterialInstanceDynamic::Create(Material.Object, this);
-	MaterialInstance3 = UMaterialInstanceDynamic::Create(Material.Object, this);
-	
-	SolutionSphere1->SetMaterial(0, MaterialInstance1);
-	SolutionSphere2->SetMaterial(0, MaterialInstance2);
-	SolutionSphere3->SetMaterial(0, MaterialInstance3);
 
 	SolutionSphere1->RegisterComponentWithWorld(GetWorld());
 	SolutionSphere2->RegisterComponentWithWorld(GetWorld());
@@ -72,8 +62,6 @@ AMonstroPlante::AMonstroPlante(const class FObjectInitializer& ObjectInitializer
 
 	m_iIdToReplace = 0;
 
-	UpdateLights();
-
 	TriggerBox = ObjectInitializer.CreateDefaultSubobject<UBoxComponent>(this, TEXT("BoxTrigger_InteractiveElement"));
 	TriggerBox->OnComponentBeginOverlap.AddDynamic(this, &AMonstroPlante::OnOverlapBegin);
 
@@ -103,6 +91,7 @@ float AMonstroPlante::TakeDamage(float DamageAmount, struct FDamageEvent const &
 			AEnergyCell* energyCell = GetWorld()->SpawnActor<AEnergyCell>(AEnergyCell::StaticClass(), GetActorLocation(), FRotator::ZeroRotator);
 		}
 		GetWorldTimerManager().SetTimer(this, &AMonstroPlante::RespawnAI, fRespawnTime, false);
+		UpdateLights();
 		StaticMesh->SetVisibility(false);
 	}
 	else
@@ -134,7 +123,12 @@ void AMonstroPlante::Destroyed()
 void AMonstroPlante::RespawnAI()
 {
 	Super::RespawnAI();
-	GetWorld()->GetAuthGameMode()->RestartPlayer(GetAIController());
+
+	if (GetAIController() != NULL)
+	{
+		GetWorld()->GetAuthGameMode()->RestartPlayer(GetAIController());
+	}
+	
 	if (SpawnPoint != nullptr)
 	{
 		SetActorLocation(SpawnPoint->GetActorLocation());
@@ -149,19 +143,32 @@ void AMonstroPlante::RespawnAI()
 	m_bNeedToAvoid = false;
 
 	SpeedDefault();
-	UpdateLights();
 }
 
 void AMonstroPlante::UpdateLights()
 {
-	MaterialInstance1->SetVectorParameterValue(FName(TEXT("Color")), GetColorOfTheSolution(SolutionResistence[0]));
-	MaterialInstance2->SetVectorParameterValue(FName(TEXT("Color")), GetColorOfTheSolution(SolutionResistence[1]));
-	MaterialInstance3->SetVectorParameterValue(FName(TEXT("Color")), GetColorOfTheSolution(SolutionResistence[2]));
+	if (InitializedMaterials == false)
+	{
+		UMaterialInterface* MeshMat1 = SolutionSphere1->GetMaterial(0);
+		MaterialInstance1 = UMaterialInstanceDynamic::Create(MeshMat1, this);
 
-	SolutionSphere1->SetMaterial(0, MaterialInstance1);
-	SolutionSphere2->SetMaterial(0, MaterialInstance2);
-	SolutionSphere3->SetMaterial(0, MaterialInstance3);
+		UMaterialInterface* MeshMat2 = SolutionSphere2->GetMaterial(0);
+		MaterialInstance2 = UMaterialInstanceDynamic::Create(MeshMat2, this);
 
+		UMaterialInterface* MeshMat3 = SolutionSphere3->GetMaterial(0);
+		MaterialInstance3 = UMaterialInstanceDynamic::Create(MeshMat3, this);
+
+		InitializedMaterials = true;
+	}
+
+		MaterialInstance1->SetVectorParameterValue(FName(TEXT("Color")), FLinearColor(GetColorOfTheSolution(SolutionResistence[0])));
+		SolutionSphere1->SetMaterial(0, MaterialInstance1);
+
+		MaterialInstance2->SetVectorParameterValue(FName(TEXT("Color")), FLinearColor(GetColorOfTheSolution(SolutionResistence[1])));
+		SolutionSphere2->SetMaterial(0, MaterialInstance2);
+
+		MaterialInstance3->SetVectorParameterValue(FName(TEXT("Color")), FLinearColor(GetColorOfTheSolution(SolutionResistence[2])));
+		SolutionSphere3->SetMaterial(0, MaterialInstance3);
 }
 
 void AMonstroPlante::Tick(float DeltaSeconds)

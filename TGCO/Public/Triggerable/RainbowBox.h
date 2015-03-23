@@ -10,6 +10,7 @@
 *
 * @brief	Rainbow boxes for the rainbow box puzzle
 *
+* @sa ATriggerable
 */
 UCLASS()
 class TGCO_API ARainbowBox : public ATriggerable

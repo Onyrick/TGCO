@@ -1,4 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -16,7 +15,11 @@ class TGCO_API UInventoryUMG : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	/** Constructors */
+	/**
+	* @brief	Constructor.
+	*
+	* @param	ObjectInitializer	The object initializer.
+	*/
 	UInventoryUMG(const FObjectInitializer& ObjectInitializer);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "InventoryUMG")

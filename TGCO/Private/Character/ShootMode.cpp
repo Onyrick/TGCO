@@ -1,4 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "TGCO.h"
 #include "ShootMode.h"
@@ -12,7 +11,6 @@ int GetEnergyConsuming(const EShootMode::Type ShootMode)
 		case EShootMode::STOP:					return 40;
 		default:								return 0;
 	}
-
 }
 
 FString GetNameOfTheMode(const EShootMode::Type ShootMode)
@@ -25,4 +23,15 @@ FString GetNameOfTheMode(const EShootMode::Type ShootMode)
 		default:								return FString(TEXT("Unknown"));
 	}
 
+}
+
+FColor GetColorOfTheMode(const EShootMode::Type ShootMode)
+{
+	switch (ShootMode)
+	{
+	case EShootMode::SLOW:					return FColor(138, 239, 251);
+	case EShootMode::SPEED:					return FColor(255, 12, 12);
+	case EShootMode::STOP:					return FColor(255, 255, 255);
+	default:								return FColor(0, 0, 0);
+	}
 }

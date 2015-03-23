@@ -116,6 +116,16 @@ public:
 	UFUNCTION(Server, WithValidation, reliable)
 	void ServerAddEnergy(class ATGCOGameState* GameState, int32 iEnergyAmount);
 
+	/**
+	* Function that activate a specific Fan
+	* Call on server by client
+	*
+	* @param	AFan	Fan for activation
+	*			bActive	Whether the Fan will be active
+	*/
+	UFUNCTION(Server, WithValidation, Reliable)
+	void ServerSetReadyToMove(class AMonster* Fan, bool _ready);
+
 protected:
 	/** @brief   Function call when the game start */
 	virtual void BeginPlay() override;

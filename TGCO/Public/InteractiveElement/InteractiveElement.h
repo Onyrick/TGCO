@@ -1,4 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -6,7 +5,7 @@
 #include "InteractiveElement.generated.h"
 
 /**
-* TODO
+* @brief An Interactive Element is an element the player can interact with by pressing "E"
 */
 UCLASS(Abstract)
 class TGCO_API AInteractiveElement : public AActor
@@ -14,7 +13,12 @@ class TGCO_API AInteractiveElement : public AActor
 	GENERATED_BODY()
 
 public:
-	/** Constructors */
+
+	/**
+	 * @brief	Constructor.
+	 *
+	 * @param	ObjectInitializer	The object initializer.
+	 */
 	AInteractiveElement(const FObjectInitializer& ObjectInitializer);
 
 	/**
@@ -52,15 +56,15 @@ public:
 	UFUNCTION()
 	virtual void OnOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
-	/** TODO */
+	/** The trigger box where the player can interact */
 	UPROPERTY(EditAnywhere, Category = "Triggers")
 	UBoxComponent* TriggerBox;
 
-	/** TODO */
+	/** The main static mesh */
 	UPROPERTY(EditAnywhere, Category = "Static Meshes")
 	UStaticMeshComponent* StaticMesh;
 	
-	/** TODO */
+	/** To know is it is looked by the player */
 	UPROPERTY(EditAnywhere, Category = "InteractiveElementComponents")
 	bool IsLookedAt;
 

@@ -10,6 +10,7 @@
 *
 * @brief	A stockable capsule of solution
 *
+* @sa AStockable
 */
 UCLASS()
 class TGCO_API ACapsule : public AStockable

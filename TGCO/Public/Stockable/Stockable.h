@@ -1,4 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -7,7 +6,10 @@
 #include "Stockable.generated.h"
 
 /**
-* TODO
+* @class AStockable
+* 
+* @brief Stockable interface. Class inherited from Astockable can be store in the player's inventory.
+* 		 It is composed by a description and a image texture to display in inventory.
 */
 UCLASS()
 class TGCO_API AStockable : public ATriggerable
@@ -15,19 +17,33 @@ class TGCO_API AStockable : public ATriggerable
 	GENERATED_BODY()
 
 public:
-	/** Constructors */
+	/**
+	* @brief	Constructor.
+	*
+	* @param	ObjectInitializer	The object initializer.
+	*/
 	AStockable(const FObjectInitializer& ObjectInitializer);
 
-	/** When the Player enters the area where he can use an object, this interactive element receives OnComponentBeginOverlap. */
+	/** @brief When the Player enters the area where he can use an object, this interactive element receives OnComponentBeginOverlap. */
 	virtual void OnOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
 
-	/** Getter */
+	/**   
+	* @brief Get the description
+	* 
+	* @return FString The description		 
+	*/
 	UFUNCTION(BlueprintCallable, Category = "Stockable")
 	virtual FString GetDescription();
 
+	/**
+	* @brief Get the image texture
+	*
+	* @return UTexture2D* The image texture
+	*/
 	UFUNCTION(BlueprintCallable, Category = "Stockable")
 	virtual UTexture2D* GetInventoryImageTexture();
 	
+public:
 	/** The description wirtten in the inventory when the player click on this item*/
 	UPROPERTY(EditAnywhere, Category = "Stockable")
 	FString sDescription;

@@ -5,6 +5,9 @@
 #include "GameFramework/GameMode.h"
 #include "TGCOGameMode.generated.h"
 
+/**
+* @brief The GameMode defines the game being played. It governs the game rules, scoring, what actors are allowed to exist in this game type, and who may enter the game.
+*/
 UCLASS(minimalapi)
 class ATGCOGameMode : public AGameMode
 {
