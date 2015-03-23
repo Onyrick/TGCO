@@ -113,16 +113,14 @@ void AMinesweeper::PutMinesRandomly()
 
 void AMinesweeper::CalculateNeighboursUndermined()
 {
-	UE_LOG(LogTest, Warning, TEXT("Je suis dans la fonction CalculateNeighboursUndermined"));
+	// UE_LOG(LogTest, Warning, TEXT("Je suis dans la fonction CalculateNeighboursUndermined"));
 	// TODO : Make it works with NB_COL != NB_ROWS, launch some exceptions ...
 	//For all MinesweeperBox
 	for (int i = 0; i < SIZE; ++i)
 	{
-		UE_LOG(LogTest, Warning, TEXT("for i"));
 		//Check the neighbors
 		for (int j = -1; j <= 1; ++j)
 		{
-			UE_LOG(LogTest, Warning, TEXT("for j"));
 			// If the MinesweeperBox is at the beginning of a row, don't check the previous one. 
 			// And if it is at the end of the row, don't check the next one.
 			if (((i%NB_COL == 0) && (j == -1)) 
