@@ -79,6 +79,16 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Mastermind")
 	void QuitMastermindPuzzleConsole();
 
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FBindableEvent_UpdateCameraGameToPuzzle);
+	/** Called when need to move the camera */
+	UPROPERTY(BlueprintAssignable, Category = "Puzzle")
+		FBindableEvent_UpdateCameraGameToPuzzle UpdateCameraGameToPuzzle;
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FBindableEvent_UpdateCameraPuzzleToGame);
+	/** Called when need to move the camera */
+	UPROPERTY(BlueprintAssignable, Category = "Puzzle")
+		FBindableEvent_UpdateCameraPuzzleToGame UpdateCameraPuzzleToGame;
+
 private: 
 	/**
 	* @brief	Create the solution of the mastermind.

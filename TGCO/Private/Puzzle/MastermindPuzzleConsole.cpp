@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include "Utils.h"
 #include "MastermindPuzzleConsole.h"
+#include "MonstroPlante.h"
 #include "TGCOPlayerState.h"
 
 AMastermindPuzzleConsole::AMastermindPuzzleConsole(const FObjectInitializer& ObjectInitializer)
@@ -179,6 +180,7 @@ bool AMastermindPuzzleConsole::OnInteract()
 				if (PlayerState->eCurrentState == EPlayerStatus::IN_GAME)
 				{
 					PlayerState->SwitchGamePuzzle(CameraPuzzle);
+					UpdateCameraGameToPuzzle.Broadcast();
 					SwitchDiodeOn();
 				}
 				else
@@ -186,6 +188,7 @@ bool AMastermindPuzzleConsole::OnInteract()
 					if (PlayerState->eCurrentState == EPlayerStatus::IN_PUZZLE_GAME)
 					{
 						PlayerState->SwitchGamePuzzle(PlayerController->GetCharacter());
+						UpdateCameraPuzzleToGame.Broadcast();
 						SwitchDiodeOff();
 					}
 				}
@@ -201,6 +204,7 @@ void AMastermindPuzzleConsole::SubmitAnswer()
 	// 0 : exist but not in right place
 	// 1 : in the right place
 	int* Difference = new int[4]();
+	TArray<ESolutionType::Type> NewResistance;
 
 	// For each number of the answer
 	for (int i = 0; i < 4; ++i)
@@ -226,6 +230,7 @@ void AMastermindPuzzleConsole::SubmitAnswer()
 			if (!ExistElsewhere)
 			{
 				Difference[i] = -1;
+				NewResistance.Add(Proposal[i]);
 			}
 		}
 	}
@@ -234,6 +239,14 @@ void AMastermindPuzzleConsole::SubmitAnswer()
 	UE_LOG(LogTest, Warning, TEXT("Difference : %d, %d, %d, %d"), Difference[0], Difference[1], Difference[2], Difference[3]);
 
 	UpdateDiode(Difference);
+
+
+	// Update monstroplante resistance
+	for (TActorIterator<AMonstroPlante> It(GetWorld()); It; ++It)
+	{
+		AMonstroPlante* MonstroPlante = *It;
+		//MonstroPlant.ClearAndSet();
+	}
 	
 	//return Difference;
 }
