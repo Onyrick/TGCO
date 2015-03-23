@@ -36,22 +36,6 @@ public:
 	/** @brief	Event launched when the monster has to be destroyed. */
 	virtual void Destroyed();
 
-	/**********************************************************************************************//**
-	 * @brief	Adds a new resistence solution to the array.
-	 *
-	 * @param	_solution	The solution to add.
-	 **************************************************************************************************/
-
-	void AddNewResistenceSolution(ESolutionType::Type _solution);
-
-	/**********************************************************************************************//**
-	 * @brief	Removes the resistence solution described by _solution.
-	 *
-	 * @param	_solution	The solution to remove.
-	 **************************************************************************************************/
-
-	void RemoveResistenceSolution(ESolutionType::Type _solution);
-
 	/** @brief	Respawn this MonstroPlante. */
 	void RespawnAI();
 
@@ -78,6 +62,10 @@ public:
 	/** @brief	A static mesh component representing one solution resistence*. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Light")
 	class UStaticMeshComponent* SolutionSphere3;
+
+	/** @brief	A static mesh component representing one solution resistence*. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Light")
+	class UStaticMeshComponent* SolutionSphere4;
 
 	/** @brief	The trigger box to activate the avoiding processus. */
 	UPROPERTY(EditAnywhere, Category = "Triggers")
@@ -107,6 +95,17 @@ public:
 	/** @brief	Set the walkspeed to default. */
 	void SpeedDefault();
 
+	/** @brief	Speed default up. */
+	void SpeedDefaultUp();
+
+	/**********************************************************************************************//**
+	 * @brief	Set array by _solution.
+	 *
+	 * @param	_solution	The solutions.
+	 **************************************************************************************************/
+
+	void SetSolutionArray(const TArray<ESolutionType::Type> &_solutions);
+
 	/** @brief	wether the monstroplante has to avoid. */
 	bool m_bNeedToAvoid;
 
@@ -120,6 +119,8 @@ protected:
 	UMaterialInstanceDynamic *MaterialInstance2;
 	/** @brief	The third sphere material instance. */
 	UMaterialInstanceDynamic *MaterialInstance3;
+	/** @brief	The fourth material instance. */
+	UMaterialInstanceDynamic *MaterialInstance4;
 
 	/**********************************************************************************************//**
 	 * @brief	The function called every Tick.
@@ -134,4 +135,7 @@ protected:
 
 	/** @brief	wether the materials are initialized. */
 	bool InitializedMaterials;
+
+	float fSpeedDefault;
+	float fSpeedUp;
 };
