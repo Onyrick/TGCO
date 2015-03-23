@@ -8,6 +8,7 @@
 #include "LightningBarrier.h"
 #include "MinesweeperBox.h"
 #include "Fan.h"
+#include "MonstroPlante.h"
 
 ATGCOPlayerController::ATGCOPlayerController(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -171,5 +172,57 @@ void ATGCOPlayerController::ServerSetReadyToMove_Implementation(class AMonster* 
 	if (Monster)
 	{
 		Monster->SetReadyToMove(_ready);
+	}
+}
+
+bool ATGCOPlayerController::ServerStunMonster_Validate(class AMonster* Monster)
+{
+	return true;
+}
+
+void ATGCOPlayerController::ServerStunMonster_Implementation(class AMonster* Monster)
+{
+	if (Monster)
+	{
+		Monster->Stun();
+	}
+}
+
+bool ATGCOPlayerController::ServerDestroyMonster_Validate(class AMonster* Monster)
+{
+	return true;
+}
+
+void ATGCOPlayerController::ServerDestroyMonster_Implementation(class AMonster* Monster)
+{
+	if (Monster)
+	{
+		Monster->Destroyed();
+	}
+}
+
+bool ATGCOPlayerController::ServerRespawnMonster_Validate(class AMonster* Monster)
+{
+	return true;
+}
+
+void ATGCOPlayerController::ServerRespawnMonster_Implementation(class AMonster* Monster)
+{
+	if (Monster)
+	{
+		Monster->RespawnAI();
+	}
+}
+
+bool ATGCOPlayerController::ServerSetNeedToAvoidMonster_Validate(class AMonstroPlante* Monster, bool _avoid)
+{
+	return true;
+}
+
+void ATGCOPlayerController::ServerSetNeedToAvoidMonster_Implementation(class AMonstroPlante* Monstro, bool _avoid)
+{
+	if (Monstro)
+	{
+		Monstro->SetNeedToAvoid(_avoid);
 	}
 }

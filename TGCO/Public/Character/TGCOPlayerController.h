@@ -124,7 +124,19 @@ public:
 	*			bActive	Whether the Fan will be active
 	*/
 	UFUNCTION(Server, WithValidation, Reliable)
-	void ServerSetReadyToMove(class AMonster* Fan, bool _ready);
+	void ServerSetReadyToMove(class AMonster* Monster, bool _ready);
+
+	UFUNCTION(Server, WithValidation, Reliable)
+	void ServerStunMonster(class AMonster* Monster);
+
+	UFUNCTION(Server, WithValidation, Reliable)
+	void ServerDestroyMonster(class AMonster* Monster);
+
+	UFUNCTION(Server, WithValidation, Reliable)
+	void ServerRespawnMonster(class AMonster* Monster);
+	
+	UFUNCTION(Server, WithValidation, Reliable)
+	void ServerSetNeedToAvoidMonster(class AMonstroPlante* Monster, bool _avoid);
 
 protected:
 	/** @brief   Function call when the game start */
