@@ -130,7 +130,7 @@ public:
 	void ServerStunMonster(class AMonster* Monster);
 
 	UFUNCTION(Server, WithValidation, Reliable)
-	void ServerDestroyMonster(class AMonster* Monster);
+	void ServerDestroyMonster(class AMonstroPlante* Monster);
 
 	UFUNCTION(Server, WithValidation, Reliable)
 	void ServerRespawnMonster(class AMonster* Monster);

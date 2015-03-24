@@ -28,12 +28,12 @@ void AInteractiveElement::Highlight(bool highlight)
 	//TODO : animation and visual effect
 	if (highlight)
 	{
-		//UE_LOG(LogTest, Warning, TEXT("Highlight on"));
+		UE_LOG(LogTest, Warning, TEXT("Highlight on"));
 		IsLookedAt = true;
 	}
 	else
 	{
-		//UE_LOG(LogTest, Warning, TEXT("Highlight off"));
+		UE_LOG(LogTest, Warning, TEXT("Highlight off"));
 		IsLookedAt = false;
 	}
 
