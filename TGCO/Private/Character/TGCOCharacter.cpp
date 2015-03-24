@@ -16,13 +16,21 @@
 
 ATGCOCharacter::ATGCOCharacter(const FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer)
+, BaseTurnRate(45.f)
+, BaseLookUpRate(45.f)
+, PreviousInteractiveElement(nullptr)
+, iNumberOfCloseInteractiveElement(0)
+, LastSpawn(nullptr)
+, PlayerPawn(nullptr)
+, WristMode(EShootMode::STOP)
+, WristModeIndex(0)
+, SolutionType(ESolutionType::NONE)
+, fLastRegenTime(0.f)
+, bIsProtect(false)
+, fTimeSinceProtectionIsActive(0.f)
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
-
-	// set our turn rates for input
-	BaseTurnRate = 45.f;
-	BaseLookUpRate = 45.f;
 
 	// Create a CameraComponent	
 	FirstPersonCameraComponent = ObjectInitializer.CreateDefaultSubobject<UCameraComponent>(this, TEXT("FirstPersonCamera"));
@@ -41,24 +49,17 @@ ATGCOCharacter::ATGCOCharacter(const FObjectInitializer& ObjectInitializer)
 	Mesh1P->bCastDynamicShadow = false;
 	Mesh1P->CastShadow = false;
 
+	// Shield component
+	Shield = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("Shield"));
+	Shield->AttachParent = FirstPersonCameraComponent;
+	Shield->SetVisibility(false);
+
 	// Configure character movement
 	GetCharacterMovement()->bOrientRotationToMovement = true; // Character moves in the direction of input...	
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f); // ...at this rotation rate
 	GetCharacterMovement()->JumpZVelocity = 600.f;
 	GetCharacterMovement()->AirControl = 0.2f;
 	GetCharacterMovement()->MaxWalkSpeed = 400;
-
-	bShootMode = true;
-	WristMode = EShootMode::STOP;
-	WristModeIndex = 0;
-
-	PreviousInteractiveElement = nullptr;
-	iNumberOfCloseInteractiveElement = 0;
-
-	PlayerPawn = nullptr;
-	LastSpawn = nullptr;
-
-	SolutionType = ESolutionType::NONE;
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
@@ -102,7 +103,6 @@ void ATGCOCharacter::SetupPlayerInputComponent(class UInputComponent* InputCompo
 	InputComponent->BindTouch(IE_Pressed, this, &ATGCOCharacter::TouchStarted);
 	InputComponent->BindTouch(IE_Released, this, &ATGCOCharacter::TouchStopped);
 }
-
 
 void ATGCOCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVector Location)
 {
@@ -163,51 +163,59 @@ void ATGCOCharacter::MoveRight(float Value)
 
 void ATGCOCharacter::OnFire()
 {
-	// if player is in FireMode
-	if (bShootMode == true)
+	ATGCOPlayerState* PlayerState = Cast<ATGCOPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
+	if (PlayerState)
 	{
-		ATGCOGameState* gameState = Cast<ATGCOGameState>(GetWorld()->GetGameState());
-		if (gameState && gameState->GetEnergy() > 20)
+		if (PlayerState->eCurrentState == EPlayerStatus::IN_GAME)
 		{
-			gameState->DecreaseEnergy(20);
-
-			// try and fire a projectile
-			if (ProjectileClass != NULL)
+			ATGCOGameState* GameState = Cast<ATGCOGameState>(GetWorld()->GetGameState());
+			if (GameState != nullptr && GameState->GetEnergy() > 20)
 			{
-				const FRotator SpawnRotation = GetControlRotation();
-				// MuzzleOffset is in camera space, so transform it to world space before offsetting from the character location to find the final muzzle position
-				const FVector SpawnLocation = GetActorLocation() + SpawnRotation.RotateVector(GunOffset);
+				GameState->DecreaseEnergy(20);
 
-				UWorld* const World = GetWorld();
-				if (World != NULL)
+				// try and fire a projectile
+				if (ProjectileClass != nullptr)
 				{
-					// spawn the projectile at the muzzle
-					AProjectile* Projectile = World->SpawnActor<AProjectile>(ProjectileClass, SpawnLocation, SpawnRotation);
-					Projectile->SetSolutionType(SolutionType);
-					Projectile->SetMode(WristMode);
+					const FRotator SpawnRotation = GetControlRotation();
+					// MuzzleOffset is in camera space, so transform it to world space before offsetting from the character location to find the final muzzle position
+					const FVector SpawnLocation = GetActorLocation() + SpawnRotation.RotateVector(GunOffset);
+
+					UWorld* const World = GetWorld();
+					if (World != nullptr)
+					{
+						// spawn the projectile at the muzzle
+						AProjectile* Projectile = World->SpawnActor<AProjectile>(ProjectileClass, SpawnLocation, SpawnRotation);
+						if (Projectile != nullptr)
+						{
+							Projectile->SetSolutionType(SolutionType);
+							Projectile->SetMode(WristMode);
+						}
+					}
 				}
-			}
 
-			// try and play the sound if specified
-			if (FireSound != NULL)
-			{
-				UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
-			}
-
-			// try and play a firing animation if specified
-			if (FireAnimation != NULL)
-			{
-				/*
-				// Get the animation object for the arms mesh
-				UAnimInstance* AnimInstance = Mesh1P->GetAnimInstance();
-				if (AnimInstance != NULL)
+				// try and play the sound if specified
+				if (FireSound != nullptr)
 				{
-				AnimInstance->Montage_Play(FireAnimation, 1.f);
+					UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
 				}
-				*/
+
+				// try and play a firing animation if specified
+				if (FireAnimation != nullptr)
+				{
+					/*
+					// Get the animation object for the arms mesh
+					UAnimInstance* AnimInstance = Mesh1P->GetAnimInstance();
+					if (AnimInstance != nullptr)
+					{
+					AnimInstance->Montage_Play(FireAnimation, 1.f);
+					}
+					*/
+				}
 			}
 		}
 	}
+
+	
 }
 
 void ATGCOCharacter::Use()
@@ -223,7 +231,7 @@ void ATGCOCharacter::Use()
 		// Get the hitting element as an InteractiveElement
 		AInteractiveElement* ElementHit = Cast<AInteractiveElement>(OutHitResult.GetActor());
 		
-		if (ElementHit != NULL)
+		if (ElementHit != nullptr)
 		{
 			// If element is active
 			if (ElementHit->IsInteractive())
@@ -241,41 +249,60 @@ void ATGCOCharacter::Use()
 
 void ATGCOCharacter::SetPreviousWristMode()
 {
-	ATGCOGameState * GS = Cast<ATGCOGameState>(GetWorld()->GetGameState());
-	const TMap<int, EShootMode::Type>& UnlockSkills = GS->GetUnlockSkills();
-
-	int lengthMap = UnlockSkills.Num();
-
-	WristModeIndex = WristModeIndex - 1;
-	if (WristModeIndex < 0)
+	ATGCOPlayerState* PlayerState = Cast<ATGCOPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
+	if (PlayerState != nullptr)
 	{
-		WristModeIndex = lengthMap - 1;
+		if (PlayerState->eCurrentState == EPlayerStatus::IN_GAME)
+		{
+			ATGCOGameState * GameState = Cast<ATGCOGameState>(GetWorld()->GetGameState());
+			if (GameState != nullptr)
+			{
+				const TMap<int, EShootMode::Type>& UnlockSkills = GameState->GetUnlockSkills();
+
+				int lengthMap = UnlockSkills.Num();
+
+				WristModeIndex = WristModeIndex - 1;
+				if (WristModeIndex < 0)
+				{
+					WristModeIndex = lengthMap - 1;
+				}
+
+				WristMode = UnlockSkills[WristModeIndex];
+			}			
+		}
 	}
-
-	WristMode = UnlockSkills[WristModeIndex];
-
-	UE_LOG(LogDebug, Warning, TEXT("Previous : %s"), *GetNameOfTheMode(WristMode));
 }
 
 void ATGCOCharacter::SetNextWristMode()
 {
-	ATGCOGameState * GS = Cast<ATGCOGameState>(GetWorld()->GetGameState());
-	const TMap<int, EShootMode::Type>& UnlockSkills = GS->GetUnlockSkills();
+	ATGCOPlayerState* PlayerState = Cast<ATGCOPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
+	if (PlayerState != nullptr)
+	{
+		if (PlayerState->eCurrentState == EPlayerStatus::IN_GAME)
+		{
+			ATGCOGameState * GameState = Cast<ATGCOGameState>(GetWorld()->GetGameState());
+			if (GameState != nullptr)
+			{
+				const TMap<int, EShootMode::Type>& UnlockSkills = GameState->GetUnlockSkills();
 
-	int lengthMap = UnlockSkills.Num();
+				int lengthMap = UnlockSkills.Num();
 
-	WristModeIndex = (WristModeIndex + 1) % lengthMap;
+				WristModeIndex = (WristModeIndex + 1) % lengthMap;
 
-	WristMode = UnlockSkills[WristModeIndex];
-
-	UE_LOG(LogDebug, Warning, TEXT("Next : %s"), *GetNameOfTheMode(WristMode));
+				WristMode = UnlockSkills[WristModeIndex];
+			}
+		}
+	}
 }
 
 void ATGCOCharacter::CancelActionTime()
 {
-	ATGCOPlayerState* PS = Cast<ATGCOPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
-	PS->SetPropsAffected(NULL);
-	PS->SetModUsed(EShootMode::NONE);
+	ATGCOPlayerState* PlayerState = Cast<ATGCOPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
+	if (PlayerState != nullptr)
+	{
+		PlayerState->SetPropsAffected(nullptr);
+		PlayerState->SetModUsed(EShootMode::NONE);
+	}
 
 	UE_LOG(LogDebug, Warning, TEXT("Cancel action time"));
 }
@@ -338,52 +365,41 @@ void ATGCOCharacter::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 
 	UWorld* const World = GetWorld();
-	if (World != NULL)
+	if (World != nullptr)
 	{
-		//GameMode is only on the server
-		ATGCOGameMode* GameMode = Cast<ATGCOGameMode>(World->GetAuthGameMode());
-		if (GameMode)
-		{
-			ATGCOGameState* GameState = Cast<ATGCOGameState>(World->GetGameState());
-			if (GameState != NULL)
-			{	
-				ATGCOPlayerState* PS = Cast<ATGCOPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
-				float gameTime = this->GetWorld()->GetTimeSeconds();
-
-				if (PS->GetModUsed() != EShootMode::NONE && gameTime - fLastRegenTime >= 1.f)
-				{
-					fLastRegenTime = gameTime;
-					
-					if (GameState->GetEnergy() == 1)
-					{
-						PS->SetPropsAffected(NULL);
-						PS->SetModUsed(EShootMode::NONE);
-					}
-					else
-					{
-						GameState->DecreaseEnergy(GetEnergyConsuming(PS->GetModUsed()));
-					}
-				}
-				else
-				{
-					GameState->UpdateEnergy();
-				}
+		ATGCOGameState* GameState = Cast<ATGCOGameState>(World->GetGameState());
+		if (GameState != nullptr)
+		{	
+			float fGameTime = World->GetTimeSeconds();
+			if (fGameTime - fLastRegenTime >= 1.f)
+			{
+				fLastRegenTime = fGameTime;
+				GameState->ManagePlayersEnergy();
+			}
 				
-				
-				if (GameState->CheckRemainingEnergy() == false)
+			// Need to test also if player has taken damages
+			if (GameState->CheckRemainingEnergy() == false)
+			{
+				//GameMode is only on the server
+				ATGCOGameMode* GameMode = Cast<ATGCOGameMode>(World->GetAuthGameMode());
+				if (GameMode)
 				{
 					GameMode->ServerKillPlayersThenRespawn();
-				}				
+				}
+			}
+
+			// Check for protection 
+			if (fGameTime - fTimeSinceProtectionIsActive >= 5.f && bIsProtect)
+			{
+				ActiveShield(false);
 			}
 		}
 	}
 
-	if (iNumberOfCloseInteractiveElement <= 0)
+	if (iNumberOfCloseInteractiveElement > 0)
 	{
-		return;
+		HighlightCloseInteractiveElement();
 	}
-	
-	HightlightCloseInteractiveElement();
 }
 
 void ATGCOCharacter::IncreaseNumberOfCloseInteractiveElement()
@@ -396,7 +412,7 @@ void ATGCOCharacter::DecreaseNumberOfCloseInteractiveElement()
 	iNumberOfCloseInteractiveElement--;
 }
 
-void ATGCOCharacter::HightlightCloseInteractiveElement()
+void ATGCOCharacter::HighlightCloseInteractiveElement()
 {
 	FHitResult OutHitResult;
 	FCollisionQueryParams Params(false);
@@ -406,12 +422,12 @@ void ATGCOCharacter::HightlightCloseInteractiveElement()
 	if (hasHit)
 	{
 		AInteractiveElement* ElementHit = Cast<AInteractiveElement>(OutHitResult.GetActor());
-		if (PreviousInteractiveElement != NULL && PreviousInteractiveElement != ElementHit)
+		if (PreviousInteractiveElement != nullptr && PreviousInteractiveElement != ElementHit)
 		{
 			PreviousInteractiveElement->Highlight(false);
-			PreviousInteractiveElement = NULL;
+			PreviousInteractiveElement = nullptr;
 		}
-		if (ElementHit != NULL)
+		if (ElementHit != nullptr)
 		{
 			if (ElementHit->IsInteractive())
 			{
@@ -426,10 +442,10 @@ void ATGCOCharacter::HightlightCloseInteractiveElement()
 	}
 	else
 	{
-		if (PreviousInteractiveElement != NULL)
+		if (PreviousInteractiveElement != nullptr)
 		{
 			PreviousInteractiveElement->Highlight(false);
-			PreviousInteractiveElement = NULL;
+			PreviousInteractiveElement = nullptr;
 		}
 	}
 }
@@ -437,17 +453,24 @@ void ATGCOCharacter::HightlightCloseInteractiveElement()
 float ATGCOCharacter::TakeDamage(float fDamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser)
 {
 	UWorld* const World = GetWorld();
-	if (World != NULL)
+	if (World != nullptr)
 	{
 		ATGCOGameState* GameState = Cast<ATGCOGameState>(World->GetGameState());
-		if (GameState != NULL)
+		if (GameState != nullptr)
 		{
-			UE_LOG(LogDebug, Warning, TEXT("Player take damage"));
 			// Active shield
-			ActiveShield(true);
+			if (!bIsProtect)
+			{
+				ActiveShield(true);
+			}
+			else
+			{
+				// If shield is activate, decrease less energy (because we are protected) !
+				fDamageAmount *= 0.7f;
+			}
 
 			// Decrease energy in the GameState
-			GameState->DecreaseEnergy(fDamageAmount);
+			GameState->DecreaseEnergy(fDamageAmount, true);
 
 			return fDamageAmount;
 		}
@@ -458,30 +481,41 @@ float ATGCOCharacter::TakeDamage(float fDamageAmount, struct FDamageEvent const 
 
 void ATGCOCharacter::ActiveShield(bool bActivate)
 {
-	if (bActivate)
+	if (bActivate == false)
 	{
-		UE_LOG(LogDebug, Warning, TEXT("Active Shield"));
-		// Activate the shield
-		PlayShieldAnimation();
-		PlayShieldSound();
+		UE_LOG(LogDebug, Warning, TEXT("Desactive shield"));
+		Shield->SetVisibility(false);
 	}
 	else
 	{
-		// TODO : Deactivate the shield
-		// Need to do something ?
+		UE_LOG(LogDebug, Warning, TEXT("Activate shield"));
+		Shield->SetVisibility(true);
+	}
+
+	bIsProtect = bActivate;
+
+	if (bActivate)
+	{
+		// Activate the shield
+		PlayShieldAnimation();
+		PlayShieldSound();
+
+		UWorld * const World = GetWorld();
+		if (World != nullptr)
+		{
+			fTimeSinceProtectionIsActive = World->GetTimeSeconds();
+		}
 	}
 }
 
 void ATGCOCharacter::PlayShieldAnimation()
 {
 	// TODO
-	UE_LOG(LogDebug, Warning, TEXT("TO DO : play activate shield animation"));
 }
 
 void ATGCOCharacter::PlayShieldSound()
 {
 	// TODO
-	UE_LOG(LogDebug, Warning, TEXT("TO DO : play activate shield sound"));
 }
 
 UInventoryUMG* ATGCOCharacter::GetInventoryUMG() const
@@ -491,17 +525,22 @@ UInventoryUMG* ATGCOCharacter::GetInventoryUMG() const
 
 void ATGCOCharacter::SetInventoryUMG(UInventoryUMG* _widget)
 {
+	check(_widget);
 	InventoryUMG = _widget;
 }
 
 void ATGCOCharacter::PickStockableItem(AStockable* _item)
 {
+	check(_item);
 	InventoryUMG->AddNewItem(_item);
 	UWorld* World = GetWorld();
 	if (World)
 	{
 		ATGCOPlayerState* PlayerState = Cast<ATGCOPlayerState>(World->GetFirstPlayerController()->PlayerState);
-		PlayerState->AddNewInventoryItem(_item);
+		if (PlayerState != nullptr)
+		{
+			PlayerState->AddNewInventoryItem(_item);
+		}
 	}
 
 }
@@ -509,18 +548,19 @@ void ATGCOCharacter::PickStockableItem(AStockable* _item)
 void ATGCOCharacter::ToggleInventory()
 {
 	APlayerController* MyController = GetWorld()->GetFirstPlayerController();
-
-	if (InventoryUMG->IsVisible())
+	if (MyController != nullptr)
 	{
-		InventoryUMG->SetVisibility(ESlateVisibility::Hidden);
-		MyController->bShowMouseCursor = false;
+		if (InventoryUMG->IsVisible())
+		{
+			InventoryUMG->SetVisibility(ESlateVisibility::Hidden);
+			MyController->bShowMouseCursor = false;
+		}
+		else
+		{
+			InventoryUMG->SetVisibility(ESlateVisibility::Visible);
+			MyController->bShowMouseCursor = true;
+		}
 	}
-	else
-	{
-		InventoryUMG->SetVisibility(ESlateVisibility::Visible);
-		MyController->bShowMouseCursor = true;
-	}
-	
 }
 
 ESolutionType::Type ATGCOCharacter::GetSolutionType()
@@ -531,4 +571,14 @@ ESolutionType::Type ATGCOCharacter::GetSolutionType()
 void ATGCOCharacter::SetSolutionType(ESolutionType::Type _solution)
 {
 	SolutionType = _solution;
+}
+
+EShootMode::Type ATGCOCharacter::GetWristMode()
+{
+	return WristMode;
+}
+
+FString ATGCOCharacter::GetWristModeString()
+{
+	return GetNameOfTheMode(GetWristMode());
 }

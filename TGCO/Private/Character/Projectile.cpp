@@ -1,4 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "TGCO.h"
 #include "Projectile.h"
@@ -9,12 +8,16 @@
 
 AProjectile::AProjectile(const FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer)
+, ProjectileMode(EShootMode::NONE)
+, SolutionType(ESolutionType::NONE)
 {
 	// Use a sphere as a simple collision representation
 	CollisionComp = ObjectInitializer.CreateDefaultSubobject<USphereComponent>(this, TEXT("SphereComp"));
 	CollisionComp->InitSphereRadius(10.0f);
 	CollisionComp->BodyInstance.SetCollisionProfileName("Projectile");
 	CollisionComp->OnComponentHit.AddDynamic(this, &AProjectile::OnHit);		// set up a notification for when this component hits something blocking
+
+	//MeshProjectile = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("ProjectileMesh2"));
 
 	// Set as root component
 	RootComponent = CollisionComp;
@@ -29,13 +32,14 @@ AProjectile::AProjectile(const FObjectInitializer& ObjectInitializer)
 
 	// Die after 3 seconds by default
 	InitialLifeSpan = 3.0f;
+
 }
 
 void AProjectile::InitVelocity(const FVector& ShootDirection)
 {
 	if (ProjectileMovement)
 	{
-		// set the projectile's velocity to the desired direction
+		// Set the projectile's velocity to the desired direction
 		ProjectileMovement->Velocity = ShootDirection * ProjectileMovement->InitialSpeed;
 	}
 }
@@ -43,24 +47,24 @@ void AProjectile::InitVelocity(const FVector& ShootDirection)
 void AProjectile::OnHit(AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 	// Only add impulse and destroy projectile if we hit a physics
-	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && OtherComp->IsSimulatingPhysics())
+	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr) && OtherComp->IsSimulatingPhysics())
 	{
 		OtherComp->AddImpulseAtLocation(GetVelocity() * 100.0f, GetActorLocation());
 	}
 
 	//Stun the monster hit
 	AMonster* Monster = Cast<AMonster>(OtherActor);
-	if (Monster != NULL)
+	if (Monster != nullptr)
 	{
 		FDamageEvent damage;
 		Monster->TakeDamage(0.f, damage, Monster->GetController(), this);
 	}
 
 	AProps* Props = Cast<AProps>(OtherActor);
-	if (Props != NULL)
+	if (Props != nullptr)
 	{
 		FDamageEvent damage;
-		Props->TakeDamage(0.f, damage, NULL, this);
+		Props->TakeDamage(0.f, damage, nullptr, this);
 	}
 
 	Destroy();
@@ -79,6 +83,17 @@ void AProjectile::SetSolutionType(ESolutionType::Type _solution)
 void AProjectile::SetMode(EShootMode::Type _Mode)
 {
 	ProjectileMode = _Mode;
+
+	RootComponent->AttachChildren.FindItemByClass(&MeshProjectile);
+
+	if (MeshProjectile != nullptr)
+	{
+		UMaterialInterface* MeshMat = MeshProjectile->GetMaterial(0);
+		MaterialInstance = UMaterialInstanceDynamic::Create(MeshMat, this);
+		MaterialInstance->SetVectorParameterValue(FName(TEXT("Color")), FLinearColor(GetColorOfTheMode(_Mode)));
+		MaterialInstance->SetScalarParameterValue(FName(TEXT("Intensity")), 100.f);
+		MeshProjectile->SetMaterial(0, MaterialInstance);
+	}
 }
 
 EShootMode::Type AProjectile::GetProjectileMode()

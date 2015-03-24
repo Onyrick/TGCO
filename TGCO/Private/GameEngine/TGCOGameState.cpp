@@ -1,20 +1,20 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "TGCO.h"
 #include "TGCOGameState.h"
 #include "TGCOPlayerState.h"
 #include "TGCOGameInstance.h"
+#include "TGCOPlayerController.h"
 #include "Net/UnrealNetwork.h"
 
 ATGCOGameState::ATGCOGameState(const FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer)
+, iPlayersEnergy(1000)
+, iPlayersEnergyIncrement(10)
+, iMaxPlayersEnergy(1000)
+, fLastRegenTime(0.f)
+, fRegenTime(0.1f)
+, fResumeRegenAfterDecrease(2.5f)
 {
-	iPlayersEnergy = 500;
-	iPlayersEnergyIncrement = 1;
-	iMaxPlayersEnergy = 1000;
-	fLastRegenTime = 0.f;
-	fRegenTime = 0.1f;
-	fResumeRegenAfterDecrease = 2.5f;
 	MapUnlockSkills.Add(0, EShootMode::STOP);
 	MapUnlockSkills.Add(1, EShootMode::SLOW);
 	MapUnlockSkills.Add(2, EShootMode::SPEED);
@@ -25,13 +25,37 @@ const TMap<int, EShootMode::Type>& ATGCOGameState::GetUnlockSkills()
 	return MapUnlockSkills;
 }
 
+void ATGCOGameState::ManagePlayersEnergy()
+{
+	ATGCOPlayerState* PlayerState = Cast<ATGCOPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
+	if (PlayerState != nullptr)
+	{
+		if (PlayerState->GetModUsed() != EShootMode::NONE)
+		{
+			if (GetEnergy() == 1)
+			{
+				PlayerState->SetPropsAffected(NULL);
+				PlayerState->SetModUsed(EShootMode::NONE);
+			}
+			else
+			{
+				DecreaseEnergy(GetEnergyConsuming(PlayerState->GetModUsed()));
+			}
+		}
+		else
+		{
+			UpdateEnergy();
+		}
+	}
+}
+
 void ATGCOGameState::UpdateEnergy()
 {
-	float gameTime = this->GetWorld()->GetTimeSeconds();
-	if (gameTime - fLastRegenTime >= fRegenTime)
+	float fGameTime = GetWorld()->GetTimeSeconds();
+	if (fGameTime - fLastRegenTime >= fRegenTime)
 	{
-		iPlayersEnergy = FMath::Min(iMaxPlayersEnergy, iPlayersEnergy + iPlayersEnergyIncrement);
-		fLastRegenTime = gameTime;
+		AddEnergy(iPlayersEnergyIncrement);
+		fLastRegenTime = fGameTime;
 	}
 	
 }
@@ -40,22 +64,16 @@ void ATGCOGameState::AddEnergy(int32 iEnergyAmount)
 {
 	if (Role < ROLE_Authority)
 	{
-		ServerAddEnergy(iEnergyAmount);
+		ATGCOPlayerController * PC = Cast<ATGCOPlayerController>(GetWorld()->GetFirstPlayerController());
+		if (PC != nullptr)
+		{
+			PC->ServerAddEnergy(this, iEnergyAmount);
+		}
 	}
 	else
 	{
 		iPlayersEnergy = FMath::Min(iMaxPlayersEnergy, iPlayersEnergy + iEnergyAmount);
 	}
-}
-
-bool ATGCOGameState::ServerAddEnergy_Validate(int32 iEnergyAmount)
-{
-	return true;
-}
-
-void ATGCOGameState::ServerAddEnergy_Implementation(int32 iEnergyAmount)
-{
-	AddEnergy(iEnergyAmount);
 }
 
 void ATGCOGameState::IncreaseEnergyMax(int32 iEnergyAmount)
@@ -80,11 +98,15 @@ void ATGCOGameState::ServerIncreaseEnergyMax_Implementation(int32 iEnergyAmount)
 	IncreaseEnergyMax(iEnergyAmount);
 }
 
-void ATGCOGameState::DecreaseEnergy(int32 iEnergyAmount, bool monsterHit)
+void ATGCOGameState::DecreaseEnergy(int32 iEnergyAmount, bool bCanPlayerDie)
 {
 	if (Role < ROLE_Authority)
 	{
-		return ServerDecreaseEnergy(iEnergyAmount);
+		ATGCOPlayerController * PC = Cast<ATGCOPlayerController>(GetWorld()->GetFirstPlayerController());
+		if (PC != nullptr)
+		{
+			PC->ServerDecreaseEnergy(this, iEnergyAmount, bCanPlayerDie);
+		}
 	}
 	else
 	{
@@ -95,24 +117,13 @@ void ATGCOGameState::DecreaseEnergy(int32 iEnergyAmount, bool monsterHit)
 
 		iPlayersEnergy = FMath::Max(0, iPlayersEnergy - iEnergyAmount);
 
-		if (iPlayersEnergy <= 0 && monsterHit == false)
+		if (iPlayersEnergy <= 0 && bCanPlayerDie == false)
 		{
 			iPlayersEnergy = 1;
 		}
 
-		UE_LOG(LogTest, Warning, TEXT("Next Energy : %d"), iPlayersEnergy);
 		fLastRegenTime = this->GetWorld()->GetTimeSeconds() + fResumeRegenAfterDecrease;
 	}
-}
-
-bool ATGCOGameState::ServerDecreaseEnergy_Validate(int32 iEnergyAmount, bool monsterHit)
-{
-	return true;
-}
-
-void ATGCOGameState::ServerDecreaseEnergy_Implementation(int32 iEnergyAmount, bool monsterHit)
-{
-	DecreaseEnergy(iEnergyAmount, monsterHit);
 }
 
 bool ATGCOGameState::CheckRemainingEnergy()
@@ -123,16 +134,19 @@ bool ATGCOGameState::CheckRemainingEnergy()
 void ATGCOGameState::MulticastRemoveAllWidgets_Implementation()
 {
 	UGameViewportClient* GVC = GEngine->GameViewport;
-	GVC->RemoveAllViewportWidgets();
+	if (GVC != nullptr)
+	{
+		GVC->RemoveAllViewportWidgets();
+	}
 }
 
 void ATGCOGameState::MulticastGoToPlayingState_Implementation()
 {
 	UWorld* const World = GetWorld();
-	if (World)
+	if (World != nullptr)
 	{
 		UTGCOGameInstance* GameInstance = Cast<UTGCOGameInstance>(World->GetGameInstance());
-		if (GameInstance)
+		if (GameInstance != nullptr)
 		{
 			GameInstance->SetCurrentState(FName(TEXT("Playing")));
 		}
@@ -144,4 +158,5 @@ void ATGCOGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> & OutL
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	// Replicate to everyone
 	DOREPLIFETIME(ATGCOGameState, iPlayersEnergy);
+	DOREPLIFETIME(ATGCOGameState, iMaxPlayersEnergy);
 }

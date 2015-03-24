@@ -1,8 +1,17 @@
 #pragma once
 
+
+/** 
+* @namespace	ERailType  
+* 				
+* @brief Contain the list of rails' type
+*/
 namespace ERailType
 {
-	/** List of Rail Type */
+	/**   
+	* @enum	Type  
+	* @brief List of Rail Type
+	*/
 	enum Type
 	{
 		STRAIGHT,

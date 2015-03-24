@@ -1,4 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "TGCO.h"
 #include "TGCOGameSession.h"
@@ -178,7 +177,7 @@ void ATGCOGameSession::OnDestroySessionComplete(FName SessionName, bool bWasSucc
 	{
 		IOnlineSessionPtr Sessions = OnlineSub->GetSessionInterface();
 		Sessions->ClearOnDestroySessionCompleteDelegate(OnDestroySessionCompleteDelegate);
-		HostSettings = NULL;
+		HostSettings = nullptr;
 	}
 }
 
@@ -213,7 +212,7 @@ void ATGCOGameSession::OnJoinSessionComplete(FName SessionName, EOnJoinSessionCo
 	UE_LOG(LogOnlineGame, Verbose, TEXT("OnJoinSessionComplete %s bSuccess: %d"), *SessionName.ToString(), static_cast<int32>(Result));
 
 	IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get();
-	IOnlineSessionPtr Sessions = NULL;
+	IOnlineSessionPtr Sessions = nullptr;
 	if (OnlineSub)
 	{
 		Sessions = OnlineSub->GetSessionInterface();

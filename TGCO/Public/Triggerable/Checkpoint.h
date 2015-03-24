@@ -1,4 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -6,7 +5,11 @@
 #include "Checkpoint.generated.h"
 
 /**
-*
+* @class ACheckpoint
+* 		 
+* @brief A checkpoint to save progression of the player. Automatically saved when the player pass throught the checkpoint.
+* 
+* @sa ATrigerrable		 
 */
 UCLASS()
 class TGCO_API ACheckpoint : public ATriggerable
@@ -16,10 +19,14 @@ class TGCO_API ACheckpoint : public ATriggerable
 public:
 	ACheckpoint(const FObjectInitializer& ObjectInitializer);
 
-	/** Event launch when Player begin to trigger the TriggerBox component. */
+	/**   
+	* @brief Event launch when Player begin to trigger the TriggerBox component.
+	*/
 	virtual void OnOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult) override;
 
-	/** Event launch when Player end to trigger the TriggerBox component. */
+	/**   
+	* @brief Event launch when Player end to trigger the TriggerBox component. 
+	*/
 	virtual void OnOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex) override;
 
 };

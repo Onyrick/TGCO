@@ -1,4 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -22,7 +21,7 @@ struct FServerEntry
 };
 
 /**
- * TODO
+ * @brief Manage all servers reachable
  */
 UCLASS()
 class TGCO_API UTGCOServerList : public UObject
@@ -31,44 +30,59 @@ class TGCO_API UTGCOServerList : public UObject
 public:
 	UTGCOServerList(const FObjectInitializer& ObjectInitializer);
 
-	/** Init the object with the Player that own it */
+	/** @brief Init the object with the Player that own it */
 	void UTGCOServerList::Init(TWeakObjectPtr<class ULocalPlayer> pPlayer);
 
 	/**
-	 * Get the current game session
+	 * @brief Get the current game session
 	 *
 	 * @return The current game session
 	 */
 	ATGCOGameSession* GetGameSession() const;
 
 	/**
-	 * Get the current player that own this object
+	 * @brief Get the current player that own this object
 	 *
 	 * @return The current player
 	 */
 	TWeakObjectPtr<class ULocalPlayer> GetPlayer() const;
 
 	/**
-	 * Tick called by the GameInstance when needed
+	 * @brief Tick called by the GameInstance when needed
+	 * 		  
+	 * @param DeltaSecond Delta time
 	 */
 	void Tick(float DeltaSeconds);
 
-	/** Updates current search status */
+	/** @brief Updates current search status */
 	void UpdateSearchStatus();
 
-	/** Starts searching for servers */
+	/** 
+	* @brief Starts searching for servers  
+	*  
+	*  @param bLANMatch In LAN ?
+	*/
 	void BeginServerSearch(bool bLANMatch);
 
-	/** Called when server search is finished */
+	/** @brief Called when server search is finished */
 	void OnServerSearchFinished();
 
-	/** fill/update server list */
+	/** @brief Fill/update server list */
 	void UpdateServerList();
 
-	/** connect to chosen server */
+	/**    
+	* @brief Connect to chosen server
+	* 
+	* @param SessionIndex The index of the chosen session
+	*/
 	UFUNCTION(BlueprintCallable, Category = "Server")
 	void ConnectToServer(int32 SessionIndex);
 
+	/**
+	* @brief Get the list of servers
+	*
+	* @return TArray<FServerEntry> Array  of servers
+	*/
 	UFUNCTION(BlueprintCallable, Category = "Server")
 	TArray<FServerEntry> GetServerList();
 
@@ -81,9 +95,6 @@ protected:
 
 	/** action bindings array */
 	TArray<FServerEntry> ServerList;
-
-	/** current status text */
-	FString StatusText;
 
 	/** pointer to our owner PC */
 	TWeakObjectPtr<class ULocalPlayer> PlayerOwner;

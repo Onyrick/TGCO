@@ -5,57 +5,120 @@
 #include "GameFramework/Actor.h"
 #include <vector>
 #include <ctime>
-#include "Triggerable/MinesBox.h"
+#include "Triggerable/MinesweeperBox.h"
 #include "Minesweeper.generated.h"
 
 
 /**
- * 
- */
+* @class	AMinesweeper
+*
+* @brief	The container of minesweeper boxes for the minesweeper puzzle
+*/
 UCLASS()
 class TGCO_API AMinesweeper : public AActor
 {
 	GENERATED_BODY()
 
 public:
+
+	/**
+	* @brief	Constructor.
+	*
+	* @param	ObjectInitializer	The object initializer.
+	*/
 	AMinesweeper(const FObjectInitializer& ObjectInitializer);
 
-	/** Create the Minesweeper */
+	/**
+	* @brief	Creates the minesweeper.
+	*
+	*/
 	void CreateMinesweeper();
 
-	/** Get the size of the minesweeper */
-	UFUNCTION(BlueprintCallable, Category = "Minesweeper")
-		int32 GetMinesweeperSize();
+	/**
+	* @brief	Gets minesweeper size.
+	*		Can be called in BluePrint
+	*
+	* @return	The minesweeper size.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "Minesweeper")	
+	int32 GetMinesweeperSize();
 
-	/** Get the MineBox at the index position in the Squares Array */
+	/**
+	* @brief	Gets  MinesweeperBox at the index position in the Squares Array.
+	*		Can be called in BluePrint
+	*
+	* @param	index	Zero-based index of the Squares Array.
+	*
+	* @return	null if it fails, else the MinesweeperBox.
+	*/
 	UFUNCTION(BlueprintCallable, Category = "Minesweeper")
-		AMinesBox* GetMineBoxAt(int32 index);
+	AMinesweeperBox* GetMinesweeperBoxAt(int32 index);
 
-	/** Reset all values of the array of MinesweeperBox. Called when the player in the past walk on a mine. */
+	/**
+	* @brief	Resets all values of the squares of MinesweeperBox. 
+	*		Called when the player in the past walk on a mine.
+	*		Can be called in BluePrint.
+	*/
 	UFUNCTION(BlueprintCallable, Category = "Minesweeper")
-		void ResetMinesweeper();
+	void ResetMinesweeper();
 
-	/** Delete the array that contains AMinesBox */
+	/**
+	* @brief	Delete the array that contains AMinesweeperBox.
+	*/
 	void DeleteMinesweeper();
 
-	/** Put mines randomly in the TArray of MineBox */
+	/**
+	* @brief	Put mines randomly in the TArray of MinesweeperBox.
+	*/
 	void PutMinesRandomly();
-	/** Calculate the number of neighbours that are undermined */
+
+	/**
+	* @brief	Calculate the number of neighbours that are undermined.
+	*/
 	void CalculateNeighboursUndermined();
 
-	/** Content all the mine box */
-	TArray<AMinesBox*> Squares;
-	/** Content the BluePrint of the MineBox */
-	TSubclassOf<class AMinesBox> MineBoxBP;
+	/**
+	* @brief	Executes the reset console action.
+	*		Can be called in BluePrint
+	*/
+	UFUNCTION(BlueprintCallable, Category = "Minesweeper")
+	void OnResetConsole();
+
+	/**
+	* @brief	Content all the mine box.
+	*/
+	TArray<AMinesweeperBox*> Squares;
+
+	/**
+	* @brief	Content the BluePrint of the MinesweeperBox.
+	*/
+	TSubclassOf<class AMinesweeperBox> MinesweeperBoxBP;
 
 private:
-	/** The number of columns */
+	/**
+	* @brief	Call ResetMinesweeper on server by client
+	*/
+	UFUNCTION(Server, WithValidation, Reliable)
+	void ServerResetMinesweeper();
+
+	/**
+	* @brief The number of columns.
+	*/
 	const int NB_COL = 5;
-	/** The number of rows */
+
+	/**
+	* @brief	The number of rows.	
+	*/
 	const int NB_ROW = 5;
-	/** The size of the Minesweeper */
+
+	/**
+	* @brief	The size of the Minesweeper.
+	*/
 	const int SIZE = NB_COL * NB_ROW;
-	/** The number of mines presents in minesweeper */
-	const int NB_MINES = 4;
+
+	/**
+	* @brief	The number of mines presents in minesweeper.
+	*/
+	const int NB_MINES = 5;
 
 };

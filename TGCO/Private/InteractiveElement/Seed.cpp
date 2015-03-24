@@ -1,4 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "TGCO.h"
 #include "Seed.h"
@@ -14,6 +13,6 @@ ASeed::ASeed(const class FObjectInitializer& ObjectInitializer)
 bool ASeed::OnInteract()
 {
 	SeedPicked.Broadcast();
-	UE_LOG(LogDebug, Warning, TEXT("Interactible seed"));
+	//UE_LOG(LogDebug, Warning, TEXT("Interactible seed"));
 	return true;
 }

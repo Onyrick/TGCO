@@ -1,38 +1,31 @@
 
-
 #include "TGCO.h"
 #include "Net/UnrealNetwork.h"
 #include "RainbowBox.h"
-#include "RainbowBoxHandlerFutur.h"
+#include "RainbowBoxHandlerFuture.h"
 #include "RainbowBoxHandlerPast.h"
 
 ARainbowBox::ARainbowBox(const class FObjectInitializer& ObjectInitializer)
-: Super(ObjectInitializer),
-iColor(0),
-bShouldNotify(false),
-bIsHideInPast(false)
+: Super(ObjectInitializer)
+, iColor(0)
+, bShouldNotify(false)
+, bIsHideInPast(false)
 {
 	bReplicates = true;
 	MaterialInstanceDynamic = nullptr;
 }
 
-void ARainbowBox::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> & OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	// Replicate to everyone
-	DOREPLIFETIME(ARainbowBox, iColor);
-}
-
 void ARainbowBox::OnOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
-	ARainbowBoxHandlerFutur* RainbowBoxHandlerFutur = nullptr;
+	ARainbowBoxHandlerFuture* RainbowBoxHandlerFuture = nullptr;
 	ARainbowBoxHandlerPast* RainbowBoxHandlerPast = nullptr;
 
+	// Get RainbowBoxHandler of the future and of the past
 	for (TActorIterator<AActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
 	{
-		if (ActorItr->GetName().Contains("RainbowBoxHandlerFutur_BP"))
+		if (ActorItr->GetName().Contains("RainbowBoxHandlerFuture_BP"))
 		{
-			RainbowBoxHandlerFutur = Cast<ARainbowBoxHandlerFutur>(*ActorItr);
+			RainbowBoxHandlerFuture = Cast<ARainbowBoxHandlerFuture>(*ActorItr);
 		}
 		if (ActorItr->GetName().Contains("RainbowBoxHandlerPast_BP"))
 		{
@@ -40,11 +33,12 @@ void ARainbowBox::OnOverlapBegin(class AActor* OtherActor, class UPrimitiveCompo
 		}
 	}
 
+	// If the rainbowBox have to notify RainbowBoxHandler of the future
 	if (bShouldNotify)
 	{
-		if (RainbowBoxHandlerFutur != nullptr)
+		if (RainbowBoxHandlerFuture != nullptr)
 		{
-			RainbowBoxHandlerFutur->HideAllOfThisColor(GetColorFromInt(iColor));
+			RainbowBoxHandlerFuture->HideAllOfThisColor(GetColorFromInt(iColor));
 		}
 
 		if (RainbowBoxHandlerPast != nullptr)
@@ -54,9 +48,9 @@ void ARainbowBox::OnOverlapBegin(class AActor* OtherActor, class UPrimitiveCompo
 	}
 	else
 	{
-		if (RainbowBoxHandlerFutur)
+		if (RainbowBoxHandlerFuture)
 		{
-			RainbowBoxHandlerFutur->HideAllExcepted(this);
+			RainbowBoxHandlerFuture->HideAllExcepted(this);
 		}
 	}
 }
@@ -80,8 +74,6 @@ void ARainbowBox::Show()
 
 void ARainbowBox::SetColor(const ERainbowBoxColor::Color eNewColor)
 {
-
-	UE_LOG(LogTest, Warning, TEXT("I create the new Material Dynamic of color %s "), *GetNameOfTheColor(eNewColor).ToString());
 	// Store color 
 	iColor = GetIntFromColor(eNewColor);
 
@@ -89,12 +81,10 @@ void ARainbowBox::SetColor(const ERainbowBoxColor::Color eNewColor)
 	MaterialInstanceDynamic = UMaterialInstanceDynamic::Create(MeshMat, this);
 	MaterialInstanceDynamic->SetVectorParameterValue(FName(TEXT("Color")), FLinearColor(GetRedValueOfTheColor(eNewColor), GetGreenValueOfTheColor(eNewColor), GetBlueValueOfTheColor(eNewColor), 1.0));
 	StaticMesh->SetMaterial(0, MaterialInstanceDynamic);
-	//StaticMesh->SetMaterial(0, MaterialInstanceDynamic);
 }
 
 void ARainbowBox::OnRep_Material()
 {
-	UE_LOG(LogTest, Warning, TEXT("On Rep Material automaticly call "));
 	ERainbowBoxColor::Color eColor = GetColorFromInt(iColor);
 	UMaterialInterface* MeshMat = StaticMesh->GetMaterial(0);
 	MaterialInstanceDynamic = UMaterialInstanceDynamic::Create(MeshMat, this);
@@ -122,3 +112,9 @@ bool ARainbowBox::GetIsHideInPast()
 	return bIsHideInPast;
 }
 
+void ARainbowBox::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> & OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	// Replicate to everyone
+	DOREPLIFETIME(ARainbowBox, iColor);
+}

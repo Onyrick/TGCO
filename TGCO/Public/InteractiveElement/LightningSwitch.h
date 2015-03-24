@@ -8,8 +8,10 @@
 #include "LightningSwitch.generated.h"
 
 /**
- * Switch allowing the player to turn off a @ref ALightningBarrier (either a simple one
+ * @brief Switch allowing the player to turn off a @ref ALightningBarrier (either a simple one
  * or part of a @ref AMultiLightningBarrier 
+ * 	
+ * 	@sa AInteractiveElement
  */
 UCLASS()
 class TGCO_API ALightningSwitch : public AInteractiveElement
@@ -18,8 +20,12 @@ class TGCO_API ALightningSwitch : public AInteractiveElement
 	GENERATED_BODY()
 
 public:
-	/** Constructors */
-	ALightningSwitch(const FObjectInitializer& PCIP);
+	/**
+	* @brief	Constructor.
+	*
+	* @param	ObjectInitializer	The object initializer.
+	*/
+	ALightningSwitch(const FObjectInitializer& ObjectInitializer);
 
 	/** Called when the Player uses the object */
 	UFUNCTION(BlueprintCallable, Category = "LightningSwitch")

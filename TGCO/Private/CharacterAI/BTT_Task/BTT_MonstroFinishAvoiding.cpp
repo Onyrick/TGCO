@@ -1,4 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "TGCO.h"
 #include "ControllerAI.h"
@@ -6,7 +5,7 @@
 #include "TGCOCharacter.h"
 #include "BTT_MonstroFinishAvoiding.h"
 
-UBTT_MonstroFinishAvoiding::UBTT_MonstroFinishAvoiding(const class FObjectInitializer& PCIP) : Super(PCIP)
+UBTT_MonstroFinishAvoiding::UBTT_MonstroFinishAvoiding(const class FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 }
 
@@ -15,8 +14,8 @@ EBTNodeResult::Type UBTT_MonstroFinishAvoiding::ExecuteTask(UBehaviorTreeCompone
 	Super::ExecuteTask(OwnerComp, NodeMemory);
 
 	UBehaviorTreeComponent* MyComp = OwnerComp;
-	AControllerAI* MyController = MyComp ? Cast<AControllerAI>(MyComp->GetOwner()) : NULL;
-	if (MyController == NULL)
+	AControllerAI* MyController = MyComp ? Cast<AControllerAI>(MyComp->GetOwner()) : nullptr;
+	if (MyController == nullptr)
 	{
 		return EBTNodeResult::Failed;
 	}
@@ -29,7 +28,7 @@ EBTNodeResult::Type UBTT_MonstroFinishAvoiding::ExecuteTask(UBehaviorTreeCompone
 			MyBlackboard->SetValueAsBool("Avoiding", false);
 			ATargetPoint *oldTargetPoint = Cast<ATargetPoint>(MyBlackboard->GetValueAsObject("PlayerToChase"));
 
-			if (oldTargetPoint != NULL)
+			if (oldTargetPoint != nullptr)
 			{
 				oldTargetPoint->Destroy();
 			}

@@ -1,8 +1,8 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "TGCO.h"
 #include "TGCOGameInstance.h"
 #include "TGCOGameState.h"
+#include "TGCOCharacter.h"
 
 #include "Online.h"
 #include "Engine.h"
@@ -19,11 +19,11 @@ namespace TGCOGameInstanceState
 
 UTGCOGameInstance::UTGCOGameInstance(const FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer)
-{
-	CurrentState = TGCOGameInstanceState::None;
-	ServerListObject = nullptr;
-}
-
+, CurrentState(TGCOGameInstanceState::None)
+, PendingState(TGCOGameInstanceState::None)
+, TravelURL(FString(""))
+, ServerListObject(nullptr)
+{}
 
 void UTGCOGameInstance::Init()
 {
@@ -469,6 +469,11 @@ void UTGCOGameInstance::BeginMainMenuState()
 
 	// player 0 gets to own the UI
 	ULocalPlayer* const Player = GetFirstGamePlayer();
+	
+	// Set a custom cursor
+	FString Path = FPaths::GameContentDir() / "Cursors";
+
+	FSlateApplication::Get().SetCustomCursor(EMouseCursor::Default, Path / "default.cur");
 }
 
 void UTGCOGameInstance::EndMainMenuState()
@@ -486,12 +491,13 @@ void UTGCOGameInstance::BeginPlayingState()
 		{
 			Game->bUseSeamlessTravel = true;
 		}
+
 		ATGCOGameState* const GameState = Cast<ATGCOGameState>(World->GetGameState());
 		GameState->MulticastRemoveAllWidgets();
 		GameState->MulticastGoToPlayingState();
+		
+		World->ServerTravel(FString("/Game/Maps/TestMap/GymMastermind?listen"));
 	}
-
-	GetWorld()->ServerTravel(FString("/Game/Maps/TestMap/GymFan?listen"));
 }
 
 void UTGCOGameInstance::EndPlayingState()
@@ -504,8 +510,6 @@ void UTGCOGameInstance::BeginHostingState()
 	UGameViewportClient* GVC = GEngine->GameViewport;
 	GVC->RemoveAllViewportWidgets();
 	GetWorld()->ServerTravel(TravelURL);
-	//UGameplayStatics::OpenLevel(GetWorld(), FName(*TravelURL), true, FString(TEXT("listen")));
-	//UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("/Game/Maps/HostMap")), true);
 }
 
 void UTGCOGameInstance::EndHostingState()
@@ -550,7 +554,7 @@ void UTGCOGameInstance::CleanupSessionOnReturnToMenu()
 
 	// end online game and then destroy it
 	IOnlineSubsystem * OnlineSub = IOnlineSubsystem::Get();
-	IOnlineSessionPtr Sessions = (OnlineSub != NULL) ? OnlineSub->GetSessionInterface() : NULL;
+	IOnlineSessionPtr Sessions = (OnlineSub != nullptr) ? OnlineSub->GetSessionInterface() : nullptr;
 
 	if (Sessions.IsValid())
 	{

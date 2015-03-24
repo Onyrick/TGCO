@@ -6,9 +6,16 @@
 
 AFan::AFan(const FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer)
+, FutureFan(nullptr)
+, bIsActive(true)
 {
+	bReplicates = true;
+
+	// Initialize speed
 	fInitialSpeed = 600; 
-	fSpeed = 600;
+	fCurrentSpeed = 600;
+
+	// Initialize component according to fInitialSpeed, can be override in BP
 	RotatingMovement = ObjectInitializer.CreateDefaultSubobject<URotatingMovementComponent>(this, TEXT("RotatingMovement"));
 	RotatingMovement->RotationRate = FRotator(0, 0, fInitialSpeed);
 	RotatingMovement->PivotTranslation = FVector(0, 0, 0);
@@ -21,87 +28,76 @@ AFan::AFan(const FObjectInitializer& ObjectInitializer)
 	RadialForce->Falloff = RIF_Linear;
 	RadialForce->bImpulseVelChange = true;
 	RadialForce->AttachParent = StaticMeshProps;
-
-	bIsActive = true;
-
-	FuturFan = NULL;
 }
 
-void AFan::UpdateSpeed()
+void AFan::UpdateSpeedComponents()
 {
-	UE_LOG(LogDebug, Warning, TEXT("Je suis dans update speed : %f"), fSpeed);
-
-	RotatingMovement->RotationRate = FRotator(0.f, 0.f, fSpeed);
-	if (RadialForce)
+	RotatingMovement->RotationRate = FRotator(0.f, 0.f, fCurrentSpeed);
+	if (RadialForce != nullptr)
 	{
-		RadialForce->ForceStrength = fSpeed * 1000;
-		RadialForce->ImpulseStrength = fSpeed * 0;
+		RadialForce->ForceStrength = fCurrentSpeed * 1000;
+		RadialForce->ImpulseStrength = fCurrentSpeed * 0;
 	}
 
-	if (FuturFan)
+	if (FutureFan != nullptr)
 	{
-		FuturFan->Affect(fSpeed);
+		FutureFan->AffectBySpeed(fCurrentSpeed);
 	}
 }
 
-void AFan::Affect(float _fSpeed)
+void AFan::AffectBySpeed(float _fSpeed)
 {
 	RotatingMovement->RotationRate = FRotator(0.f, 0.f, _fSpeed);
-	if (RadialForce)
+	if (RadialForce != nullptr)
 	{
 		RadialForce->ForceStrength = _fSpeed * 1000;
 		RadialForce->ImpulseStrength = _fSpeed * 0;
 	}
 
-	ATGCOPlayerController * PC;
 	for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
 	{
-		PC = Cast<ATGCOPlayerController>(Iterator->Get());
-		PC->ClientAffectSpeedOnFuturFan(this, _fSpeed);
+		ATGCOPlayerController * PC = Cast<ATGCOPlayerController>(Iterator->Get());
+		if (PC != nullptr)
+		{
+			PC->ClientAffectSpeedOnFutureFan(this, _fSpeed);
+		}
 	}
 }
 
-void AFan::ReinitSpeed()
+void AFan::ReinitSpeedToInitialSpeed()
 {
 	UpdateSpeedValue(fInitialSpeed);
 }
 
 void AFan::Activate(bool bActive)
 {
-	UE_LOG(LogDebug, Warning, TEXT("Début de la fonction activate"))
 	if (Role < ROLE_Authority)
 	{
-		UE_LOG(LogDebug, Warning, TEXT("Role < ROLAUTHORITY "))
-		ATGCOPlayerController * PC;
 		for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
 		{
-			PC = Cast<ATGCOPlayerController>(Iterator->Get());
-			PC->ServerActivateFan(this, bActive);
+			ATGCOPlayerController * PC = Cast<ATGCOPlayerController>(Iterator->Get());
+			if (PC != nullptr)
+			{
+				PC->ServerActivateFan(this, bActive);
+			}
 		}
 	}
 	else
 	{
-		UE_LOG(LogDebug, Warning, TEXT("Role >= ROLAUTHORITY "))
 		bIsActive = bActive;
 		RotatingMovement->SetActive(bIsActive);
-		/* if (!bIsActive)	{ UpdateSpeedValue(0); }
-		else { ReinitSpeed(); } */
-		if (FuturFan)
+
+		if (FutureFan != nullptr)
 		{
-			FuturFan->bIsActive = bActive;
-			FuturFan->RotatingMovement->SetActive(bIsActive);
+			FutureFan->bIsActive = bActive;
+			FutureFan->RotatingMovement->SetActive(bIsActive);
 		}
 	}
 }
 
 void AFan::OnRep_Activate()
 {
-	if (bIsActive){ UE_LOG(LogDebug, Warning, TEXT("Je passe dans rep activate true")); }
-	else{ UE_LOG(LogDebug, Warning, TEXT("Je passe dans rep activate false")); }
-
 	RotatingMovement->SetActive(bIsActive);
-	/* if (!bIsActive)	{ UpdateSpeedValue(0); }
-	else { ReinitSpeed(); } */
 }
 
 void AFan::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> & OutLifetimeProps) const

@@ -1,4 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "TGCO.h"
 #include "FlowerPot.h"
@@ -29,10 +28,10 @@ bool AFlowerPot::OnInteract()
 	//TODO
 	UE_LOG(LogDebug, Warning, TEXT("Interactible flower pot"));
 
-	AFlowerPot* FuturSelf = Cast<AFlowerPot>(FuturElement);
-	if (FuturSelf != nullptr)
+	AFlowerPot* FutureSelf = Cast<AFlowerPot>(FutureElement);
+	if (FutureSelf != nullptr)
 	{
-		FuturSelf->GrowTree();
+		FutureSelf->GrowTree();
 	}
 
 	return true;
@@ -54,7 +53,7 @@ void AFlowerPot::GrowTree()
 			if (classname.Contains(TEXT("Lever")))
 			{
 				auto tempLever = Cast<ALever>(component);
-				tempLever->getStaticMesh()->SetVisibility(false);
+				tempLever->GetStaticMesh()->SetVisibility(false);
 
 				UE_LOG(LogDebug, Warning, TEXT("Tree has pushed the lever"));
 			}			

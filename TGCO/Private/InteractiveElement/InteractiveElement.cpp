@@ -1,4 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "TGCO.h"
 #include "TGCOCharacter.h"
@@ -26,7 +25,7 @@ void AInteractiveElement::Highlight(bool highlight)
 {
 	auto name = this->GetClass()->GetName();
 
-	//TODO
+	//TODO : animation and visual effect
 	if (highlight)
 	{
 		//UE_LOG(LogTest, Warning, TEXT("Highlight on"));
@@ -60,7 +59,7 @@ void AInteractiveElement::OnOverlapBegin(class AActor* OtherActor, class UPrimit
 {
 	ATGCOCharacter* PlayerCharacter = Cast<ATGCOCharacter>(OtherActor);
 
-	if (PlayerCharacter != NULL)
+	if (PlayerCharacter != nullptr)
 	{
 		PlayerCharacter->IncreaseNumberOfCloseInteractiveElement();
 		bCloseEnough = true;
@@ -71,7 +70,7 @@ void AInteractiveElement::OnOverlapEnd(class AActor* OtherActor, class UPrimitiv
 {
 	ATGCOCharacter* PlayerCharacter = Cast<ATGCOCharacter>(OtherActor);
 
-	if (PlayerCharacter != NULL)
+	if (PlayerCharacter != nullptr)
 	{
 		PlayerCharacter->DecreaseNumberOfCloseInteractiveElement();
 		bCloseEnough = false;
