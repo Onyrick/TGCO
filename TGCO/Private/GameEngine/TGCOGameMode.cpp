@@ -21,7 +21,13 @@ ATGCOGameMode::ATGCOGameMode(const FObjectInitializer& ObjectInitializer)
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
 
-	HUDClass = ATGCOHUD::StaticClass();
+	static ConstructorHelpers::FClassFinder<AHUD> TheHUDOb(TEXT("Blueprint'/Game/Character/HUD/HudBp.HudBp_C'"));
+	if (TheHUDOb.Class != NULL)
+	{
+		HUDClass = TheHUDOb.Class;
+	}
+
+	//HUDClass = ATGCOHUD::StaticClass();
 	GameStateClass = ATGCOGameState::StaticClass();
 	PlayerStateClass = ATGCOPlayerState::StaticClass();
 	PlayerControllerClass = ATGCOPlayerController::StaticClass();

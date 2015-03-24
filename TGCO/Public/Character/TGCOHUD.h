@@ -25,7 +25,7 @@ public:
 	/** @brief   Variable for storing the font */
 	UPROPERTY()
 	class UFont* HUDFont;
-
+	
 	/**
 	* @brief	Gets HUD energy umg.
 	*
@@ -52,4 +52,5 @@ protected:
 private:
 	/** @brief  Crosshair asset pointer */
 	class UTexture2D* CrosshairTex;
+
 };

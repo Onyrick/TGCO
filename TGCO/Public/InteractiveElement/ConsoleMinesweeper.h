@@ -7,8 +7,10 @@
 #include "ConsoleMinesweeper.generated.h"
 
 /**
- * @brief An Interactive Element is an element the player can interact with by pressing "E"
- * 	
+ * @class AConsoleMinesweeper
+ * 		  
+ * @brief The console that manage the minesweeper
+ * 		  	
  * 	@sa AInteractiveElement
  */
 UCLASS()

@@ -8,8 +8,6 @@
 AMinesweeper::AMinesweeper(const class FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer)
 {
-	//static ConstructorHelpers::FObjectFinder<UBlueprint> ItemBlueprint(TEXT("Blueprint'/Game/Blueprints/MinesBox_BP'"));
-	//if (ItemBlueprint.Object){
 	static ConstructorHelpers::FClassFinder<AMinesweeperBox> ItemBlueprint(TEXT("/Game/Blueprints/MinesweeperBox_BP"));
 	if (ItemBlueprint.Class != nullptr)
 	{
