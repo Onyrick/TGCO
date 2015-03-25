@@ -224,7 +224,7 @@ void ATGCOCharacter::Use()
 	FCollisionQueryParams Params(false);
 	
 	// If raytracer hit an Actor
-	bool hasHit = GetWorld()->LineTraceSingle(OutHitResult, GetActorLocation(), 3000.f*GetActorForwardVector(), ECC_Visibility, Params);
+	bool hasHit = GetWorld()->LineTraceSingle(OutHitResult, FirstPersonCameraComponent->GetComponentLocation(), FirstPersonCameraComponent->GetForwardVector()*300.f + FirstPersonCameraComponent->GetComponentLocation(), ECC_Visibility, Params);
 
 	if (hasHit)
 	{
@@ -417,8 +417,8 @@ void ATGCOCharacter::HighlightCloseInteractiveElement()
 	FHitResult OutHitResult;
 	FCollisionQueryParams Params(false);
 
-	bool hasHit = GetWorld()->LineTraceSingle(OutHitResult, GetActorLocation(), 3000.f*GetActorForwardVector(), ECC_Visibility, Params);
-
+	bool hasHit = GetWorld()->LineTraceSingle(OutHitResult, FirstPersonCameraComponent->GetComponentLocation(), FirstPersonCameraComponent->GetForwardVector()*300.f + FirstPersonCameraComponent->GetComponentLocation(), ECC_Visibility, Params);
+	
 	if (hasHit)
 	{
 		AInteractiveElement* ElementHit = Cast<AInteractiveElement>(OutHitResult.GetActor());

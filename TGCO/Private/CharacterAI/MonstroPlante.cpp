@@ -1,7 +1,6 @@
 
 #include "TGCO.h"
 #include "TGCOCharacter.h"
-#include "EnergyCell.h"
 #include "SolutionType.h"
 #include "MonstroPlante.h"
 
