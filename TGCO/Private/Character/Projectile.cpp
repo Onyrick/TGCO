@@ -76,11 +76,6 @@ ESolutionType::Type AProjectile::GetSolutionType()
 void AProjectile::SetSolutionType(ESolutionType::Type _solution)
 {
 	SolutionType = _solution;
-}
-
-void AProjectile::SetMode(EShootMode::Type _Mode)
-{
-	ProjectileMode = _Mode;
 
 	RootComponent->AttachChildren.FindItemByClass(&MeshProjectile);
 
@@ -88,10 +83,15 @@ void AProjectile::SetMode(EShootMode::Type _Mode)
 	{
 		UMaterialInterface* MeshMat = MeshProjectile->GetMaterial(0);
 		MaterialInstance = UMaterialInstanceDynamic::Create(MeshMat, this);
-		MaterialInstance->SetVectorParameterValue(FName(TEXT("Color")), FLinearColor(GetColorOfTheMode(_Mode)));
+		MaterialInstance->SetVectorParameterValue(FName(TEXT("Color")), FLinearColor(GetColorOfTheSolution(_solution)));
 		MaterialInstance->SetScalarParameterValue(FName(TEXT("Intensity")), 100.f);
 		MeshProjectile->SetMaterial(0, MaterialInstance);
 	}
+}
+
+void AProjectile::SetMode(EShootMode::Type _Mode)
+{
+	ProjectileMode = _Mode;
 
 	SetParticleSystem(_Mode);
 }
