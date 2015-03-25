@@ -17,8 +17,6 @@ AProjectile::AProjectile(const FObjectInitializer& ObjectInitializer)
 	CollisionComp->BodyInstance.SetCollisionProfileName("Projectile");
 	CollisionComp->OnComponentHit.AddDynamic(this, &AProjectile::OnHit);		// set up a notification for when this component hits something blocking
 
-	//MeshProjectile = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("ProjectileMesh2"));
-
 	// Set as root component
 	RootComponent = CollisionComp;
 
@@ -94,6 +92,13 @@ void AProjectile::SetMode(EShootMode::Type _Mode)
 		MaterialInstance->SetScalarParameterValue(FName(TEXT("Intensity")), 100.f);
 		MeshProjectile->SetMaterial(0, MaterialInstance);
 	}
+
+	SetParticleSystem(_Mode);
+}
+
+void AProjectile::SetParticleSystem_Implementation(EShootMode::Type _Mode)
+{
+	
 }
 
 EShootMode::Type AProjectile::GetProjectileMode()
