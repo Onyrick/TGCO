@@ -3,6 +3,7 @@
 #pragma once
 #include "Props/Props.h"
 #include "Props/LightningBarrierSkeletalMeshComp.h"
+#include "Puzzle/BarrierColor.h"
 #include "LightningBarrier.generated.h"
 
 
@@ -53,6 +54,10 @@ public:
 	UFUNCTION()
 		void OnRep_LightningState();
 
+
+	UFUNCTION()
+		void BeginPlay();
+
 	/**
 	* TODO
 	*/
@@ -70,23 +75,21 @@ public:
 		bool bIsLightningActive;
 
 	/** Mesh representing the barrier itself */
-	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "LightningBarrier")
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "LightningBarrier")
 		ULightningBarrierSkeletalMeshComp * pBarrier;
 
-	UPROPERTY()
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "LightningBarrier")
 		UStaticMeshComponent * rail1;
 	
-	UPROPERTY()
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "LightningBarrier")
 		UStaticMeshComponent * rail2;
 		
-
 	UPROPERTY(EditAnywhere, Category = "LightningBarrier")
 		uint32 ActivateInMotionCheckBox : 1;
 
 	/** Direction of the movement if the barrier is in motion */
-	UPROPERTY(Replicated, EditAnywhere, Category = "MovingLightningBarrier")
+	UPROPERTY(Replicated, EditAnywhere, Category = "LightningBarrier")
 		EMotionDir eDirection;
-
 
 	/**  Length of the path the barrier will cover back and forth*/
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "MovingLightningBarrier", meta = (EditCondition = "ActivateInMotionCheckBox"))
@@ -95,7 +98,7 @@ public:
 	/** True if the barrier is in motion.  */
 	UPROPERTY(Replicated, EditAnywhere, Category = "MovingLightningBarrier", meta = (EditCondition = "ActivateInMotionCheckBox"))
 		bool bInMotion;
-
+	
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "MovingLightningBarrier", meta = (EditCondition = "ActivateInMotionCheckBox"))
 		URotatingMovementComponent* RotatingMovement;
 
@@ -113,9 +116,8 @@ public:
 
 	UStaticMesh* railshape;
 
-	virtual void ChangeActiveStateFromServer(bool bValue);
+	EBarrierColor::Type eBarColor;
 
-	virtual void UpdateActiveState();
 
 	/** delegate used to pickup when the selection has changed */
 	void OnActorSelectionChanged(UObject* obj);

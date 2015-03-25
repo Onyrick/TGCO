@@ -28,6 +28,8 @@ ULightningBarrierSkeletalMeshComp::ULightningBarrierSkeletalMeshComp(const FObje
 	pLightningComponent->SetWorldScale3D(FVector(1.f, 5.f, 1.0f));
 	pLightningComponent->SetWorldLocation(FVector(0, -250, 100));
 	pLightningComponent->AttachParent = pSecondTerminalComponent;
+
+//	SetBarrierMaterial(EColorBarrier::VE_Green);
 }
 
 void ULightningBarrierSkeletalMeshComp::ChangeLightningState(bool ActivateLightning)
@@ -35,4 +37,20 @@ void ULightningBarrierSkeletalMeshComp::ChangeLightningState(bool ActivateLightn
 	pLightningComponent->SetVisibility(ActivateLightning, false);
 	auto collisionType = ActivateLightning ? ECollisionEnabled::QueryAndPhysics : ECollisionEnabled::NoCollision;
 	pLightningComponent->SetCollisionEnabled(collisionType);
+}
+
+void ULightningBarrierSkeletalMeshComp::SetBarrierMaterial(EBarrierColor::Type color)
+{
+/*	auto * MaterialInst1 = pSecondTerminalComponent->GetMaterial(0);
+	UMaterialInstanceDynamic * MaterialInstanceFirstTerm = UMaterialInstanceDynamic::Create(MaterialInst1, this);
+
+	auto * MaterialInst2 = pSecondTerminalComponent->GetMaterial(0);
+	UMaterialInstanceDynamic * MaterialInstanceSecondTerm = UMaterialInstanceDynamic::Create(MaterialInst2, this);
+
+	MaterialInstanceFirstTerm->SetVectorParameterValue(FName(TEXT("Color")), FLinearColor(GetColorBarrier(color)));
+	MaterialInstanceFirstTerm->SetScalarParameterValue(FName(TEXT("Intensity")), 100.f);
+	MaterialInstanceSecondTerm->SetVectorParameterValue(FName(TEXT("Color")), FLinearColor(GetColorBarrier(color)));
+	MaterialInstanceSecondTerm->SetScalarParameterValue(FName(TEXT("Intensity")), 100.f);
+	pFirstTerminalComponent->SetMaterial(0, MaterialInstanceFirstTerm);
+	pSecondTerminalComponent->SetMaterial(0, MaterialInstanceSecondTerm);*/
 }

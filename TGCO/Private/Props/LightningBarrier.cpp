@@ -2,6 +2,7 @@
 #include "TGCO.h"
 #include "TGCOPlayerController.h"
 #include "LightningBarrier.h"
+#include "Puzzle/BarrierColor.h"
 #include "Net/UnrealNetwork.h"
 
 
@@ -27,14 +28,30 @@ ALightningBarrier::ALightningBarrier(const FObjectInitializer& ObjectInitializer
 	ConstructorHelpers::FObjectFinder<UStaticMesh> shape(TEXT("StaticMesh'/Game/StarterContent/Shapes/Shape_Trim.Shape_Trim'"));
 	railshape = shape.Object;
 	ActivateInMotionCheckBox = 0;
+	rail1->SetStaticMesh(railshape);
+	rail1->AttachTo(pBarrier);
+	rail1->SetVisibility(true, true);
+	rail2->SetStaticMesh(railshape);
+	rail2->AttachTo(pBarrier);
+	rail2->SetVisibility(true, true);
 
-
+	rail1->SetWorldRotation(FRotator(0, 90.0f, 0.00));
+	rail2->SetWorldRotation(FRotator(0, 90.0f, 0.00));
+	
+///	pBarrier->SetBarrierMaterial(eBarColor);
 	USelection::SelectionChangedEvent.AddUObject(this, &ALightningBarrier::OnActorSelectionChanged);
+	//eBarColor = EBarrierColor::VE_Green;
 }
 
 void ALightningBarrier::OnActorSelectionChanged(UObject* obj)
 {
 
+}
+
+
+void ALightningBarrier::BeginPlay()
+{
+	//pBarrier->SetBarrierMaterial(eColor);
 }
 
 
@@ -96,8 +113,6 @@ void ALightningBarrier::PostEditChangeProperty(struct FPropertyChangedEvent& Pro
 		{
 		case EMotionDir::VE_None:
 			ActivateInMotionCheckBox = 0;
-			//pGhostBarrier->SetVisibility(false);
-
 			break;
 		case EMotionDir::VE_X_Axis:
 			bInMotion = false;

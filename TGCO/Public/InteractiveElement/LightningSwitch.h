@@ -9,14 +9,14 @@
 
 /**
  * @brief Switch allowing the player to turn off a @ref ALightningBarrier (either a simple one
- * or part of a @ref AMultiLightningBarrier 
- * 	
+ * or part of a @ref AMultiLightningBarrier
+ *
  * 	@sa AInteractiveElement
  */
 UCLASS()
 class TGCO_API ALightningSwitch : public AInteractiveElement
 {
-	
+
 	GENERATED_BODY()
 
 public:
@@ -29,11 +29,15 @@ public:
 
 	/** Called when the Player uses the object */
 	UFUNCTION(BlueprintCallable, Category = "LightningSwitch")
-	virtual bool OnInteract() override;
-	
+		virtual bool OnInteract() override;
+
 	/** Array containing pointers to all the barrier it controls */
 	UPROPERTY(EditAnywhere, Category = "LightningSwitch")
-	TArray<ALightningBarrier * > m_vControledTerminals;
+		TArray<ALightningBarrier *> m_vControledTerminals;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LightningSwitch")
+		TArray<UStaticMeshComponent *> Informers;
+
 
 
 private:
