@@ -230,7 +230,7 @@ public:
 	class USkeletalMeshComponent* Mesh1P;
 
 	/** @brief	A camera component*. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FirstPersonCameraComponent;
 
 	/** @brief   Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
