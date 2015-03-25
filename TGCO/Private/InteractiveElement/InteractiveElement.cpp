@@ -13,12 +13,18 @@ AInteractiveElement::AInteractiveElement(const class FObjectInitializer& ObjectI
 	TriggerBox->OnComponentEndOverlap.AddDynamic(this, &AInteractiveElement::OnOverlapEnd);
 
 	StaticMesh = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("StaticMesh_InteractiveElement"));
-	
+
 	TriggerBox->AttachTo(StaticMesh);
 	RootComponent = StaticMesh;
 
 	IsLookedAt = false;
 	bCanExistsPastFuture = 0;
+
+	
+	TriggerBox->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+	TriggerBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
+
+	StaticMesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
 }
 
 void AInteractiveElement::Highlight(bool highlight)

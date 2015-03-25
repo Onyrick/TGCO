@@ -70,11 +70,20 @@ public:
 	 */
 	void SetMode(EShootMode::Type _Mode);
 
+	/**********************************************************************************************//**
+	 * @brief	Sets particle system.
+	 *
+	 * @param	_Mode	The mode.
+	 **************************************************************************************************/
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "SetMode")
+	void SetParticleSystem(EShootMode::Type _Mode);
+
 	/**
 	 * @brief	Gets projectile mode.
 	 *
 	 * @return	The projectile mode.
 	 */
+	UFUNCTION(BlueprintCallable, Category = "ShootMode")
 	EShootMode::Type GetProjectileMode();
 
 	/**
@@ -101,5 +110,5 @@ protected:
 
 	/** Projectile Material */
 	UMaterialInstanceDynamic *MaterialInstance;
-	
+
 };
