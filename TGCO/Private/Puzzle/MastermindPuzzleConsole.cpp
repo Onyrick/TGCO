@@ -142,7 +142,7 @@ void AMastermindPuzzleConsole::SwitchDiodeOn()
 	{
 		UMaterialInstanceDynamic* MaterialInstance = MaterialArray[i];
 		MaterialInstance->SetVectorParameterValue(FName(TEXT("Color")), FColor(255, 255, 255));
-		MaterialInstance->SetScalarParameterValue(FName(TEXT("Intensity")), 10);
+		MaterialInstance->SetScalarParameterValue(FName(TEXT("Intensity")), 3);
 	}
 	Diode1->SetMaterial(0, MaterialArray[0]);
 	Diode2->SetMaterial(0, MaterialArray[1]);
@@ -230,17 +230,17 @@ void AMastermindPuzzleConsole::SubmitAnswer()
 					break;
 				}
 			}
+			NewResistance.Add(Proposal[i]);
 			if (!ExistElsewhere)
 			{
-				Difference[i] = -1;
-				NewResistance.Add(Proposal[i]);
+				Difference[i] = -1;				
 			}
 		}
 	}
 	UE_LOG(LogTest, Warning, TEXT("Solution : %s, %s, %s, %s"), *GetNameOfTheSolution(Solution[0]), *GetNameOfTheSolution(Solution[1]), *GetNameOfTheSolution(Solution[2]), *GetNameOfTheSolution(Solution[3]));
 	UE_LOG(LogTest, Warning, TEXT("Proposal : %s, %s, %s, %s"), *GetNameOfTheSolution(Proposal[0]), *GetNameOfTheSolution(Proposal[1]), *GetNameOfTheSolution(Proposal[2]), *GetNameOfTheSolution(Proposal[3]));
 	UE_LOG(LogTest, Warning, TEXT("Difference : %d, %d, %d, %d"), Difference[0], Difference[1], Difference[2], Difference[3]);
-
+	
 	UpdateDiode(Difference);
 
 	++TryNb;

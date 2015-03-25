@@ -178,7 +178,7 @@ void AMonstroPlante::UpdateLights()
 			continue;
 
 		MaterialArray[i]->SetVectorParameterValue(FName(TEXT("Color")), GetColorOfTheSolution(SolutionResistence[i]));
-		MaterialArray[i]->SetScalarParameterValue(FName(TEXT("Intensity")), 10);
+		MaterialArray[i]->SetScalarParameterValue(FName(TEXT("Intensity")), 3);
 		SolutionSphere1->SetMaterial(0, MaterialArray[i]);
 	}
 	SolutionSphere1->SetMaterial(0, MaterialArray[0]);
@@ -204,9 +204,9 @@ void AMonstroPlante::Tick(float DeltaSeconds)
 	SolutionSphere3->AddLocalRotation(FRotator(5.f, -5.f, 0.f));
 	SolutionSphere3->AddLocalOffset(FVector(-40.f, 0.f, 0.f));
 
-	SolutionSphere4->AddLocalOffset(FVector(40.f, 0.f, 0.f));
-	SolutionSphere4->AddLocalRotation(FRotator(5.f, 5.f, 0.f));
 	SolutionSphere4->AddLocalOffset(FVector(-40.f, 0.f, 0.f));
+	SolutionSphere4->AddLocalRotation(FRotator(5.f, 5.f, 0.f));
+	SolutionSphere4->AddLocalOffset(FVector(40.f, 0.f, 0.f));
 }
 
 void AMonstroPlante::OnOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
@@ -259,11 +259,15 @@ void AMonstroPlante::SpeedDefaultUp()
 
 void AMonstroPlante::SetSolutionArray(const TArray<ESolutionType::Type> &_solutions)
 {
-	if (_solutions.Num() < 4) return;
-
-	for (int i = 0; i < 4; ++i)
+	if (_solutions.Num() > 4) return;
+	
+	for (int i = 0; i < _solutions.Num(); ++i)
 	{
 		SolutionResistence[i] = _solutions[i];
+	}
+	for (int i = _solutions.Num(); i < 4; ++i)
+	{
+		SolutionResistence[i] = ESolutionType::NONE;
 	}
 
 	UpdateLights();
