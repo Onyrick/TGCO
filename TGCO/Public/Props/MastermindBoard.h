@@ -8,7 +8,7 @@
 /**
 * @brief Structure to permit to store array of array. Comport a proposal field and a difference field.
 */
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FProposalDifferenceField
 {
 	GENERATED_USTRUCT_BODY()
@@ -21,8 +21,12 @@ struct FProposalDifferenceField
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Mastermind)
 	TArray<int32> DifferenceField;
 
-	FProposalDifferenceField()
+	FProposalDifferenceField(){}
+
+	FProposalDifferenceField(TArray<TEnumAsByte<ESolutionType::Type>> NewProposalField, TArray<int32> NewDifferenceField)
 	{
+		ProposalField = NewProposalField;
+		DifferenceField = NewDifferenceField;
 	}
 };
 

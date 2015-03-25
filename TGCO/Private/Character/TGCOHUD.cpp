@@ -23,8 +23,6 @@ ATGCOHUD::ATGCOHUD(const FObjectInitializer& ObjectInitializer)
 void ATGCOHUD::DrawHUD()
 {
 	Super::DrawHUD();
-
-	UE_LOG(LogDebug, Warning, TEXT("Draw hud true !"));
 	
 	ATGCOPlayerController* PlayerController = Cast<ATGCOPlayerController>(GetWorld()->GetFirstPlayerController());
 	if (PlayerController != nullptr)
@@ -51,27 +49,3 @@ void ATGCOHUD::DrawHUD()
 	}
 }
 
-UUserWidget* ATGCOHUD::GetHUDEnergyUMG() const
-{
-	return HUDEnergyUMG;
-}
-
-void ATGCOHUD::SetHUDEnergyUMG(UUserWidget* _widget)
-{
-	check(_widget);
-	HUDEnergyUMG = _widget;
-}
-
-void ATGCOHUD::SetHUDVisibility(bool _visible)
-{
-	if (_visible)
-	{
-		HUDEnergyUMG->SetVisibility(ESlateVisibility::Visible);
-		UE_LOG(LogOnline, Log, TEXT("Change HUD to be visible"));
-	}
-	else
-	{
-		HUDEnergyUMG->SetVisibility(ESlateVisibility::Hidden);
-		UE_LOG(LogOnline, Log, TEXT("Change HUD to be hidden"));
-	}
-}

@@ -9,6 +9,7 @@
 
 AMastermindPuzzleConsole::AMastermindPuzzleConsole(const FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer)
+, TryNb(0)
 {
 	bReplicates = true;
 	Solution = new ESolutionType::Type[4]();
@@ -168,6 +169,8 @@ void AMastermindPuzzleConsole::SwitchDiodeOff()
 
 bool AMastermindPuzzleConsole::OnInteract()
 {
+
+	UE_LOG(LogTest, Warning, TEXT("On Interact with mastermind console"));
 	UWorld* World = GetWorld();
 	if (World)
 	{
@@ -240,12 +243,31 @@ void AMastermindPuzzleConsole::SubmitAnswer()
 
 	UpdateDiode(Difference);
 
+	++TryNb;
 
 	// Update monstroplante resistance
 	for (TActorIterator<AMonstroPlante> It(GetWorld()); It; ++It)
 	{
 		AMonstroPlante* MonstroPlante = *It;
-		//MonstroPlant.ClearAndSet();
+		MonstroPlante->SetSolutionArray(NewResistance);
+		if (TryNb % 8 == 0)
+		{
+			MonstroPlante->SpeedDefaultUp();
+		}
+	}
+	
+	if (MastermindBoard != nullptr)
+	{
+		TArray<TEnumAsByte<ESolutionType::Type>> ProposalMemory;
+		TArray<int> DifferenceMemory;
+		for (int i = 0; i < 4; ++i)
+		{
+			UE_LOG(LogTest, Warning, TEXT("MastermindBoard : %d"), i);
+			ProposalMemory.Add(Proposal[i]);
+			DifferenceMemory.Add(Difference[i]);
+		}
+
+		MastermindBoard->AddForMemory(ProposalMemory, DifferenceMemory);
 	}
 	
 	//return Difference;
@@ -265,7 +287,6 @@ ESolutionType::Type AMastermindPuzzleConsole::GetProposalAt(int32 iIndex)
 {
 	return Proposal[iIndex];
 }
-
 
 void AMastermindPuzzleConsole::ClearProposal()
 {

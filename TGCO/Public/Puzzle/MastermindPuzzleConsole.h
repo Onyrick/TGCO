@@ -3,6 +3,7 @@
 
 #include "InteractiveElement/InteractiveElement.h"
 #include "SolutionType.h"
+#include "MastermindBoard.h"
 #include "MastermindPuzzleConsole.generated.h"
 
 /**
@@ -131,11 +132,18 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MastermindCamera")
 	ACameraActor* CameraPuzzle;
 
+	/** Camera of the puzzle for auto move */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MastermindBoard")
+	AMastermindBoard* MastermindBoard;
+
 private:
 	/** Solution of the mastermind */
 	ESolutionType::Type* Solution;
 	/** Proposal of the user for the mastermind */
 	ESolutionType::Type* Proposal;
+
+	/** Number of try */
+	int TryNb;
 
 	/** Array of materials for diodes*/
 	TArray<UMaterialInstanceDynamic*> MaterialArray;
