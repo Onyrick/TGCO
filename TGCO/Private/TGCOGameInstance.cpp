@@ -473,7 +473,7 @@ void UTGCOGameInstance::BeginMainMenuState()
 	// Set a custom cursor
 	FString Path = FPaths::GameContentDir() / "Cursors";
 
-	FSlateApplication::Get().SetCustomCursor(EMouseCursor::Default, Path / "default.cur");
+	FSlateApplication::Get().SetCustomCursor(EMouseCursor::Default, Path / "cursor.cur");
 }
 
 void UTGCOGameInstance::EndMainMenuState()
@@ -496,7 +496,7 @@ void UTGCOGameInstance::BeginPlayingState()
 		GameState->MulticastRemoveAllWidgets();
 		GameState->MulticastGoToPlayingState();
 		
-		World->ServerTravel(FString("/Game/Maps/TestMap/GymMastermind?listen"));
+		World->ServerTravel(FString("/Game/Maps/TestMap/MapTestLucie?listen"));
 	}
 }
 

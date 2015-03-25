@@ -93,10 +93,10 @@ void AProjectile::SetMode(EShootMode::Type _Mode)
 {
 	ProjectileMode = _Mode;
 
-	SetParticleSystem(_Mode);
+	SetProjectileParticleSystem(_Mode);
 }
 
-void AProjectile::SetParticleSystem_Implementation(EShootMode::Type _Mode)
+void AProjectile::SetProjectileParticleSystem_Implementation(EShootMode::Type _Mode)
 {
 	
 }
