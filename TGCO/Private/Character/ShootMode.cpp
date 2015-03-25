@@ -30,7 +30,7 @@ FColor GetColorOfTheMode(const EShootMode::Type ShootMode)
 	switch (ShootMode)
 	{
 	case EShootMode::SLOW:					return FColor(138, 239, 251);
-	case EShootMode::SPEED:					return FColor(255, 12, 12);
+	case EShootMode::SPEED:					return FColor(0, 255, 0);
 	case EShootMode::STOP:					return FColor(255, 255, 255);
 	default:								return FColor(0, 0, 0);
 	}

@@ -24,7 +24,7 @@ void ATGCOHUD::DrawHUD()
 {
 	Super::DrawHUD();
 
-	UE_LOG(LogDebug, Warning, TEXT("Draw hud true !"));
+	/*UE_LOG(LogDebug, Warning, TEXT("Draw hud true !"));*/
 	
 	ATGCOPlayerController* PlayerController = Cast<ATGCOPlayerController>(GetWorld()->GetFirstPlayerController());
 	if (PlayerController != nullptr)
