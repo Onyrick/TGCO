@@ -473,7 +473,7 @@ void UTGCOGameInstance::BeginMainMenuState()
 	// Set a custom cursor
 	FString Path = FPaths::GameContentDir() / "Cursors";
 
-	FSlateApplication::Get().SetCustomCursor(EMouseCursor::Default, Path / "default.cur");
+	FSlateApplication::Get().SetCustomCursor(EMouseCursor::Default, Path / "cursor.cur");
 }
 
 void UTGCOGameInstance::EndMainMenuState()
