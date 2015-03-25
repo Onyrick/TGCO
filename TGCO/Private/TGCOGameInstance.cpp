@@ -496,7 +496,7 @@ void UTGCOGameInstance::BeginPlayingState()
 		GameState->MulticastRemoveAllWidgets();
 		GameState->MulticastGoToPlayingState();
 		
-		World->ServerTravel(FString("/Game/Maps/TestMap/Monstroplante_Map?listen"));
+		World->ServerTravel(FString("/Game/Maps/TestMap/GymRainbow?listen"));
 	}
 }
 
