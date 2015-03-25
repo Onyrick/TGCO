@@ -188,12 +188,12 @@ void ATGCOPlayerController::ServerStunMonster_Implementation(class AMonster* Mon
 	}
 }
 
-bool ATGCOPlayerController::ServerDestroyMonster_Validate(class AMonster* Monster)
+bool ATGCOPlayerController::ServerDestroyMonster_Validate(class AMonstroPlante* Monster)
 {
 	return true;
 }
 
-void ATGCOPlayerController::ServerDestroyMonster_Implementation(class AMonster* Monster)
+void ATGCOPlayerController::ServerDestroyMonster_Implementation(class AMonstroPlante* Monster)
 {
 	if (Monster)
 	{

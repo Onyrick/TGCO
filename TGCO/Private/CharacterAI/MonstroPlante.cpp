@@ -117,11 +117,23 @@ float AMonstroPlante::TakeDamage(float DamageAmount, struct FDamageEvent const &
 
 void AMonstroPlante::Destroyed()
 {
-	Super::Destroyed();
-	SolutionSphere1->SetVisibility(false);
-	SolutionSphere2->SetVisibility(false);
-	SolutionSphere3->SetVisibility(false);
-	SolutionSphere4->SetVisibility(false);
+	if (Role < ROLE_Authority)
+	{
+		ATGCOPlayerController * PC;
+		for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
+		{
+			PC = Cast<ATGCOPlayerController>(Iterator->Get());
+			PC->ServerDestroyMonster(this);
+		}
+	}
+	else
+	{
+		Super::Destroyed();
+		SolutionSphere1->SetVisibility(false);
+		SolutionSphere2->SetVisibility(false);
+		SolutionSphere3->SetVisibility(false);
+		SolutionSphere4->SetVisibility(false);
+	}
 }
 
 void AMonstroPlante::RespawnAI()

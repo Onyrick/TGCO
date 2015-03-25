@@ -20,24 +20,12 @@ float AMonster::TakeDamage(float DamageAmount, struct FDamageEvent const & Damag
 
 void AMonster::Destroyed()
 {
-	if (Role < ROLE_Authority)
+	Super::Destroyed();
+	if (GetAIController() != nullptr)
 	{
-		ATGCOPlayerController * PC;
-		for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
-		{
-			PC = Cast<ATGCOPlayerController>(Iterator->Get());
-			PC->ServerDestroyMonster(this);
-		}
+		GetAIController()->StopMovement();
 	}
-	else
-	{
-		Super::Destroyed();
-		if (GetAIController() != nullptr)
-		{
-			GetAIController()->StopMovement();
-		}
-		bIsDead = true;
-	}
+	bIsDead = true;
 }
 
 bool AMonster::IsStun()
