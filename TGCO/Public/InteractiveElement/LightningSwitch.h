@@ -32,12 +32,11 @@ public:
 		virtual bool OnInteract() override;
 
 	/** Array containing pointers to all the barrier it controls */
-	UPROPERTY(EditAnywhere, Category = "LightningSwitch")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LightningSwitch")
 		TArray<ALightningBarrier *> m_vControledTerminals;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LightningSwitch")
-		TArray<UStaticMeshComponent *> Informers;
-
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LightningSwitch")
+	UStaticMeshComponent* Diode1;
 
 
 private:

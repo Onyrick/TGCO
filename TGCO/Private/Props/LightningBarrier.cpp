@@ -40,7 +40,7 @@ ALightningBarrier::ALightningBarrier(const FObjectInitializer& ObjectInitializer
 	
 ///	pBarrier->SetBarrierMaterial(eBarColor);
 	USelection::SelectionChangedEvent.AddUObject(this, &ALightningBarrier::OnActorSelectionChanged);
-	//eBarColor = EBarrierColor::VE_Green;
+	eBarColor = EBarrierColor::VE_Green;
 }
 
 void ALightningBarrier::OnActorSelectionChanged(UObject* obj)

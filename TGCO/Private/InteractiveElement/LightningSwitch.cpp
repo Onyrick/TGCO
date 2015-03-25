@@ -11,45 +11,33 @@ ALightningSwitch::ALightningSwitch(const class FObjectInitializer& ObjectInitial
 	StaticMesh->SetStaticMesh(SwitchShape.Object);
 	StaticMesh->SetWorldScale3D(FVector(8.f, 8.f, 8.0f));
 
+	ConstructorHelpers::FObjectFinder<UStaticMesh> DiodeMesh(TEXT("StaticMesh'/Game/StarterContent/Shapes/Shape_Sphere'"));
 
-	//for (int i = 0; i < 10; i++)
-	//{
-	//	ConstructorHelpers::FObjectFinder<UStaticMesh> DiodeMesh(TEXT("StaticMesh'/Game/StarterContent/Shapes/Shape_Sphere'"));
-	//	UStaticMeshComponent* Diode = ConstructObject<UStaticMeshComponent>(UStaticMeshComponent::StaticClass(), this);
+	Diode1 = ConstructObject<UStaticMeshComponent>(UStaticMeshComponent::StaticClass(), this);
 
-	//	auto MeshMat = Diode->GetMaterial(0);
-	//	UMaterialInstanceDynamic * MaterialDynInstance = UMaterialInstanceDynamic::Create(MeshMat, this);
-	//	if (m_vControledTerminals.Num()>i && m_vControledTerminals[i] != nullptr)
-	//	{
-	//		auto barCol = m_vControledTerminals[i]->eBarColor;
-	//		MaterialDynInstance->SetVectorParameterValue(FName(TEXT("Color")), FLinearColor(GetBarrierColor(barCol)));
-	//	}
-	//	else
-	//	{
-	//		MaterialDynInstance->SetVectorParameterValue(FName(TEXT("Color")), FLinearColor(GetBarrierColor(EBarrierColor::VE_Blue)));
-	//	}
-	//	MaterialDynInstance->SetScalarParameterValue(FName(TEXT("Intensity")), 10000.f);
-	//	Diode->SetMaterial(0, MaterialDynInstance);
+	Diode1->SetWorldScale3D(FVector(0.01f, 0.01f, 0.01f));
 
-	//	Diode->SetWorldScale3D(FVector(0.01f, 0.01f, 0.01f));
-	//	auto loc = GetActorLocation();
+	/** Attach mesh component to each diode */
+	Diode1->SetStaticMesh(DiodeMesh.Object);
 
-	//	/** Attach mesh component to each diode */
-	//	Diode->SetStaticMesh(DiodeMesh.Object);
+	/** Register each Diode component */
+	Diode1->RegisterComponentWithWorld(GetWorld());
 
-	//	/** Register each Diode component */
-	//	Diode->RegisterComponentWithWorld(GetWorld());
-
-	//	/** Attach each diode to root element */
-	//	//Diode->AttachTo(RootComponent);
-	//	Diode->SetVisibility(false, true);
-	//	Diode->SetRelativeLocation(StaticMesh->RelativeLocation + FVector(0.0, Informers.Num(), 20));
-	//	Diode->AttachTo(StaticMesh);
+	/** Attach each diode to root element */
+	//Diode->AttachTo(RootComponent);
+	Diode1->SetVisibility(true, true);
+	Diode1->SetRelativeLocation(StaticMesh->RelativeLocation + FVector(0.0, 0, 20));
+	Diode1->AttachTo(StaticMesh);
 
 
-	//	AddOwnedComponent(Diode);
-	//	Informers.Push(Diode);
-	//}
+	auto MeshMat = Diode1->GetMaterial(0);
+	UMaterialInstanceDynamic * MaterialDynInstance = UMaterialInstanceDynamic::Create(MeshMat, this);
+	MaterialDynInstance->SetVectorParameterValue(FName(TEXT("Color")), FLinearColor(GetBarrierColor(EBarrierColor::VE_Blue)));
+	MaterialDynInstance->SetScalarParameterValue(FName(TEXT("Intensity")), 10000.f);
+
+	Diode1->SetMaterial(0, MaterialDynInstance);
+
+	AddOwnedComponent(Diode1);
 }
 
 bool ALightningSwitch::OnInteract()
@@ -65,5 +53,22 @@ bool ALightningSwitch::OnInteract()
 		}
 	}
 
+	if (Diode1 != nullptr)
+	{
+		auto MeshMat = Diode1->GetMaterial(0);
+		UMaterialInstanceDynamic * MaterialDynInstance = UMaterialInstanceDynamic::Create(MeshMat, this);
+		if (m_vControledTerminals[0] != nullptr)
+		{
+			auto barCol = m_vControledTerminals[0]->eBarColor;
+			MaterialDynInstance->SetVectorParameterValue(FName(TEXT("Color")), FLinearColor(GetBarrierColor(barCol)));
+		}
+		else
+		{
+			MaterialDynInstance->SetVectorParameterValue(FName(TEXT("Color")), FLinearColor(GetBarrierColor(EBarrierColor::VE_Blue)));
+		}
+		MaterialDynInstance->SetScalarParameterValue(FName(TEXT("Intensity")), 10000.f);
+		Diode1->SetMaterial(0, MaterialDynInstance);
+
+	}
 	return true;
 }
