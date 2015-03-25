@@ -4,10 +4,12 @@
 #include <cstdlib>
 #include "Utils.h"
 #include "MastermindPuzzleConsole.h"
+#include "MonstroPlante.h"
 #include "TGCOPlayerState.h"
 
 AMastermindPuzzleConsole::AMastermindPuzzleConsole(const FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer)
+, TryNb(0)
 {
 	bReplicates = true;
 	Solution = new ESolutionType::Type[4]();
@@ -167,6 +169,8 @@ void AMastermindPuzzleConsole::SwitchDiodeOff()
 
 bool AMastermindPuzzleConsole::OnInteract()
 {
+
+	UE_LOG(LogTest, Warning, TEXT("On Interact with mastermind console"));
 	UWorld* World = GetWorld();
 	if (World)
 	{
@@ -179,6 +183,7 @@ bool AMastermindPuzzleConsole::OnInteract()
 				if (PlayerState->eCurrentState == EPlayerStatus::IN_GAME)
 				{
 					PlayerState->SwitchGamePuzzle(CameraPuzzle);
+					UpdateCameraGameToPuzzle.Broadcast();
 					SwitchDiodeOn();
 				}
 				else
@@ -186,6 +191,7 @@ bool AMastermindPuzzleConsole::OnInteract()
 					if (PlayerState->eCurrentState == EPlayerStatus::IN_PUZZLE_GAME)
 					{
 						PlayerState->SwitchGamePuzzle(PlayerController->GetCharacter());
+						UpdateCameraPuzzleToGame.Broadcast();
 						SwitchDiodeOff();
 					}
 				}
@@ -201,6 +207,7 @@ void AMastermindPuzzleConsole::SubmitAnswer()
 	// 0 : exist but not in right place
 	// 1 : in the right place
 	int* Difference = new int[4]();
+	TArray<ESolutionType::Type> NewResistance;
 
 	// For each number of the answer
 	for (int i = 0; i < 4; ++i)
@@ -226,6 +233,7 @@ void AMastermindPuzzleConsole::SubmitAnswer()
 			if (!ExistElsewhere)
 			{
 				Difference[i] = -1;
+				NewResistance.Add(Proposal[i]);
 			}
 		}
 	}
@@ -234,6 +242,33 @@ void AMastermindPuzzleConsole::SubmitAnswer()
 	UE_LOG(LogTest, Warning, TEXT("Difference : %d, %d, %d, %d"), Difference[0], Difference[1], Difference[2], Difference[3]);
 
 	UpdateDiode(Difference);
+
+	++TryNb;
+
+	// Update monstroplante resistance
+	for (TActorIterator<AMonstroPlante> It(GetWorld()); It; ++It)
+	{
+		AMonstroPlante* MonstroPlante = *It;
+		MonstroPlante->SetSolutionArray(NewResistance);
+		if (TryNb % 8 == 0)
+		{
+			MonstroPlante->SpeedDefaultUp();
+		}
+	}
+	
+	if (MastermindBoard != nullptr)
+	{
+		TArray<TEnumAsByte<ESolutionType::Type>> ProposalMemory;
+		TArray<int> DifferenceMemory;
+		for (int i = 0; i < 4; ++i)
+		{
+			UE_LOG(LogTest, Warning, TEXT("MastermindBoard : %d"), i);
+			ProposalMemory.Add(Proposal[i]);
+			DifferenceMemory.Add(Difference[i]);
+		}
+
+		MastermindBoard->AddForMemory(ProposalMemory, DifferenceMemory);
+	}
 	
 	//return Difference;
 }
@@ -252,7 +287,6 @@ ESolutionType::Type AMastermindPuzzleConsole::GetProposalAt(int32 iIndex)
 {
 	return Proposal[iIndex];
 }
-
 
 void AMastermindPuzzleConsole::ClearProposal()
 {
