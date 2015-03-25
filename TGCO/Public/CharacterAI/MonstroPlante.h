@@ -99,6 +99,14 @@ public:
 	void SpeedDefaultUp();
 
 	/**********************************************************************************************//**
+	 * @brief	Sets need to avoid.
+	 *
+	 * @param	_avoid	true to avoid.
+	 **************************************************************************************************/
+
+	void SetNeedToAvoid(bool _avoid);
+
+	/**********************************************************************************************//**
 	 * @brief	Set array by _solution.
 	 *
 	 * @param	_solution	The solutions.
@@ -107,6 +115,7 @@ public:
 	void SetSolutionArray(const TArray<ESolutionType::Type> &_solutions);
 
 	/** @brief	wether the monstroplante has to avoid. */
+	UPROPERTY(Transient, Replicated)
 	bool m_bNeedToAvoid;
 
 protected:	

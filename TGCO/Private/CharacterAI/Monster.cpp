@@ -35,12 +35,24 @@ bool AMonster::IsStun()
 
 void AMonster::Stun()
 {
-	bIsStun = true;
-	GetWorldTimerManager().SetTimer(this, &AMonster::UnStun, fStunTime, false);
-
-	if (GetAIController() != nullptr)
+	if (Role < ROLE_Authority)
 	{
-		GetAIController()->StopMovement();
+		ATGCOPlayerController * PC;
+		for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
+		{
+			PC = Cast<ATGCOPlayerController>(Iterator->Get());
+			PC->ServerStunMonster(this);
+		}
+	}
+	else
+	{
+		bIsStun = true;
+		GetWorldTimerManager().SetTimer(this, &AMonster::UnStun, fStunTime, false);
+
+		if (GetAIController() != nullptr)
+		{
+			GetAIController()->StopMovement();
+		}
 	}
 }
 
@@ -71,9 +83,20 @@ void AMonster::SetWalkSpeed(float _speed)
 
 void AMonster::RespawnAI()
 {
-	Super::RespawnAI();
-//	GetAIController()->ResumeMove(GetAIController()->GetCurrentMoveRequestID());
-	bIsDead = false;
+	if (Role < ROLE_Authority)
+	{
+		ATGCOPlayerController * PC;
+		for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
+		{
+			PC = Cast<ATGCOPlayerController>(Iterator->Get());
+			PC->ServerRespawnMonster(this);
+		}
+	}
+	else
+	{
+		Super::RespawnAI();
+		bIsDead = false;
+	}
 }
 
 bool AMonster::IsDead()
