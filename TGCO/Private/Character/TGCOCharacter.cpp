@@ -435,10 +435,6 @@ void ATGCOCharacter::HighlightCloseInteractiveElement()
 				ElementHit->Highlight(true);
 				PreviousInteractiveElement = ElementHit;
 			}
-			else
-			{
-				UE_LOG(LogDebug, Warning, TEXT("Element is not yet interactible"));
-			}
 		}
 	}
 	else

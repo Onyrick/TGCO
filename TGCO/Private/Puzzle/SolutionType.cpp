@@ -49,8 +49,8 @@ FColor GetColorOfTheSolution(const ESolutionType::Type SolutionType)
 	switch (SolutionType)
 	{
 	case ESolutionType::ACID:					return FColor(226, 230, 93);
-	case ESolutionType::CAUSTIC_SODA:			return FColor(255, 255, 255);
-	case ESolutionType::SALTED_WATER:			return FColor(64, 141, 157);
+	case ESolutionType::CAUSTIC_SODA:			return FColor(0, 0, 255);
+	case ESolutionType::SALTED_WATER:			return FColor(128, 128, 255);
 	case ESolutionType::ETHANOL:				return FColor(216, 190, 36);
 	case ESolutionType::MERCURY:				return FColor(237, 56, 1);
 	case ESolutionType::WEEDKILLING:			return FColor(222, 222, 222);

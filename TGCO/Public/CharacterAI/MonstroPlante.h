@@ -4,7 +4,6 @@
 #include "Monster.h"
 #include "SolutionType.h"
 #include "BotTargetPoint.h"
-#include "EnergyCell.h"
 #include "MonstroPlante.generated.h"
 
 

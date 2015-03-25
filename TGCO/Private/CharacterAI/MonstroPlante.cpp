@@ -85,7 +85,6 @@ AMonstroPlante::AMonstroPlante(const class FObjectInitializer& ObjectInitializer
 
 float AMonstroPlante::TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser)
 {
-	//TODO
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	AProjectile* Projectile = Cast<AProjectile>(DamageCauser);
 
@@ -98,10 +97,6 @@ float AMonstroPlante::TakeDamage(float DamageAmount, struct FDamageEvent const &
 		m_iIdToReplace = (m_iIdToReplace + 1) % 3;
 
 		Destroyed();
-		if (GetAIController() != nullptr)
-		{
-			AEnergyCell* energyCell = GetWorld()->SpawnActor<AEnergyCell>(AEnergyCell::StaticClass(), GetActorLocation(), FRotator::ZeroRotator);
-		}
 		GetWorldTimerManager().SetTimer(this, &AMonstroPlante::RespawnAI, fRespawnTime, false);
 		UpdateLights();
 		StaticMesh->SetVisibility(false);
@@ -181,15 +176,19 @@ void AMonstroPlante::UpdateLights()
 	SolutionSphere4->SetVisibility(SolutionResistence[3] != ESolutionType::NONE);
 
 	MaterialInstance1->SetVectorParameterValue(FName(TEXT("Color")), FLinearColor(GetColorOfTheSolution(SolutionResistence[0])));
+	MaterialInstance1->SetScalarParameterValue(FName(TEXT("Intensity")), 10);
 	SolutionSphere1->SetMaterial(0, MaterialInstance1);
 	
 	MaterialInstance2->SetVectorParameterValue(FName(TEXT("Color")), FLinearColor(GetColorOfTheSolution(SolutionResistence[1])));
+	MaterialInstance2->SetScalarParameterValue(FName(TEXT("Intensity")), 10);
 	SolutionSphere2->SetMaterial(0, MaterialInstance2);
 
 	MaterialInstance3->SetVectorParameterValue(FName(TEXT("Color")), FLinearColor(GetColorOfTheSolution(SolutionResistence[2])));
+	MaterialInstance3->SetScalarParameterValue(FName(TEXT("Intensity")), 10);
 	SolutionSphere3->SetMaterial(0, MaterialInstance3);
 
 	MaterialInstance4->SetVectorParameterValue(FName(TEXT("Color")), FLinearColor(GetColorOfTheSolution(SolutionResistence[3])));
+	MaterialInstance4->SetScalarParameterValue(FName(TEXT("Intensity")), 10);
 	SolutionSphere4->SetMaterial(0, MaterialInstance4);
 }
 
