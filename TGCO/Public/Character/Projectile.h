@@ -76,7 +76,7 @@ public:
 	 * @param	_Mode	The mode.
 	 **************************************************************************************************/
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "SetMode")
-	void SetParticleSystem(EShootMode::Type _Mode);
+	void SetProjectileParticleSystem(EShootMode::Type _Mode);
 
 	/**
 	 * @brief	Gets projectile mode.

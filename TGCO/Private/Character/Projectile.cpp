@@ -93,10 +93,10 @@ void AProjectile::SetMode(EShootMode::Type _Mode)
 		MeshProjectile->SetMaterial(0, MaterialInstance);
 	}
 
-	SetParticleSystem(_Mode);
+	SetProjectileParticleSystem(_Mode);
 }
 
-void AProjectile::SetParticleSystem_Implementation(EShootMode::Type _Mode)
+void AProjectile::SetProjectileParticleSystem_Implementation(EShootMode::Type _Mode)
 {
 	
 }
