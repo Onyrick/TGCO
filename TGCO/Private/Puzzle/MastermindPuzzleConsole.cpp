@@ -270,6 +270,21 @@ void AMastermindPuzzleConsole::SubmitAnswer()
 		MastermindBoard->AddForMemory(ProposalMemory, DifferenceMemory);
 	}
 	
+	bool finishMastermind = true;
+	for (int i = 0; i < 4; ++i)
+	{
+		if (Difference[i] != 1)
+		{
+			finishMastermind = false;
+			break;
+		}
+	}
+
+	if (finishMastermind)
+	{
+		FinishMastermind();
+	}
+
 	//return Difference;
 }
 
@@ -294,4 +309,9 @@ void AMastermindPuzzleConsole::ClearProposal()
 	{
 		Proposal[i] = ESolutionType::NONE;
 	}
+}
+
+void AMastermindPuzzleConsole::FinishMastermind_Implementation()
+{
+
 }

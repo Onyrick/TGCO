@@ -128,6 +128,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Diode")
 	class UStaticMeshComponent* Diode4;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DoorExit")
+	AActor* DoorExitPast;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DoorExit")
+		AActor* DoorExitFuture;
+
 	/** Camera of the puzzle for auto move */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MastermindCamera")
 	ACameraActor* CameraPuzzle;
@@ -135,6 +141,9 @@ public:
 	/** Camera of the puzzle for auto move */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MastermindBoard")
 	AMastermindBoard* MastermindBoard;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "End Mastermind")
+	void FinishMastermind();
 
 private:
 	/** Solution of the mastermind */
