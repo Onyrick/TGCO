@@ -29,6 +29,10 @@ public:
 
 	/** Called when the Player uses the object */
 	UFUNCTION(BlueprintCallable, Category = "LightningSwitch")
+		virtual void BeginPlay() override;
+
+	/** Called when the Player uses the object */
+	UFUNCTION(BlueprintCallable, Category = "LightningSwitch")
 		virtual bool OnInteract() override;
 
 	/** Array containing pointers to all the barrier it controls */
@@ -37,6 +41,8 @@ public:
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LightningSwitch")
 	UStaticMeshComponent* Diode1;
+	UStaticMeshComponent* Diode2;
+	UStaticMeshComponent* Diode3;
 
 
 private:

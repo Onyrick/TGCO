@@ -1,6 +1,7 @@
 
 
 #include "TGCO.h"
+#include "Puzzle/BarrierColor.h"
 #include "LightningBarrierSkeletalMeshComp.h"
 
 ULightningBarrierSkeletalMeshComp::ULightningBarrierSkeletalMeshComp(const FObjectInitializer& ObjectInitializer)
@@ -39,18 +40,18 @@ void ULightningBarrierSkeletalMeshComp::ChangeLightningState(bool ActivateLightn
 	pLightningComponent->SetCollisionEnabled(collisionType);
 }
 
-void ULightningBarrierSkeletalMeshComp::SetBarrierMaterial(EBarrierColor::Type color)
+void ULightningBarrierSkeletalMeshComp::SetBarrierMaterial(EBarrierColor color)
 {
-/*	auto * MaterialInst1 = pSecondTerminalComponent->GetMaterial(0);
+	auto * MaterialInst1 = pFirstTerminalComponent->GetMaterial(0);
 	UMaterialInstanceDynamic * MaterialInstanceFirstTerm = UMaterialInstanceDynamic::Create(MaterialInst1, this);
 
 	auto * MaterialInst2 = pSecondTerminalComponent->GetMaterial(0);
 	UMaterialInstanceDynamic * MaterialInstanceSecondTerm = UMaterialInstanceDynamic::Create(MaterialInst2, this);
 
-	MaterialInstanceFirstTerm->SetVectorParameterValue(FName(TEXT("Color")), FLinearColor(GetColorBarrier(color)));
+	MaterialInstanceFirstTerm->SetVectorParameterValue(FName(TEXT("Color")), FLinearColor(GetBarrierColor(color)));
 	MaterialInstanceFirstTerm->SetScalarParameterValue(FName(TEXT("Intensity")), 100.f);
-	MaterialInstanceSecondTerm->SetVectorParameterValue(FName(TEXT("Color")), FLinearColor(GetColorBarrier(color)));
+	MaterialInstanceSecondTerm->SetVectorParameterValue(FName(TEXT("Color")), FLinearColor(GetBarrierColor(color)));
 	MaterialInstanceSecondTerm->SetScalarParameterValue(FName(TEXT("Intensity")), 100.f);
 	pFirstTerminalComponent->SetMaterial(0, MaterialInstanceFirstTerm);
-	pSecondTerminalComponent->SetMaterial(0, MaterialInstanceSecondTerm);*/
+	pSecondTerminalComponent->SetMaterial(0, MaterialInstanceSecondTerm);
 }

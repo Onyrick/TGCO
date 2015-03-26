@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerInput.h"
 #include "Props.h"
 #include "LightningBarrier.h"
+#include "OpenBarrierConsole.h"
 #include "MinesweeperBox.h"
 #include "Fan.h"
 #include "MonstroPlante.h"
@@ -93,6 +94,11 @@ bool ATGCOPlayerController::ServerChangeActiveStateOnBarrier_Validate(class ALig
 	return true;
 }
 
+bool ATGCOPlayerController::ServerSetOpeningCode_Validate(class AOpenBarrierConsole* LightningBarrier, int32 code)
+{
+	return true;
+}
+
 void ATGCOPlayerController::ServerUpdateVisibilityOnMesh_Implementation(class AMinesweeperBox* MinesweeperBox)
 {
 	if (MinesweeperBox != nullptr)
@@ -107,6 +113,14 @@ void ATGCOPlayerController::ServerChangeActiveStateOnBarrier_Implementation(clas
 	if (LightningBarrier != nullptr)
 	{
 		LightningBarrier->ChangeActiveStateFromServer(bValue);
+	}
+}
+
+void ATGCOPlayerController::ServerSetOpeningCode_Implementation(class AOpenBarrierConsole* OpenBarrierConsole, int32 code)
+{
+	if (OpenBarrierConsole != nullptr)
+	{
+		OpenBarrierConsole->SetOpeningCodeFromServer(code);
 	}
 }
 

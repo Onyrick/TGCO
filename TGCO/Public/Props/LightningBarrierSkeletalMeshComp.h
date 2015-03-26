@@ -30,7 +30,7 @@ public:
 		void ChangeLightningState(bool ActivateLightning);
 
 	UFUNCTION(BlueprintCallable, Category = "LightningBarrier")
-		void SetBarrierMaterial(EBarrierColor::Type BarColor);
+		void SetBarrierMaterial(EBarrierColor BarColor);
 
 public:
 	/** Mesh of the barrier's first pylon */

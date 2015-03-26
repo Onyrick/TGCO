@@ -13,12 +13,13 @@ ALightningBarrier::ALightningBarrier(const FObjectInitializer& ObjectInitializer
 	bInMotion(false),
 	bCompleted(false),
 	fLength(250),
-	rRotation(0.0f, 0.0f, 0.0f)
+	rRotation(0.0f, 0.0f, 0.0f),
+	pFutureBarrier(nullptr)
 {
 	fInitialSpeed = 0;
 	pBarrier = ObjectInitializer.CreateDefaultSubobject<ULightningBarrierSkeletalMeshComp>(this, TEXT("Barrier"));
 	pBarrier->AttachTo(StaticMeshProps);
-
+	
 	RotatingMovement = ObjectInitializer.CreateDefaultSubobject<URotatingMovementComponent>(this, TEXT("RotatingMovement"));
 	RotatingMovement->PivotTranslation = FVector(0, 0, 0);
 	RotatingMovement->SetUpdatedComponent(pBarrier);
@@ -51,7 +52,7 @@ void ALightningBarrier::OnActorSelectionChanged(UObject* obj)
 
 void ALightningBarrier::BeginPlay()
 {
-	//pBarrier->SetBarrierMaterial(eColor);
+	pBarrier->SetBarrierMaterial(eBarColor);
 }
 
 
@@ -64,13 +65,27 @@ void ALightningBarrier::ChangeActiveState()
 		{
 			PC = Cast<ATGCOPlayerController>(Iterator->Get());
 			PC->ServerChangeActiveStateOnBarrier(this, !bIsLightningActive);
+			if (pFutureBarrier != nullptr)
+			{
+				PC->ServerChangeActiveStateOnBarrier(pFutureBarrier, !bIsLightningActive);
+			}
 		}
 	}
 	else
 	{
 		bIsLightningActive = !bIsLightningActive;
 		UpdateActiveState();
+		if (pFutureBarrier != nullptr)
+		{
+			pFutureBarrier->SetActiveState(bIsLightningActive);
+		}
 	}
+}
+
+void ALightningBarrier::SetActiveState(bool state)
+{
+	bIsLightningActive = state;
+	UpdateActiveState();
 }
 
 void ALightningBarrier::ChangeActiveStateFromServer(bool bValue)

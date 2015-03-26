@@ -57,14 +57,23 @@ public:
 	void ServerUpdateSpeedValueOnProps(class AProps* Props, float fValue);
 
 	/**
-	 * @brief	Function that change the activate state on a specific LightningBarrier.
-	 * 			Call on server by client.
-	 *
-	 * @param 	LightningBarrier	LightningBarrier for updating active State.
-	 * @param	bValue						The value.
-	 */
+	* @brief	Function that change the activate state on a specific LightningBarrier.
+	* 			Call on server by client.
+	*
+	* @param 	LightningBarrier	LightningBarrier for updating active State.
+	* @param	bValue						The value.
+	*/
 	UFUNCTION(Server, WithValidation, Reliable)
-	void ServerChangeActiveStateOnBarrier(class ALightningBarrier* LightningBarrier, bool bValue);
+		void ServerChangeActiveStateOnBarrier(class ALightningBarrier* LightningBarrier, bool bValue);
+
+	/**
+	* @brief	Function that set the deactivation code of the console in the lightning corridor
+	*
+	* @param 	AOpenBarrierConsole	AOpenBarrierConsole to receive the new code.
+	* @param	code				The code.
+	*/
+	UFUNCTION(Server, WithValidation, Reliable)
+		void ServerSetOpeningCode(class AOpenBarrierConsole* OpenBarrierConsole, int32 code);
 
 	/**
 	 * @brief	Function that change the visibility of a mesh.

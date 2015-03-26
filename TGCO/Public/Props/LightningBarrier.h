@@ -9,7 +9,7 @@
 
 /**
  *  @class ALightningBarrier
- *  	   
+ *
  * 	@brief Class representing a lightning barrier. The lightning can be switched off
  *	Enum listing all movement direction
  * - None means the barrier is static
@@ -41,12 +41,15 @@ public:
 	/** @brief Constructor */
 	ALightningBarrier(const FObjectInitializer& ObjectInitializer);
 
-		/**
-	* @brief Change the active state (whether or not the lightning
-		 * is active)
-		 */
+	/**
+* @brief Change the active state (whether or not the lightning
+* is active)
+*/
 	UFUNCTION(BlueprintCallable, Category = "LightningBarrier")
-		 void ChangeActiveState();
+		void ChangeActiveState();
+
+	UFUNCTION(BlueprintCallable, Category = "LightningBarrier")
+		void SetActiveState(bool state);
 
 	/**
 	* @brief Function automatically called when @ref bIsLightningActive is replicated
@@ -78,12 +81,20 @@ public:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "LightningBarrier")
 		ULightningBarrierSkeletalMeshComp * pBarrier;
 
+	/** Mesh representing the barrier itself */
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "LightningBarrier")
+		ALightningBarrier * pFutureBarrier;
+
+
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "LightningBarrier")
+		EBarrierColor eBarColor;
+
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "LightningBarrier")
 		UStaticMeshComponent * rail1;
-	
+
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "LightningBarrier")
 		UStaticMeshComponent * rail2;
-		
+
 	UPROPERTY(EditAnywhere, Category = "LightningBarrier")
 		uint32 ActivateInMotionCheckBox : 1;
 
@@ -98,7 +109,7 @@ public:
 	/** True if the barrier is in motion.  */
 	UPROPERTY(Replicated, EditAnywhere, Category = "MovingLightningBarrier", meta = (EditCondition = "ActivateInMotionCheckBox"))
 		bool bInMotion;
-	
+
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "MovingLightningBarrier", meta = (EditCondition = "ActivateInMotionCheckBox"))
 		URotatingMovementComponent* RotatingMovement;
 
@@ -110,13 +121,11 @@ public:
 
 	UPROPERTY()
 		UTextRenderComponent *TextRenderComponent;
-	
+
 	UPROPERTY()
-	UMaterialInstanceDynamic *GhostMaterialInstance;
+		UMaterialInstanceDynamic *GhostMaterialInstance;
 
 	UStaticMesh* railshape;
-
-	EBarrierColor::Type eBarColor;
 
 
 	/** delegate used to pickup when the selection has changed */
@@ -127,7 +136,7 @@ public:
 	 * @brief Method catching property changes event coming from the
 	 * unreal editor. This is used to apply the changes during the scene edition to the
 	 * modified instance (as opposed to during runtime)
-	 * 
+	 *
 	 * @param FPropertyChangedEvent & PropertyChangedEvent
 	 */
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
