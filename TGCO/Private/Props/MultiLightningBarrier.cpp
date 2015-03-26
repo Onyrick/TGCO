@@ -109,6 +109,5 @@ void AMultiLightningBarrier::GetLifetimeReplicatedProps(TArray<FLifetimeProperty
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	// Replicate to everyone
 	DOREPLIFETIME(AMultiLightningBarrier, aBarriers);
-	DOREPLIFETIME(AMultiLightningBarrier, iNbBarriers);
-	
+	DOREPLIFETIME(AMultiLightningBarrier, iNbBarriers);	
 }

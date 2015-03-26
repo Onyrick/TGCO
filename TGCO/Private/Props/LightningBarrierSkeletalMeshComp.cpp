@@ -7,6 +7,7 @@
 ULightningBarrierSkeletalMeshComp::ULightningBarrierSkeletalMeshComp(const FObjectInitializer& ObjectInitializer)
 	:Super(ObjectInitializer)
 {
+	/*Creation of the first pillar of the barrier mesh */
 	pFirstTerminalComponent = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("First Terminal Component"));
 	ConstructorHelpers::FObjectFinder<UStaticMesh> FirstTerminalShape(TEXT("StaticMesh'/Game/StarterContent/Shapes/Shape_Cylinder.Shape_Cylinder'"));
 	pFirstTerminalComponent->SetStaticMesh(FirstTerminalShape.Object);
@@ -14,6 +15,7 @@ ULightningBarrierSkeletalMeshComp::ULightningBarrierSkeletalMeshComp(const FObje
 	pFirstTerminalComponent->SetWorldLocation(FVector(0.f, 0.f, 0.0f));
 	pFirstTerminalComponent->AttachTo(this);
 
+	/*Creation of the second pillar of the barrier mesh */
 	pSecondTerminalComponent = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("Second Terminal Component"));
 	ConstructorHelpers::FObjectFinder<UStaticMesh> SecondTerminalShape(TEXT("StaticMesh'/Game/StarterContent/Shapes/Shape_Cylinder.Shape_Cylinder'"));
 	pSecondTerminalComponent->SetStaticMesh(SecondTerminalShape.Object);
@@ -21,6 +23,7 @@ ULightningBarrierSkeletalMeshComp::ULightningBarrierSkeletalMeshComp(const FObje
 	pSecondTerminalComponent->SetWorldLocation(FVector(0.f, 500.f, 0.0f));
 	pSecondTerminalComponent->AttachParent = pFirstTerminalComponent;
 
+	/*Creation of the barrier part of the mesh */
 	pLightningComponent = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("Lightning Barrier Component"));
 	ConstructorHelpers::FObjectFinder<UStaticMesh> LightningShape(TEXT("StaticMesh'/Game/StarterContent/Shapes/Shape_Trim.Shape_Trim'"));
 	pLightningComponent->SetStaticMesh(LightningShape.Object);
@@ -42,6 +45,7 @@ void ULightningBarrierSkeletalMeshComp::ChangeLightningState(bool ActivateLightn
 
 void ULightningBarrierSkeletalMeshComp::SetBarrierMaterial(EBarrierColor color)
 {
+	/*Retrieval of the pillars' material in order to apply them the given color */
 	auto * MaterialInst1 = pFirstTerminalComponent->GetMaterial(0);
 	UMaterialInstanceDynamic * MaterialInstanceFirstTerm = UMaterialInstanceDynamic::Create(MaterialInst1, this);
 

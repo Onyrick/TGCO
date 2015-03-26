@@ -29,6 +29,13 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "LightningBarrier")
 		void ChangeLightningState(bool ActivateLightning);
 
+	/**
+	* @brief Set the barrier material to give it an identifiable color.
+	* This color is also found on the diodes of the different @ref LightningSwitch that 
+	* control this barrier
+	*
+	* @param BarColor Color to apply to the barrier
+	*/
 	UFUNCTION(BlueprintCallable, Category = "LightningBarrier")
 		void SetBarrierMaterial(EBarrierColor BarColor);
 

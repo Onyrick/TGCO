@@ -42,32 +42,54 @@ public:
 	ALightningBarrier(const FObjectInitializer& ObjectInitializer);
 
 	/**
-* @brief Change the active state (whether or not the lightning
-* is active)
-*/
+	* @brief Toggle the active state (whether or not the lightning
+	* is active)
+	*
+	* @return void
+	*/
 	UFUNCTION(BlueprintCallable, Category = "LightningBarrier")
 		void ChangeActiveState();
 
+	/**
+	* @brief Force the active state to a given one.
+
+	* @param bool the new state
+	* @return void
+	*/
 	UFUNCTION(BlueprintCallable, Category = "LightningBarrier")
 		void SetActiveState(bool state);
 
 	/**
 	* @brief Function automatically called when @ref bIsLightningActive is replicated
+	*
+	* @return void
 	*/
 	UFUNCTION()
 		void OnRep_LightningState();
 
 
+	/**
+	* @brief Function called at launch game
+	*
+	* @return void
+	*/
 	UFUNCTION()
 		void BeginPlay();
 
 	/**
-	* TODO
+	* @brief Change the active state of the barrier (on the client side) using the value sent by the server
+	* 
+	* @param bool the new barrier' state 
+	* @return void
 	*/
 	virtual void ChangeActiveStateFromServer(bool bValue);
 
 	/**
-	* TODO
+	* @brief Apply the LightningBarrier state to its @ref ULightningBarrierSkeletalMeshComp pBarrier
+	* so that it visually changes in the scene (displays or hides the ligthning between the 2 poles of the 
+	* barrier depending on its current state)
+	*
+	* @return void
 	*/
 	virtual void UpdateActiveState();
 
@@ -85,16 +107,19 @@ public:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "LightningBarrier")
 		ALightningBarrier * pFutureBarrier;
 
-
+	/** Color of the barrier. Used to have a visual aid to know which switches control the barrier*/
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "LightningBarrier")
 		EBarrierColor eBarColor;
 
+	/** First rail mesh on which the barrier will be translating in case of a moving barrier*/
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "LightningBarrier")
 		UStaticMeshComponent * rail1;
 
+	/** Second rail mesh on which the barrier will be translating in case of a moving barrier*/
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "LightningBarrier")
 		UStaticMeshComponent * rail2;
 
+	/** Boolean used to specify whether or not the barrier is a moving one*/
 	UPROPERTY(EditAnywhere, Category = "LightningBarrier")
 		uint32 ActivateInMotionCheckBox : 1;
 
@@ -109,22 +134,20 @@ public:
 	/** True if the barrier is in motion.  */
 	UPROPERTY(Replicated, EditAnywhere, Category = "MovingLightningBarrier", meta = (EditCondition = "ActivateInMotionCheckBox"))
 		bool bInMotion;
-
+	
+	/** Rotation of barrier in case of a rotating barrier*/ 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "MovingLightningBarrier", meta = (EditCondition = "ActivateInMotionCheckBox"))
 		URotatingMovementComponent* RotatingMovement;
-
+	
+	/** Vector used to control the motion of a moving barrier*/
 	UPROPERTY(Replicated, EditAnywhere, Category = "MovingLightningBarrier", meta = (EditCondition = "ActivateInMotionCheckBox"))
 		FVector vMotion;
 
+	/** Rotator used to control the motion of a rotating barrier*/
 	UPROPERTY(Replicated, EditAnywhere, Category = "MovingLightningBarrier", meta = (EditCondition = "ActivateInMotionCheckBox"))
 		FRotator rRotation;
 
-	UPROPERTY()
-		UTextRenderComponent *TextRenderComponent;
-
-	UPROPERTY()
-		UMaterialInstanceDynamic *GhostMaterialInstance;
-
+	/** Shape of the rails on which a translating barrier will slide*/ 
 	UStaticMesh* railshape;
 
 
@@ -142,8 +165,4 @@ public:
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 
 #endif
-
-protected:
-	float fPercentageWayCovered;
-	bool bCompleted;
 };

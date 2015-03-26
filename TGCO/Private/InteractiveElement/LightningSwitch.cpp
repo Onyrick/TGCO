@@ -7,10 +7,12 @@
 ALightningSwitch::ALightningSwitch(const class FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+	/*Creation of the switch mesh*/
 	ConstructorHelpers::FObjectFinder<UStaticMesh> SwitchShape(TEXT("StaticMesh'/Game/StarterContent/Props/SM_CornerFrame.SM_CornerFrame'"));
 	StaticMesh->SetStaticMesh(SwitchShape.Object);
 	StaticMesh->SetWorldScale3D(FVector(8.f, 8.f, 8.0f));
 
+	/*Creation of the diodes mesh*/
 	ConstructorHelpers::FObjectFinder<UStaticMesh> DiodeMesh(TEXT("StaticMesh'/Game/StarterContent/Shapes/Shape_Sphere'"));
 	Diode1 = ConstructObject<UStaticMeshComponent>(UStaticMeshComponent::StaticClass(), this);
 	Diode1->SetWorldScale3D(FVector(0.01f, 0.01f, 0.01f));
@@ -64,6 +66,8 @@ ALightningSwitch::ALightningSwitch(const class FObjectInitializer& ObjectInitial
 void ALightningSwitch::BeginPlay()
 {
 	Super::BeginPlay();
+	/*First thing the switch does on start is setting the color of its diodes to their
+	matching indexed barrier*/
 	if (Diode1 != nullptr && m_vControledTerminals.Num() > 0)
 	{
 		auto MeshMat = Diode1->GetMaterial(0);
@@ -107,9 +111,8 @@ void ALightningSwitch::BeginPlay()
 
 bool ALightningSwitch::OnInteract()
 {
-	//TODO
-	//TODO
-	UE_LOG(LogDebug, Warning, TEXT("Interactible Lightning Switch"));
+	/*When the player interacts with the switch it toggles all the controlled barriers to their other state*/
+	//UE_LOG(LogDebug, Warning, TEXT("Interactible Lightning Switch"));
 	for (auto Iter(m_vControledTerminals.CreateIterator()); Iter; Iter++)
 	{
 		if ((*Iter) != nullptr)

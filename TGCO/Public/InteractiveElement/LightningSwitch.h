@@ -27,11 +27,19 @@ public:
 	*/
 	ALightningSwitch(const FObjectInitializer& ObjectInitializer);
 
-	/** Called when the Player uses the object */
+	/**
+	* @brief	Called when the Player uses the object 
+	*
+	* @return	void
+	*/
 	UFUNCTION(BlueprintCallable, Category = "LightningSwitch")
 		virtual void BeginPlay() override;
 
-	/** Called when the Player uses the object */
+	/**
+	* @brief	Called when the Player uses the object 
+	*
+	* @return	bool
+	*/
 	UFUNCTION(BlueprintCallable, Category = "LightningSwitch")
 		virtual bool OnInteract() override;
 
@@ -40,6 +48,8 @@ public:
 		TArray<ALightningBarrier *> m_vControledTerminals;
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LightningSwitch")
+	/** List of diode representing the controlled barrier. Because of a problem of TArray those are hard set 
+	values but will be changed to dynamic as soon as the bug is solved*/
 	UStaticMeshComponent* Diode1;
 	UStaticMeshComponent* Diode2;
 	UStaticMeshComponent* Diode3;

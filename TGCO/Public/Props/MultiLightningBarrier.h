@@ -12,7 +12,7 @@
  * 		  
  * @brief Inherits from @ref ALightningBarrier. Represents a barrier with multiple
  * lightning barrier on top of one another. Each LightningBarrier can be controlled
- * by a different @ref ALightningSwitch
+ * by one or more different @ref ALightningSwitch
  */
 
 UCLASS()
@@ -41,9 +41,6 @@ public:
 	/** Array containing all the @ref ALigthningBarrier composing the instance */
 	UPROPERTY(Replicated, EditAnywhere, Category = "MultiLightningBarrier")
 		TArray<ALightningBarrier * > aBarriers;
-
-
-
 
 #if WITH_EDITOR
 	/**

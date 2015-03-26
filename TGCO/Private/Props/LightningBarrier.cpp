@@ -9,21 +9,23 @@
 ALightningBarrier::ALightningBarrier(const FObjectInitializer& ObjectInitializer)
 	:Super(ObjectInitializer),
 	bIsLightningActive(true),
-	fPercentageWayCovered(0.0),
 	bInMotion(false),
-	bCompleted(false),
 	fLength(250),
 	rRotation(0.0f, 0.0f, 0.0f),
 	pFutureBarrier(nullptr)
 {
 	fInitialSpeed = 0;
+	/*Creation of the skeletal mesh that will visually represent the barrier*/
 	pBarrier = ObjectInitializer.CreateDefaultSubobject<ULightningBarrierSkeletalMeshComp>(this, TEXT("Barrier"));
 	pBarrier->AttachTo(StaticMeshProps);
 	
+	/*Component used to control the rotation of the barrier (used if the barrier is defined as a rotating one)*/
 	RotatingMovement = ObjectInitializer.CreateDefaultSubobject<URotatingMovementComponent>(this, TEXT("RotatingMovement"));
 	RotatingMovement->PivotTranslation = FVector(0, 0, 0);
 	RotatingMovement->SetUpdatedComponent(pBarrier);
 	RotatingMovement->RotationRate = fInitialSpeed *rRotation;
+	
+	/*Meshes representing the rails on which the barrier will be sliding if it has been defined as a translating one*/
 	rail1 = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("Rail1Barrier"));
 	rail2 = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("Rail2Barrier"));
 	ConstructorHelpers::FObjectFinder<UStaticMesh> shape(TEXT("StaticMesh'/Game/StarterContent/Shapes/Shape_Trim.Shape_Trim'"));
@@ -39,8 +41,9 @@ ALightningBarrier::ALightningBarrier(const FObjectInitializer& ObjectInitializer
 	rail1->SetWorldRotation(FRotator(0, 90.0f, 0.00));
 	rail2->SetWorldRotation(FRotator(0, 90.0f, 0.00));
 	
-///	pBarrier->SetBarrierMaterial(eBarColor);
+	/*used for a feature still in development (being able to know which barrier is selected during the edition phase)*/
 	USelection::SelectionChangedEvent.AddUObject(this, &ALightningBarrier::OnActorSelectionChanged);
+	/*Set the barrier's default color */
 	eBarColor = EBarrierColor::VE_Green;
 }
 
@@ -58,8 +61,11 @@ void ALightningBarrier::BeginPlay()
 
 void ALightningBarrier::ChangeActiveState()
 {
+	/*The management of the change is different whether we are the client or the server */
 	if (Role < ROLE_Authority)
 	{
+		/*In case of the client. It sends a request to the server so that the server apply the changes on its own and
+		cascade down the changes back to the client*/
 		ATGCOPlayerController * PC;
 		for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
 		{
@@ -73,6 +79,7 @@ void ALightningBarrier::ChangeActiveState()
 	}
 	else
 	{
+		/*In case of the server*/
 		bIsLightningActive = !bIsLightningActive;
 		UpdateActiveState();
 		if (pFutureBarrier != nullptr)
@@ -111,7 +118,8 @@ void ALightningBarrier::UpdateActiveState()
 	}
 }
 
-
+/*Method used for edition purpose. It allows the designer to hone the instance of the object in the editor to its convenience
+Each property can be tweaked to fit the designer needs*/
 void ALightningBarrier::PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent)
 {
 	FName PropertyName = (PropertyChangedEvent.Property != nullptr) ? PropertyChangedEvent.Property->GetFName() : NAME_None;
@@ -151,11 +159,12 @@ void ALightningBarrier::PostEditChangeProperty(struct FPropertyChangedEvent& Pro
 		auto transVector = fLength * vMotion;
 		RotatingMovement->RotationRate = fInitialSpeed *rRotation;
 	}
+	/*Rotation speed modifications*/
 	else if ((PropertyName == GET_MEMBER_NAME_CHECKED(ALightningBarrier, fInitialSpeed)))
 	{
 		RotatingMovement->RotationRate = fInitialSpeed *rRotation;
 	}
-
+	/*Update of the rails lenght*/
 	else if ((PropertyName == GET_MEMBER_NAME_CHECKED(ALightningBarrier, fLength)))
 	{
 		auto bound = railshape->GetBounds();
@@ -166,6 +175,7 @@ void ALightningBarrier::PostEditChangeProperty(struct FPropertyChangedEvent& Pro
 		bound = rail2->Bounds;
 		rail2->SetWorldLocation(pBarrier->pSecondTerminalComponent->GetComponentLocation() + FVector(bound.BoxExtent.X, 0, 0));
 	}
+	/*On the check of the checkbox defining that the barrier is a moving one, gives acces to more options in the editor*/
 	else if ((PropertyName == GET_MEMBER_NAME_CHECKED(ALightningBarrier, ActivateInMotionCheckBox)))
 	{
 		if (ActivateInMotionCheckBox != 0)

@@ -20,6 +20,7 @@ AOpenBarrierConsole::AOpenBarrierConsole(const FObjectInitializer& ObjectInitial
 
 bool AOpenBarrierConsole::OnInteract()
 {
+	/*When the player interact with the console it activates the camera to enter in puzzle mode*/
 	UWorld* World = GetWorld();
 	if (World)
 	{
@@ -48,6 +49,7 @@ bool AOpenBarrierConsole::OnInteract()
 
 void AOpenBarrierConsole::SetOpeningCode(int32 code)
 {
+	/*Different behavior if we are server or client.*/
 	if (Role < ROLE_Authority)
 	{
 		SetCode(code);
@@ -60,27 +62,21 @@ void AOpenBarrierConsole::SetOpeningCode(int32 code)
 	}
 }
 
-
+/*Set the code sent by the server*/
 void AOpenBarrierConsole::SetOpeningCodeFromServer(int32 code)
 {
 	SetCode(code);
 }
 
+/*When the code is received the displayer is updated*/
 void AOpenBarrierConsole::SetCode(int32 code)
 {
 	OpeningCode = code;
 	if (Displayer != nullptr)
 	{
-		//auto check = Displayer->CodeToDisplay;
-		//std::string MyStdString(TCHAR_TO_UTF8(*check));
 		Displayer->SetCodeToDisplay(FString::FromInt(OpeningCode));
-		//check = Displayer->CodeToDisplay;
-		//std::string My2StdString(TCHAR_TO_UTF8(*check));
-		//Displayer->SendCodeReadyEvent();
 	}
 }
-
-
 
 bool AOpenBarrierConsole::CheckCode(int32 code)
 {

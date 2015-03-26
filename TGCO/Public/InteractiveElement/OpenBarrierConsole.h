@@ -31,19 +31,32 @@ public:
 		virtual bool OnInteract() override;
 
 	/**
-	* @brief	
+	* @brief	Check the given code.
+	* the code is compared to OpeningCode and if it matches return true, false otherwise
+	*
+	* @param	code	int32
+	*
+	* @return	true if it matches OpeningCode false otherwise
 	*/
 	UFUNCTION(BlueprintCallable, Category = "OpenBarrier")
 		virtual bool CheckCode(int32 code);
 
 	/**
-	* @brief
+	* @brief	Set OpeningCode.
+	*	set the attribute OpeningCode to code value
+	* @param	code	int32
+	*
+	* @return	void
 	*/
 	UFUNCTION(BlueprintCallable, Category = "OpenBarrier")
 		void SetOpeningCode(int32 code);
 
 	/**
-	* @brief
+	* @brief	Set OpeningCode.
+	*	set the attribute OpeningCode to code value sent by the server
+	* @param	code	int32
+	*
+	* @return	void
 	*/
 	UFUNCTION(BlueprintCallable, Category = "OpenBarrier")
 		void SetOpeningCodeFromServer(int32 code);
@@ -56,14 +69,22 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OpenBarrier")
 		TArray<ALightningBarrier *> ControledTerminals;
 
-	/** Array containing pointers to all the barrier it controls */
+	/** Pointer to the displayer that will show the opening code to the future player*/
 	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite, Category = "OpenBarrier")
 		ACodeBarrierDisplayer* Displayer;
 
+	/** The opening code that will deactivate all the barriers contained in the ControledTerminals array */
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "OpenBarrier")
 		int32 OpeningCode;
 
 private:
+	/**
+	* @brief	Set OpeningCode.
+	*	set the attribute OpeningCode to code value sent by the server
+	* @param	code	int32
+	*
+	* @return	void
+	*/
 	void SetCode(int32 code);
 
 };
