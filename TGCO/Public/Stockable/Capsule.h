@@ -50,6 +50,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Capsule")
 	TEnumAsByte<ESolutionType::Type> GetSolutionType();
 
+	virtual void BeginPlay() override;
 
 public:
 	/** The SolutionType of the capsule */
