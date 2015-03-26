@@ -13,7 +13,7 @@ void ACapsule::BeginPlay()
 	UMaterialInterface* MeshMat = StaticMesh->GetMaterial(0);
 	UMaterialInstanceDynamic *MatInstance = UMaterialInstanceDynamic::Create(MeshMat, this);
 	MatInstance->SetVectorParameterValue(FName(TEXT("Color")), GetColorOfTheSolution(SolutionType));
-	MatInstance->SetScalarParameterValue(FName(TEXT("Intensity")), 1.5);
+	MatInstance->SetScalarParameterValue(FName(TEXT("Intensity")), 1.25);
 	StaticMesh->SetMaterial(0, MatInstance);
 }
 
