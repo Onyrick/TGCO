@@ -4,7 +4,6 @@
 #include "Monster.h"
 #include "SolutionType.h"
 #include "BotTargetPoint.h"
-#include "EnergyCell.h"
 #include "MonstroPlante.generated.h"
 
 
@@ -114,6 +113,11 @@ public:
 
 	void SetSolutionArray(const TArray<ESolutionType::Type> &_solutions);
 
+	/**
+	* @brief	On begin play, create the mastermind.
+	*/
+	virtual void BeginPlay() override;
+
 	/** @brief	wether the monstroplante has to avoid. */
 	UPROPERTY(Transient, Replicated)
 	bool m_bNeedToAvoid;
@@ -121,15 +125,6 @@ public:
 protected:	
 	/** @brief	The solution resistence array. */
 	TArray<ESolutionType::Type> SolutionResistence;
-
-	/** @brief	The first sphere material instance. */
-	UMaterialInstanceDynamic *MaterialInstance1;
-	/** @brief	The second sphere material instance. */
-	UMaterialInstanceDynamic *MaterialInstance2;
-	/** @brief	The third sphere material instance. */
-	UMaterialInstanceDynamic *MaterialInstance3;
-	/** @brief	The fourth material instance. */
-	UMaterialInstanceDynamic *MaterialInstance4;
 
 	/**********************************************************************************************//**
 	 * @brief	The function called every Tick.
@@ -139,12 +134,12 @@ protected:
 
 	virtual void Tick(float DeltaSeconds) override;
 
-	/** @brief	The current id in the solution array. */
-	int m_iIdToReplace;
-
 	/** @brief	wether the materials are initialized. */
 	bool InitializedMaterials;
 
 	float fSpeedDefault;
 	float fSpeedUp;
+
+	/** Array of materials for diodes*/
+	TArray<UMaterialInstanceDynamic*> MaterialArray;
 };

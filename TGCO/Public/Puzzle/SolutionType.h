@@ -25,10 +25,10 @@ namespace ESolutionType
 		ETHANOL UMETA(DisplayName = "Ethanol"),
 		MERCURY UMETA(DisplayName = "Mercury"),
 		WEEDKILLING UMETA(DisplayName = "Weedkilling"),
-		INFLAMMABLE_PRODUCT UMETA(DisplayName = "Inflammable"),
+		/*INFLAMMABLE_PRODUCT UMETA(DisplayName = "Inflammable"),
 		FROZEN_PRODUCT UMETA(DisplayName = "Frozen Product"),
 		NITROGLYCERINE UMETA(DisplayName = "Nitroglycerine"),
-		RIGIDIFY UMETA(DisplayName = "Rigidify"),
+		RIGIDIFY UMETA(DisplayName = "Rigidify"),*/
 	};
 }
 

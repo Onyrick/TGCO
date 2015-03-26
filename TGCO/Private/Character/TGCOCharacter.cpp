@@ -224,7 +224,7 @@ void ATGCOCharacter::Use()
 	FCollisionQueryParams Params(false);
 	
 	// If raytracer hit an Actor
-	bool hasHit = GetWorld()->LineTraceSingle(OutHitResult, GetActorLocation(), 3000.f*GetActorForwardVector(), ECC_Visibility, Params);
+	bool hasHit = GetWorld()->LineTraceSingle(OutHitResult, FirstPersonCameraComponent->GetComponentLocation(), FirstPersonCameraComponent->GetForwardVector()*300.f + FirstPersonCameraComponent->GetComponentLocation(), ECC_Visibility, Params);
 
 	if (hasHit)
 	{
@@ -417,8 +417,8 @@ void ATGCOCharacter::HighlightCloseInteractiveElement()
 	FHitResult OutHitResult;
 	FCollisionQueryParams Params(false);
 
-	bool hasHit = GetWorld()->LineTraceSingle(OutHitResult, GetActorLocation(), 3000.f*GetActorForwardVector(), ECC_Visibility, Params);
-
+	bool hasHit = GetWorld()->LineTraceSingle(OutHitResult, FirstPersonCameraComponent->GetComponentLocation(), FirstPersonCameraComponent->GetForwardVector()*300.f + FirstPersonCameraComponent->GetComponentLocation(), ECC_Visibility, Params);
+	
 	if (hasHit)
 	{
 		AInteractiveElement* ElementHit = Cast<AInteractiveElement>(OutHitResult.GetActor());
@@ -434,10 +434,6 @@ void ATGCOCharacter::HighlightCloseInteractiveElement()
 			{
 				ElementHit->Highlight(true);
 				PreviousInteractiveElement = ElementHit;
-			}
-			else
-			{
-				UE_LOG(LogDebug, Warning, TEXT("Element is not yet interactible"));
 			}
 		}
 	}
@@ -528,6 +524,32 @@ void ATGCOCharacter::SetInventoryUMG(UInventoryUMG* _widget)
 {
 	check(_widget);
 	InventoryUMG = _widget;
+}
+
+
+UUserWidget* ATGCOCharacter::GetHUDEnergyUMG() const
+{
+	return HUDEnergyUMG;
+}
+
+void ATGCOCharacter::SetHUDEnergyUMG(UUserWidget* _widget)
+{
+	check(_widget);
+	HUDEnergyUMG = _widget;
+}
+
+void ATGCOCharacter::SetHUDVisibility(bool _visible)
+{
+	if (_visible)
+	{
+		HUDEnergyUMG->SetVisibility(ESlateVisibility::Visible);
+		UE_LOG(LogOnline, Log, TEXT("Change HUD to be visible"));
+	}
+	else
+	{
+		HUDEnergyUMG->SetVisibility(ESlateVisibility::Hidden);
+		UE_LOG(LogOnline, Log, TEXT("Change HUD to be hidden"));
+	}
 }
 
 void ATGCOCharacter::PickStockableItem(AStockable* _item)

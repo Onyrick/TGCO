@@ -3,6 +3,7 @@
 
 #include "InteractiveElement/InteractiveElement.h"
 #include "SolutionType.h"
+#include "MastermindBoard.h"
 #include "MastermindPuzzleConsole.generated.h"
 
 /**
@@ -79,6 +80,16 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Mastermind")
 	void QuitMastermindPuzzleConsole();
 
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FBindableEvent_UpdateCameraGameToPuzzle);
+	/** Called when need to move the camera */
+	UPROPERTY(BlueprintAssignable, Category = "Puzzle")
+		FBindableEvent_UpdateCameraGameToPuzzle UpdateCameraGameToPuzzle;
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FBindableEvent_UpdateCameraPuzzleToGame);
+	/** Called when need to move the camera */
+	UPROPERTY(BlueprintAssignable, Category = "Puzzle")
+		FBindableEvent_UpdateCameraPuzzleToGame UpdateCameraPuzzleToGame;
+
 private: 
 	/**
 	* @brief	Create the solution of the mastermind.
@@ -117,15 +128,31 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Diode")
 	class UStaticMeshComponent* Diode4;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DoorExit")
+	AActor* DoorExitPast;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DoorExit")
+		AActor* DoorExitFuture;
+
 	/** Camera of the puzzle for auto move */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MastermindCamera")
 	ACameraActor* CameraPuzzle;
+
+	/** Camera of the puzzle for auto move */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MastermindBoard")
+	AMastermindBoard* MastermindBoard;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "End Mastermind")
+	void FinishMastermind();
 
 private:
 	/** Solution of the mastermind */
 	ESolutionType::Type* Solution;
 	/** Proposal of the user for the mastermind */
 	ESolutionType::Type* Proposal;
+
+	/** Number of try */
+	int TryNb;
 
 	/** Array of materials for diodes*/
 	TArray<UMaterialInstanceDynamic*> MaterialArray;

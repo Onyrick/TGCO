@@ -28,6 +28,7 @@ bool ASolutionGenerator::OnInteract()
 	if (Player != nullptr)
 	{
 		Player->SetSolutionType(SolutionType);
+		UE_LOG(LogTest, Warning, TEXT("Activate"));
 	}
 	return true;
 }

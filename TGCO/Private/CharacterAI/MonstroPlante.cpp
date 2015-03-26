@@ -1,7 +1,6 @@
 
 #include "TGCO.h"
 #include "TGCOCharacter.h"
-#include "EnergyCell.h"
 #include "SolutionType.h"
 #include "MonstroPlante.h"
 
@@ -73,20 +72,35 @@ AMonstroPlante::AMonstroPlante(const class FObjectInitializer& ObjectInitializer
 	SolutionSphere3->SetVisibility(false);
 	SolutionSphere4->SetVisibility(false);
 
-	m_iIdToReplace = 0;
-
 	TriggerBox = ObjectInitializer.CreateDefaultSubobject<UBoxComponent>(this, TEXT("BoxTrigger_InteractiveElement"));
 	TriggerBox->OnComponentBeginOverlap.AddDynamic(this, &AMonstroPlante::OnOverlapBegin);
 
 	TriggerBox->AttachTo(RootComponent);
 	TriggerBox->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
 
+	MaterialArray = TArray<UMaterialInstanceDynamic*>();
+
 	SpeedDefault();
+
+}
+
+void AMonstroPlante::BeginPlay()
+{
+	Super::BeginPlay();
+	UMaterialInterface* MeshMat = SolutionSphere1->GetMaterial(0);
+	MaterialArray.Push(UMaterialInstanceDynamic::Create(MeshMat, this));
+	MeshMat = SolutionSphere2->GetMaterial(0);
+	MaterialArray.Push(UMaterialInstanceDynamic::Create(MeshMat, this));
+	MeshMat = SolutionSphere3->GetMaterial(0);
+	MaterialArray.Push(UMaterialInstanceDynamic::Create(MeshMat, this));
+	MeshMat = SolutionSphere4->GetMaterial(0);
+	MaterialArray.Push(UMaterialInstanceDynamic::Create(MeshMat, this));
+
+	UpdateLights();
 }
 
 float AMonstroPlante::TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser)
 {
-	//TODO
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	AProjectile* Projectile = Cast<AProjectile>(DamageCauser);
 
@@ -95,16 +109,8 @@ float AMonstroPlante::TakeDamage(float DamageAmount, struct FDamageEvent const &
 
 	if (SolutionResistence.Contains(Projectile->GetSolutionType()) == false && Projectile->GetSolutionType() != ESolutionType::NONE)
 	{
-		SolutionResistence[m_iIdToReplace] = Projectile->GetSolutionType();
-		m_iIdToReplace = (m_iIdToReplace + 1) % 3;
-
 		Destroyed();
-		if (GetAIController() != nullptr)
-		{
-			AEnergyCell* energyCell = GetWorld()->SpawnActor<AEnergyCell>(AEnergyCell::StaticClass(), GetActorLocation(), FRotator::ZeroRotator);
-		}
 		GetWorldTimerManager().SetTimer(this, &AMonstroPlante::RespawnAI, fRespawnTime, false);
-		UpdateLights();
 		StaticMesh->SetVisibility(false);
 	}
 	else
@@ -155,43 +161,30 @@ void AMonstroPlante::RespawnAI()
 	m_bNeedToAvoid = false;
 
 	SpeedDefault();
+
+	UpdateLights();
 }
 
 void AMonstroPlante::UpdateLights()
 {
-	if (InitializedMaterials == false)
-	{
-		UMaterialInterface* MeshMat1 = SolutionSphere1->GetMaterial(0);
-		MaterialInstance1 = UMaterialInstanceDynamic::Create(MeshMat1, this);
-
-		UMaterialInterface* MeshMat2 = SolutionSphere2->GetMaterial(0);
-		MaterialInstance2 = UMaterialInstanceDynamic::Create(MeshMat2, this);
-
-		UMaterialInterface* MeshMat3 = SolutionSphere3->GetMaterial(0);
-		MaterialInstance3 = UMaterialInstanceDynamic::Create(MeshMat3, this);
-
-		UMaterialInterface* MeshMat4 = SolutionSphere4->GetMaterial(0);
-		MaterialInstance4 = UMaterialInstanceDynamic::Create(MeshMat4, this);
-
-		InitializedMaterials = true;
-	}
-
 	SolutionSphere1->SetVisibility(SolutionResistence[0] != ESolutionType::NONE);
 	SolutionSphere2->SetVisibility(SolutionResistence[1] != ESolutionType::NONE);
 	SolutionSphere3->SetVisibility(SolutionResistence[2] != ESolutionType::NONE);
 	SolutionSphere4->SetVisibility(SolutionResistence[3] != ESolutionType::NONE);
 
-	MaterialInstance1->SetVectorParameterValue(FName(TEXT("Color")), FLinearColor(GetColorOfTheSolution(SolutionResistence[0])));
-	SolutionSphere1->SetMaterial(0, MaterialInstance1);
-	
-	MaterialInstance2->SetVectorParameterValue(FName(TEXT("Color")), FLinearColor(GetColorOfTheSolution(SolutionResistence[1])));
-	SolutionSphere2->SetMaterial(0, MaterialInstance2);
+	for (int i = 0; i < MaterialArray.Num(); ++i)
+	{
+		if (SolutionResistence[i] == ESolutionType::NONE)
+			continue;
 
-	MaterialInstance3->SetVectorParameterValue(FName(TEXT("Color")), FLinearColor(GetColorOfTheSolution(SolutionResistence[2])));
-	SolutionSphere3->SetMaterial(0, MaterialInstance3);
-
-	MaterialInstance4->SetVectorParameterValue(FName(TEXT("Color")), FLinearColor(GetColorOfTheSolution(SolutionResistence[3])));
-	SolutionSphere4->SetMaterial(0, MaterialInstance4);
+		MaterialArray[i]->SetVectorParameterValue(FName(TEXT("Color")), GetColorOfTheSolution(SolutionResistence[i]));
+		MaterialArray[i]->SetScalarParameterValue(FName(TEXT("Intensity")), 3);
+		SolutionSphere1->SetMaterial(0, MaterialArray[i]);
+	}
+	SolutionSphere1->SetMaterial(0, MaterialArray[0]);
+	SolutionSphere2->SetMaterial(0, MaterialArray[1]);
+	SolutionSphere3->SetMaterial(0, MaterialArray[2]);
+	SolutionSphere4->SetMaterial(0, MaterialArray[3]);
 }
 
 void AMonstroPlante::Tick(float DeltaSeconds)
@@ -211,9 +204,9 @@ void AMonstroPlante::Tick(float DeltaSeconds)
 	SolutionSphere3->AddLocalRotation(FRotator(5.f, -5.f, 0.f));
 	SolutionSphere3->AddLocalOffset(FVector(-40.f, 0.f, 0.f));
 
-	SolutionSphere4->AddLocalOffset(FVector(40.f, 0.f, 0.f));
-	SolutionSphere4->AddLocalRotation(FRotator(5.f, 5.f, 0.f));
 	SolutionSphere4->AddLocalOffset(FVector(-40.f, 0.f, 0.f));
+	SolutionSphere4->AddLocalRotation(FRotator(5.f, 5.f, 0.f));
+	SolutionSphere4->AddLocalOffset(FVector(40.f, 0.f, 0.f));
 }
 
 void AMonstroPlante::OnOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
@@ -266,11 +259,15 @@ void AMonstroPlante::SpeedDefaultUp()
 
 void AMonstroPlante::SetSolutionArray(const TArray<ESolutionType::Type> &_solutions)
 {
-	if (_solutions.Num() < 4) return;
-
-	for (int i = 0; i < 4; ++i)
+	if (_solutions.Num() > 4) return;
+	
+	for (int i = 0; i < _solutions.Num(); ++i)
 	{
 		SolutionResistence[i] = _solutions[i];
+	}
+	for (int i = _solutions.Num(); i < 4; ++i)
+	{
+		SolutionResistence[i] = ESolutionType::NONE;
 	}
 
 	UpdateLights();
