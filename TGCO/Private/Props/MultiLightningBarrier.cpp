@@ -32,6 +32,8 @@ void AMultiLightningBarrier::ReceiveDestroyed()
 	Super::ReceiveDestroyed();
 }
 
+#if WITH_EDITOR
+
 void AMultiLightningBarrier::PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent)
 {
 	FName PropertyName = (PropertyChangedEvent.Property != nullptr) ? PropertyChangedEvent.Property->GetFName() : NAME_None;
@@ -103,6 +105,7 @@ void AMultiLightningBarrier::PostEditChangeProperty(struct FPropertyChangedEvent
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 }
 
+#endif 
 
 void AMultiLightningBarrier::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> & OutLifetimeProps) const
 {

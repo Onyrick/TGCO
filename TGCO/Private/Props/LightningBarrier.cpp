@@ -118,6 +118,8 @@ void ALightningBarrier::UpdateActiveState()
 	}
 }
 
+#if WITH_EDITOR
+
 /*Method used for edition purpose. It allows the designer to hone the instance of the object in the editor to its convenience
 Each property can be tweaked to fit the designer needs*/
 void ALightningBarrier::PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent)
@@ -205,6 +207,8 @@ void ALightningBarrier::PostEditChangeProperty(struct FPropertyChangedEvent& Pro
 	}
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 }
+
+#endif 
 
 void ALightningBarrier::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> & OutLifetimeProps) const
 {
