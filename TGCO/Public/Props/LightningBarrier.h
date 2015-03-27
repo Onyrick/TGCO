@@ -154,7 +154,6 @@ public:
 	/** delegate used to pickup when the selection has changed */
 	void OnActorSelectionChanged(UObject* obj);
 
-#if WITH_EDITOR
 	/**
 	 * @brief Method catching property changes event coming from the
 	 * unreal editor. This is used to apply the changes during the scene edition to the
@@ -164,5 +163,4 @@ public:
 	 */
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 
-#endif
 };
