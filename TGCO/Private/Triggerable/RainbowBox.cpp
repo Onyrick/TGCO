@@ -21,12 +21,16 @@ void ARainbowBox::OnOverlapBegin(class AActor* OtherActor, class UPrimitiveCompo
 	ARainbowBoxHandlerPast* RainbowBoxHandlerPast = nullptr;
 
 	// Get RainbowBoxHandler of the future and of the past
-	for (TActorIterator<AActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+	for (TActorIterator<ARainbowBoxHandlerFuture> ActorItr(GetWorld()); ActorItr; ++ActorItr)
 	{
 		if (ActorItr->GetName().Contains("RainbowBoxHandlerFuture_BP"))
 		{
 			RainbowBoxHandlerFuture = Cast<ARainbowBoxHandlerFuture>(*ActorItr);
 		}
+	}
+
+	for (TActorIterator<ARainbowBoxHandlerPast> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+	{
 		if (ActorItr->GetName().Contains("RainbowBoxHandlerPast_BP"))
 		{
 			RainbowBoxHandlerPast = Cast<ARainbowBoxHandlerPast>(*ActorItr);
