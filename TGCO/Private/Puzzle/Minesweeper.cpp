@@ -21,6 +21,7 @@ void AMinesweeper::CreateMinesweeper()
 	//Create all the MinesweeperBox and initialize them without mine
 	//UE_LOG(LogTest, Warning, TEXT("Je suis dans la fonction CreateMinesweeper"));
 	// TODO : Works with non squares datas (NB_COL != NB_ROWS), Make size of minesweeper box a constant int for future changement !
+	// TODO : Works with a custom angle instead of 90
 	for (int i = 0; i < SIZE; ++i)
 	{
 		UWorld* const World = GetWorld();
@@ -28,8 +29,11 @@ void AMinesweeper::CreateMinesweeper()
 		{
 			unsigned int x = i / NB_COL;
 			unsigned int y = i % NB_COL;
-			const FVector SpawnLocation = GetActorLocation() + FVector(x * 405, y * 405, 5.0);
+			FVector SpawnLocation = FVector(x * 405, y * 405, 5.0);
 			const FRotator SpawnRotation = GetActorRotation();
+			SpawnLocation = SpawnLocation.RotateAngleAxis(90, FVector(0, 0, 1));
+			SpawnLocation = GetActorLocation() + SpawnLocation;
+
 			AMinesweeperBox* m = (AMinesweeperBox*)World->SpawnActor<AMinesweeperBox>(MinesweeperBoxBP, SpawnLocation, SpawnRotation);
 			Squares.Add(m);
 		}
